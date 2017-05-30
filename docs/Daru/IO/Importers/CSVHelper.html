@@ -4,7 +4,7 @@
     <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>
-  Module: Daru::IO::Exporters::FastestCSV
+  Module: Daru::IO::Importers::CSVHelper
   
     &mdash; Documentation by YARD 0.9.9
   
@@ -15,7 +15,7 @@
   <link rel="stylesheet" href="../../../css/common.css" type="text/css" charset="utf-8" />
 
 <script type="text/javascript" charset="utf-8">
-  pathId = "Daru::IO::Exporters::FastestCSV";
+  pathId = "Daru::IO::Importers::CSVHelper";
   relpath = '../../../';
 </script>
 
@@ -36,10 +36,10 @@
       <div id="header">
         <div id="menu">
   
-    <a href="../../../_index.html">Index (F)</a> &raquo;
-    <span class='title'><span class='object_link'><a href="../../../Daru.html" title="Daru (module)">Daru</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../../IO.html" title="Daru::IO (module)">IO</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../Exporters.html" title="Daru::IO::Exporters (module)">Exporters</a></span></span>
+    <a href="../../../_index.html">Index (C)</a> &raquo;
+    <span class='title'><span class='object_link'><a href="../../../Daru.html" title="Daru (module)">Daru</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../../IO.html" title="Daru::IO (module)">IO</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../Importers.html" title="Daru::IO::Importers (module)">Importers</a></span></span>
      &raquo; 
-    <span class="title">FastestCSV</span>
+    <span class="title">CSVHelper</span>
   
 </div>
 
@@ -59,7 +59,7 @@
         <div class="clear"></div>
       </div>
 
-      <div id="content"><h1>Module: Daru::IO::Exporters::FastestCSV
+      <div id="content"><h1>Module: Daru::IO::Importers::CSVHelper
   
   
   
@@ -78,7 +78,7 @@
   
   <dl>
     <dt>Defined in:</dt>
-    <dd>lib/daru/io/exporters/fastest_csv.rb</dd>
+    <dd>lib/daru/io/importers/csv.rb</dd>
   </dl>
   
 </div>
@@ -101,7 +101,7 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#load-class_method" title="load (class method)">.<strong>load</strong>(str = &#39;FastestCSV#load&#39;)  &#x21d2; Object </a>
+      <a href="#manipulate-class_method" title="manipulate (class method)">.<strong>manipulate</strong>(str)  &#x21d2; Object </a>
     
 
     
@@ -130,9 +130,9 @@
 
     
       <div class="method_details first">
-  <h3 class="signature first" id="load-class_method">
+  <h3 class="signature first" id="manipulate-class_method">
   
-    .<strong>load</strong>(str = &#39;FastestCSV#load&#39;)  &#x21d2; <tt>Object</tt> 
+    .<strong>manipulate</strong>(str)  &#x21d2; <tt>Object</tt> 
   
 
   
@@ -144,15 +144,15 @@
       <pre class="lines">
 
 
-8
-9
-10</pre>
+15
+16
+17</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/daru/io/exporters/fastest_csv.rb', line 8</span>
+      <pre class="code"><span class="info file"># File 'lib/daru/io/importers/csv.rb', line 15</span>
 
-<span class='kw'>def</span> <span class='id identifier rubyid_load'>load</span><span class='lparen'>(</span><span class='id identifier rubyid_str'>str</span><span class='op'>=</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>FastestCSV#load</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
-  <span class='const'><span class='object_link'><a href="FastestCSVHelper.html" title="Daru::IO::Exporters::FastestCSVHelper (module)">FastestCSVHelper</a></span></span><span class='period'>.</span><span class='id identifier rubyid_manipulate'><span class='object_link'><a href="FastestCSVHelper.html#manipulate-class_method" title="Daru::IO::Exporters::FastestCSVHelper.manipulate (method)">manipulate</a></span></span> <span class='id identifier rubyid_str'>str</span>
+<span class='kw'>def</span> <span class='id identifier rubyid_manipulate'>manipulate</span><span class='lparen'>(</span><span class='id identifier rubyid_str'>str</span><span class='rparen'>)</span>
+  <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>CSVHelper#manipulate called by </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_str'>str</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -164,7 +164,7 @@
 </div>
 
       <div id="footer">
-  Generated on Tue May 30 12:21:16 2017 by
+  Generated on Tue May 30 14:44:31 2017 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.9 (ruby-2.4.0).
 </div>
