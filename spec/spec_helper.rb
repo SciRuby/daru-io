@@ -1,5 +1,6 @@
 require "bundler/setup"
 require "daru/io"
+require "rspec/its"
 
 RSpec::Expectations.configuration.warn_about_potential_false_positives = false
 
