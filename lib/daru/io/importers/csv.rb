@@ -5,7 +5,7 @@ module Daru
     module Importers
       module CSV
         class << self
-          def load path, opts={}
+          def load(path, opts={})
             daru_options, opts = CSVHelper.prepare_opts opts
             # Preprocess headers for detecting and correcting repetition in
             # case the :headers option is not specified.
@@ -13,7 +13,8 @@ module Daru
               if opts[:headers]
                 CSVHelper.hash_with_headers(path, opts)
               else
-                CSVHelper.hash_without_headers(path, opts)
+                CSVHelper
+                  .hash_without_headers(path, opts)
                   .tap { |hash| daru_options[:order] = hash.keys }
               end
             Daru::DataFrame.new(hsh,daru_options)
@@ -24,7 +25,7 @@ module Daru
         class << self
           OPT_KEYS = %i[clone order index name].freeze
 
-          def prepare_opts opts
+          def prepare_opts(opts)
             opts[:col_sep]           ||= ','
             opts[:converters]        ||= :numeric
 

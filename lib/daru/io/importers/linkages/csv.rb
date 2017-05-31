@@ -39,7 +39,7 @@ module Daru
         # When multiple CSV reading / writing libraries are to be integrated
         # into daru-io, have the user give the library in `opts`, such as :
         #
-        # `Daru::DataFrame.from_csv path, other_opts, lib: :fastest_csv, &block` 
+        # `Daru::DataFrame.from_csv path, other_opts, lib: :fastest_csv, &block`
         #
         # The code below, should then look like
         #
@@ -54,7 +54,7 @@ module Daru
         #   importers::CSV.load (...)
         # end
         # ```
-        # 
+        #
         # Signed off by @athityakumar on 31/05/2017 at 9:30PM
         Daru::IO::Importers::CSV.load(path, opts, &block)
       end
