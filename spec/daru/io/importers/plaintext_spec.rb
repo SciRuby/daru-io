@@ -3,7 +3,7 @@ require "spec_helper"
 RSpec.describe Daru::IO::Importers::Plaintext do
 
   context "reads data from plain text files" do
-    let(:path) { 'spec/fixtures/bank2.dat' }
+    let(:path) { 'spec/fixtures/plaintext/bank2.dat' }
     let(:vectors) { [:v1,:v2,:v3,:v4,:v5,:v6] }
     subject { Daru::DataFrame.from_plaintext(path, vectors) }
 
@@ -15,7 +15,7 @@ RSpec.describe Daru::IO::Importers::Plaintext do
   end
 
   context "understands empty fields", :skip => 'See FIXME note at importers/plainext.rb#L33-L36' do
-    let(:path) { 'spec/fixtures/empties.dat' }
+    let(:path) { 'spec/fixtures/plaintext/empties.dat' }
     let(:vectors) { [:v1,:v2,:v3] }
     subject { Daru::DataFrame.from_plaintext(path, vectors) }
 
@@ -27,7 +27,7 @@ RSpec.describe Daru::IO::Importers::Plaintext do
   end
 
   context "understands non-numeric fields" do
-    let(:path) { 'spec/fixtures/strings.dat' }
+    let(:path) { 'spec/fixtures/plaintext/strings.dat' }
     let(:vectors) { [:v1,:v2,:v3] }
     subject { Daru::DataFrame.from_plaintext(path, vectors) }
 
