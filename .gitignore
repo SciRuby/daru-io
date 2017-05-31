@@ -4,3 +4,4 @@
 Gemfile.lock
 /_yardoc/
 *.DS_store
+.rspec_status
