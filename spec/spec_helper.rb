@@ -2,11 +2,13 @@ require "bundler/setup"
 require "daru/io"
 require 'rspec'
 require "rspec/its"
+require 'simplecov'
 require 'webmock/rspec'
+require 'open-uri'
+require 'tempfile'
 
 RSpec::Expectations.configuration.warn_about_potential_false_positives = false
 
-require 'simplecov'
 SimpleCov.start do
   add_filter 'vendor'
   add_filter 'spec'

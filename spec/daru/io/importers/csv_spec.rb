@@ -58,12 +58,13 @@ RSpec.describe Daru::IO::Importers::CSV do
 	      WebMock
 	        .stub_request(:get,"http://dummy-remote-url/#{file}.csv")
 	        .to_return(status: 200, body: File.read("spec/fixtures/csv/#{file}.csv"))
+	      WebMock.disable_net_connect!(allow: %r{dummy-remote-url})
 	    end
 	  end
 
     %w[matrix_test repeated_fields scientific_notation sales-funnel].each do |file|
       let(:local) { Daru::DataFrame.from_csv("spec/fixtures/csv/#{file}.csv") }
-      subject { Daru::DataFrame.from_csv("https://dummy-remote-url/#{file}.csv") }
+      subject { Daru::DataFrame.from_csv("http://dummy-remote-url/#{file}.csv") }
 
 			it { is_expected.to be_an(Daru::DataFrame) }
 	    it { is_expected.to eq(local)}
