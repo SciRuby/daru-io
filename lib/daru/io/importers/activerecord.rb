@@ -33,5 +33,3 @@ module Daru
     end
   end
 end
-
-
