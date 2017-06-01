@@ -14,8 +14,7 @@ module Daru
                 .map { |table| HTMLHelper.decide_values table, opts }
                 .map { |table| HTMLHelper.table_to_dataframe table }
           rescue LoadError
-            raise 'Install the mechanize gem version 2.7.5 with `gem install mechanize`,'\
-            ' for using the from_html function.'
+            HTMLHelper.raise_error
           end
         end
       end
@@ -66,6 +65,11 @@ module Daru
               index: table[:index],
               order: table[:order],
               name: table[:name]
+          end
+
+          def raise_error
+            raise 'Install the mechanize gem version 2.7.5 with `gem install mechanize`,'\
+            ' for using the from_html function.'
           end
         end
       end

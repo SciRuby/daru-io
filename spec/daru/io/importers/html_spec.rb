@@ -1,6 +1,11 @@
 require "spec_helper"
 
 RSpec.describe Daru::IO::Importers::HTML do
+  context "raises error when mechanize gem is not installed" do
+    subject { -> { Daru::IO::Importers::HTMLHelper.raise_error } }
+    it  { is_expected.to raise_error('Install the mechanize gem version 2.7.5 with `gem install mechanize`, for using the from_html function.') }
+  end
+
   context "in wiki info table" do
     let(:path) {  "file://#{Dir.pwd}/spec/fixtures/html/wiki_table_info.html" }
     let(:order) { ["FName", "LName", "Age"] }
