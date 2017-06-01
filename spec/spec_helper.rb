@@ -1,19 +1,18 @@
+require 'simplecov'
+SimpleCov.start do
+  add_filter 'spec'
+  # minimum_coverage_by_file 95
+end
+
 require "bundler/setup"
 require "daru/io"
 require 'rspec'
 require "rspec/its"
-require 'simplecov'
 require 'webmock/rspec'
 require 'open-uri'
-require 'tempfile'
 
 RSpec::Expectations.configuration.warn_about_potential_false_positives = false
 
-SimpleCov.start do
-  add_filter 'vendor'
-  add_filter 'spec'
-  minimum_coverage_by_file 95
-end
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure
