@@ -1,9 +1,8 @@
-require "spec_helper"
+require 'spec_helper'
 require 'tempfile'
 require 'open-uri'
 
 RSpec.describe Daru::IO::Exporters::CSV do
-
   context "writes DataFrame to a CSV file" do
   let(:df) { 
     Daru::DataFrame.new({

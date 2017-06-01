@@ -1,5 +1,4 @@
-require "spec_helper"
-require 'spreadsheet'
+require 'spec_helper'
 
 RSpec.describe Daru::IO::Importers::Excel do
   context "loads from excel spreadsheet" do

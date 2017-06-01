@@ -1,3 +1,4 @@
+require 'spec_helper'
 require 'sqlite3'
 require 'dbi'
 require 'active_record'
