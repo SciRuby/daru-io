@@ -1,4 +1,4 @@
-require 'daru/io/importers/linkages/csv'
+require 'daru/io/importers/linkages/excel'
 
 module Daru
   module IO
