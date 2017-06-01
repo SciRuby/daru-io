@@ -28,7 +28,7 @@ RSpec.describe Daru::IO::Importers::SQL do
 
   context 'with a database handler of DBI' do
     let(:db) { DBI.connect("DBI:SQLite3:#{db_name}") }
-    subject { Daru::DataFrame.from_sql(db, "select * from accounts") }
+    subject { Daru::IO::Importers::SQL.load(db, "select * from accounts") }
 
     it { is_expected.to be_an(Daru::DataFrame) }
     its(:nrows) { is_expected.to eq(2) }
