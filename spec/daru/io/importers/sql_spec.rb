@@ -41,7 +41,7 @@ RSpec.describe Daru::IO::Importers::SQL do
       Daru::IO::Rspec::Account.establish_connection "sqlite3:#{db_name}"
       Daru::IO::Rspec::Account.connection
     end
-    subject { Daru::DataFrame.from_sql(connection, "select * from accounts") }
+    subject { Daru::IO::Importers::SQL.load(connection, "select * from accounts") }
 
     it { is_expected.to be_an(Daru::DataFrame) }
     its(:nrows) { is_expected.to eq(2) }

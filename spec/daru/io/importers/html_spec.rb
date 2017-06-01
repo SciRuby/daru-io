@@ -13,7 +13,7 @@ RSpec.describe Daru::IO::Importers::HTML do
     let(:name) { "Wikipedia Information Table" }
 
     context "returns default dataframe" do
-      subject { Daru::DataFrame.from_html(path) }
+      subject { Daru::IO::Importers::HTML.load(path) }
 
       it { is_expected.to be_an(Array).and all be_a(Daru::DataFrame) }
       its(:first) { is_expected.to eq (Daru::DataFrame.new(
@@ -27,7 +27,7 @@ RSpec.describe Daru::IO::Importers::HTML do
     end
 
     context "returns user-modified dataframe" do
-      subject { Daru::DataFrame.from_html(path, order: order, index: index, name: name) }
+      subject { Daru::IO::Importers::HTML.load(path, order: order, index: index, name: name) }
 
       it { is_expected.to be_an(Array).and all be_a(Daru::DataFrame) }
       its(:first) { is_expected.to eq(Daru::DataFrame.new(
@@ -47,7 +47,7 @@ RSpec.describe Daru::IO::Importers::HTML do
     let(:path) { "file://#{Dir.pwd}/spec/fixtures/html/wiki_climate.html" }
 
     context "returns default dataframe" do
-      subject { Daru::DataFrame.from_html(path) }
+      subject { Daru::IO::Importers::HTML.load(path) }
 
       it { is_expected.to be_an(Array).and all be_a(Daru::DataFrame) }
       its('first.index') { is_expected.to eq(Daru::Index.new(
@@ -65,7 +65,7 @@ RSpec.describe Daru::IO::Importers::HTML do
     let(:name) { "Small HTML table with index" }
 
     context "returns user-modified dataframe" do
-      subject { Daru::DataFrame.from_html(path, index: index, name: name) }
+      subject { Daru::IO::Importers::HTML.load(path, index: index, name: name) }
 
       it { is_expected.to be_an(Array).and all be_a(Daru::DataFrame) }
       its(:first) { is_expected.to eq(Daru::DataFrame.new(
@@ -85,7 +85,7 @@ RSpec.describe Daru::IO::Importers::HTML do
     let(:name) { "Year-wise Passengers Figure" }
 
     context "returns matching dataframes with index" do
-      subject { Daru::DataFrame.from_html(path, match: match, name: name) }
+      subject { Daru::IO::Importers::HTML.load(path, match: match, name: name) }
 
       it { is_expected.to be_an(Array).and all be_a(Daru::DataFrame) }
       its('first.index') { is_expected.to eq(Daru::Index.new(
@@ -125,7 +125,7 @@ RSpec.describe Daru::IO::Importers::HTML do
     let(:name) { "Share Market Analysis" }
 
     context "returns matching dataframes" do
-      subject { Daru::DataFrame.from_html(path, match: match) }
+      subject { Daru::IO::Importers::HTML.load(path, match: match) }
 
       it { is_expected.to be_an(Array).and all be_a(Daru::DataFrame) }
       its(:first) { is_expected.to eq(Daru::DataFrame.new(
@@ -143,7 +143,7 @@ RSpec.describe Daru::IO::Importers::HTML do
     end     
 
     context "returns user-modified matching dataframes" do
-      subject { Daru::DataFrame.from_html(path, match: match, index: index, name: name) }
+      subject { Daru::IO::Importers::HTML.load(path, match: match, index: index, name: name) }
 
       it { is_expected.to be_an(Array).and all be_a(Daru::DataFrame) }
       its(:last) { is_expected.to eq(Daru::DataFrame.new(
@@ -168,7 +168,7 @@ RSpec.describe Daru::IO::Importers::HTML do
     let(:path) { "file://#{Dir.pwd}/spec/fixtures/html/eciresults.html" }
 
     context "returns default dataframes" do
-      subject { Daru::DataFrame.from_html(path) }
+      subject { Daru::IO::Importers::HTML.load(path) }
 
       it { is_expected.to be_an(Array).and all be_a(Daru::DataFrame) }
       its('first.vectors') { is_expected.to eq(Daru::Index.new(

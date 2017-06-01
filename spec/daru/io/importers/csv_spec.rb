@@ -7,7 +7,7 @@ RSpec.describe Daru::IO::Importers::CSV do
     let(:path) { 'spec/fixtures/csv/matrix_test.csv' }
     let(:col_sep) { ' ' }
     let(:headers) { true }
-    let(:df) { Daru::DataFrame.from_csv(path, col_sep: col_sep, headers: headers) }
+    let(:df) { Daru::IO::Importers::CSV.load(path, col_sep: col_sep, headers: headers) }
     let('df.vectors') { [:image_resolution, :mls, :true_transform].to_index }
     subject { df }
 
@@ -19,7 +19,7 @@ RSpec.describe Daru::IO::Importers::CSV do
   context "works properly for repeated headers" do
     let(:path) { 'spec/fixtures/csv/repeated_fields.csv' }
     let(:header_converters) { :symbol }
-    subject { Daru::DataFrame.from_csv(path, header_converters: header_converters) }
+    subject { Daru::IO::Importers::CSV.load(path, header_converters: header_converters) }
 
 		it { is_expected.to be_an(Daru::DataFrame) }
     its('vectors.to_a') { is_expected.to eq(["id", "name_1", "age_1", "city", "a1", "name_2", "age_2"])}
@@ -29,7 +29,7 @@ RSpec.describe Daru::IO::Importers::CSV do
   context "accepts scientific notation as float" do
     let(:path) { 'spec/fixtures/csv/scientific_notation.csv' }
     let(:order) { ['x', 'y'] }
-    subject(:ds) { Daru::DataFrame.from_csv(path, order: order) }
+    subject(:ds) { Daru::IO::Importers::CSV.load(path, order: order) }
 
 		it { is_expected.to be_an(Daru::DataFrame) }
     its('vectors.to_a') { is_expected.to eq(['x', 'y'])}
@@ -48,7 +48,7 @@ RSpec.describe Daru::IO::Importers::CSV do
 
   context "follows the order of columns given in CSV" do
   	let(:path) { 'spec/fixtures/csv/sales-funnel.csv' }
-  	subject { Daru::DataFrame.from_csv(path) }
+  	subject { Daru::IO::Importers::CSV.load(path) }
 
 		it { is_expected.to be_an(Daru::DataFrame) }
     its('vectors.to_a') { is_expected.to eq(%W[Account Name Rep Manager Product Quantity Price Status])}
@@ -65,8 +65,8 @@ RSpec.describe Daru::IO::Importers::CSV do
 	  end
 
     %w[matrix_test repeated_fields scientific_notation sales-funnel].each do |file|
-      let(:local) { Daru::DataFrame.from_csv("spec/fixtures/csv/#{file}.csv") }
-      subject { Daru::DataFrame.from_csv("http://dummy-remote-url/#{file}.csv") }
+      let(:local) { Daru::IO::Importers::CSV.load("spec/fixtures/csv/#{file}.csv") }
+      subject { Daru::IO::Importers::CSV.load("http://dummy-remote-url/#{file}.csv") }
 
 			it { is_expected.to be_an(Daru::DataFrame) }
 	    it { is_expected.to eq(local)}

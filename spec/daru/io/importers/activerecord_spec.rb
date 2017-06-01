@@ -27,7 +27,7 @@ RSpec.describe Daru::IO::Importers::Activerecord do
   end
 
   context 'without specifying field names' do
-    subject { Daru::DataFrame.from_activerecord(relation) }
+    subject { Daru::IO::Importers::Activerecord.load relation }
 
     it { is_expected.to be_an(Daru::DataFrame) }
     its(:nrows) { is_expected.to eq(2) }
@@ -37,7 +37,7 @@ RSpec.describe Daru::IO::Importers::Activerecord do
   end
 
   context 'with specifying field names in parameters' do
-    subject { Daru::DataFrame.from_activerecord(relation, :name, :age) }
+    subject { Daru::IO::Importers::Activerecord.load(relation, :name, :age) }
 
     it { is_expected.to be_an(Daru::DataFrame) }
     its(:nrows) { is_expected.to eq(2) }

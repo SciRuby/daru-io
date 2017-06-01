@@ -10,7 +10,7 @@ RSpec.describe Daru::IO::Importers::Excel do
     let(:a1) { Daru::Vector.new(['a,b', 'b,c', 'a', nil, 'a,b,c', nil]) }
     let(:path) { 'spec/fixtures/excel/test_xls.xls' }
 
-    subject { Daru::DataFrame.from_excel path }
+    subject { Daru::IO::Importers::Excel.load path }
 
     it { is_expected.to be_an(Daru::DataFrame) }
     its(:nrows) { is_expected.to eq(6) }

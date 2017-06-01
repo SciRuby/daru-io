@@ -1,4 +1,4 @@
-require 'daru/io/importers/linkages/activerecord'
+require 'daru/io/importers/linkages/sql'
 
 module Daru
   module IO
@@ -12,7 +12,7 @@ module Daru
           #
           # @return A dataframe containing the data resulting from the query
           def load(dbh, query)
-            conn, adapter = SQLHelper.choose_adapter dbh, query
+            conn, adapter = SQLHelper.choose_adapter(dbh, query)
             df_hash       = SQLHelper.result_hash(conn, query, adapter)
             Daru::DataFrame.new(df_hash).tap(&:update)
           end
@@ -20,16 +20,14 @@ module Daru
       end
       module SQLHelper
         class << self
-          def set(conn, query, adapter)
+          def init(conn, query, adapter)
             @conn = conn
             @query = query
             @adapter = adapter
           end
 
           def result_hash(conn, query, adapter)
-            @conn = conn
-            @query = query
-            @adapter = adapter
+            init(conn, query, adapter)
             column_names
               .map(&:to_sym)
               .zip(rows.transpose)
@@ -48,18 +46,17 @@ module Daru
           def rows
             case @adapter
             when :dbi
-              @result ||= result.to_a.map(&:to_a)
+              result.to_a.map(&:to_a)
             when :activerecord
-              @result ||= result.cast_values
+              result.cast_values
             end
-            @result
           end
 
           def result
             case @adapter
             when :dbi
               @conn.execute(@query)
-            when :activeRecord
+            when :activerecord
               @conn.exec_query(@query)
             end
           end
