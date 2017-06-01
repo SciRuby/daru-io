@@ -3,14 +3,14 @@ require 'daru'
 module Daru
   class DataFrame
     class << self
-      # Read the database from a plaintext file. For this method to work,
+      # Imports +Daru::DataFrame+ from a plaintext file. For this method to work,
       # the data should be present in a plain text file in columns. See
       # spec/fixtures/bank2.dat for an example.
       #
       # == Arguments
       #
       # * path - Path of the file to be read.
-      # * fields - Vector names of the resulting database.
+      # * fields - An *Array* of Vector names of the resulting *Daru::DataFrame*.
       #
       # == Usage
       #
