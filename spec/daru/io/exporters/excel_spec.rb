@@ -1,6 +1,3 @@
-require 'spec_helper'
-require 'tempfile'
-
 RSpec.describe Daru::IO::Exporters::Excel do
   context "writes to excel spreadsheet" do
     let(:a) { Daru::Vector.new(100.times.map { rand(100) }) }

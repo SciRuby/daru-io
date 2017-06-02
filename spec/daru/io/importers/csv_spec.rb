@@ -1,7 +1,3 @@
-require 'spec_helper'
-require 'webmock/rspec'
-require 'open-uri'
-
 RSpec.describe Daru::IO::Importers::CSV do
   context "loads from a CSV file" do
     let(:path) { 'spec/fixtures/csv/matrix_test.csv' }

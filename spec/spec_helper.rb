@@ -3,16 +3,20 @@ SimpleCov.start do
   add_filter 'spec'
   # minimum_coverage_by_file 95
 end
-
-require 'bundler/setup'
-require 'daru/io'
 require 'rspec'
 require 'rspec/its'
 require 'webmock/rspec'
+
+require 'daru/io'
+
 require 'open-uri'
+require 'tempfile'
+require 'sqlite3'
+require 'dbi'
+require 'active_record'
+
 
 RSpec::Expectations.configuration.warn_about_potential_false_positives = false
-
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure
@@ -40,4 +44,3 @@ class String
     .gsub(/^\n|\n\s+$/, '')   # remove empty strings before and after
   end
 end
-

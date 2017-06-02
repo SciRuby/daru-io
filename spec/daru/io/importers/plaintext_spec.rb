@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 RSpec.describe Daru::IO::Importers::Plaintext do
 
   context "reads data from plain text files" do

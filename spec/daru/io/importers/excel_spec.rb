@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 RSpec.describe Daru::IO::Importers::Excel do
   context "loads from excel spreadsheet" do
     let(:id) { Daru::Vector.new([1, 2, 3, 4, 5, 6]) }

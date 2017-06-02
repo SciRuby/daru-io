@@ -1,8 +1,3 @@
-require 'spec_helper'
-require 'sqlite3'
-require 'dbi'
-require 'active_record'
-
 module Daru::IO::Rspec
   class Account < ActiveRecord::Base
     self.table_name = 'accounts'

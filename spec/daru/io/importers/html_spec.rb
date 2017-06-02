@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 RSpec.describe Daru::IO::Importers::HTML do
   context "raises error when mechanize gem is not installed" do
     subject { -> { Daru::IO::Importers::HTMLHelper.raise_error } }
