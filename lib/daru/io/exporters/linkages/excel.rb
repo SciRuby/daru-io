@@ -5,7 +5,7 @@ module Daru
     class << self
       # Exports *Daru::DataFrame* to an Excel Spreadsheet.
       #
-      # @param [String] filename The path of the file where the *Daru::DataFrame* 
+      # @param [String] filename The path of the file where the *Daru::DataFrame*
       #   should be written.
       # @param [Hash] opts A set of options, while writing the *Daru::DataFrame*.
       #
@@ -19,7 +19,7 @@ module Daru
       #
       #   df.write_excel "dataframe_df.xls"
       #
-      # @todo The +opts+ parameter isn't used while creating the Excel Spreadsheet yet. 
+      # @todo The +opts+ parameter isn't used while creating the Excel Spreadsheet yet.
       #   Implementing this feature will greatly allow the user to generate a Spreadsheet of
       #   their choice.
       #

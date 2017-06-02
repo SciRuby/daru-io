@@ -15,7 +15,7 @@ module Daru
       #   is parsed by the module. Users can override the parsed order through this option.
       # @option fields index [Array] By default, the index of the imported *Daru::DataFrame*
       #   is parsed by the module. Users can override the parsed order through this option.
-      # @option fields name [String] As +name+ of the imported *Daru::DataFrame* isn't 
+      # @option fields name [String] As +name+ of the imported *Daru::DataFrame* isn't
       #   parsed automatically by the module, users can set the name attribute to their
       #   *Daru::DataFrame* manually, through this option.
       #
@@ -44,7 +44,7 @@ module Daru
       #
       # @note
       #
-      #   Please note that this module works only for static table elements on a 
+      #   Please note that this module works only for static table elements on a
       #   HTML page, and won't work in cases where the data is being loaded into
       #   the HTML table by inline Javascript.
       #

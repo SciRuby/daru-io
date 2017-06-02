@@ -5,7 +5,7 @@ module Daru
     class << self
       # Imports a *Daru::DataFrame* from a database query.
       #
-      # @param dbh [DBI::DatabaseHandle, String] A DBI connection OR Path to a 
+      # @param dbh [DBI::DatabaseHandle, String] A DBI connection OR Path to a
       #   SQlite3 database.
       # @param query [String] The query to be executed
       #
@@ -13,7 +13,7 @@ module Daru
       #
       # @example Reading from database with a DBI connection
       #   dbh = DBI.connect("DBI:Mysql:database:localhost", "user", "password")
-      #   # Use the actual SQL credentials for the above line 
+      #   # Use the actual SQL credentials for the above line
       #
       #   df = Daru::DataFrame.from_sql(dbh, "SELECT * FROM test")
       #   df

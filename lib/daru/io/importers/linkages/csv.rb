@@ -11,11 +11,11 @@ module Daru
       #
       # @option opts col_sep [String] A column separator, to be used while
       #   importing from the CSV file. By default, it is set to ','
-      # @option opts converters [Symbol] If set to +:numeric+, each value in 
+      # @option opts converters [Symbol] If set to +:numeric+, each value in
       #   the imported *Daru::DataFrame* will be numeric and not string.
       # @option opts headers [Boolean] If this option is used, only those columns
       #   will be used to import the *Daru::DataFrame* whose header is given.
-      # @option opts header_converters [Symbol] If set to +:symbol+, the order of 
+      # @option opts header_converters [Symbol] If set to +:symbol+, the order of
       #   the imported *Daru::DataFrame* will be symbol (eg, +:name+) and not string.
       #
       # @return A *Daru::DataFrame* imported from the given relation and fields

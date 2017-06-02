@@ -10,11 +10,11 @@ module Daru
       # @param opts [Hash] User-defined options.
       #
       # @option opts worksheet_id [Integer] The index of the worksheet in the excel file,
-      #   from where the *Daru::DataFrame* will be imported. By default, the first worksheet 
-      #   has it's worksheet_id as 0. In general, the n-th worksheet has a worksheet_id as 
+      #   from where the *Daru::DataFrame* will be imported. By default, the first worksheet
+      #   has it's worksheet_id as 0. In general, the n-th worksheet has a worksheet_id as
       #   n-1.
-      #   
-      #   If worksheet_id option is not given, it is taken as 0 by default and the 
+      #
+      #   If worksheet_id option is not given, it is taken as 0 by default and the
       #   *Daru::DataFrame* will be imported from the first worksheet in the excel file.
       #
       # @return A *Daru::DataFrame* imported from the given excel worksheet
