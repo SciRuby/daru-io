@@ -15,6 +15,8 @@ require 'sqlite3'
 require 'dbi'
 require 'active_record'
 
+require_relative 'shared_contexts'
+require_relative 'shared_examples'
 
 RSpec::Expectations.configuration.warn_about_potential_false_positives = false
 
