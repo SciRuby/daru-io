@@ -2,9 +2,22 @@ RSpec.describe Daru::IO::Exporters::CSV do
   include_context 'csv exporter setup'
   context 'writes DataFrame to a CSV file' do
     let(:opts) { {} }
-    subject { Daru::IO::Importers::CSV.load tempfile.path }
+    let(:content) { CSV.read(tempfile.path) }
 
-    it { is_expected.to be_an(Daru::DataFrame) }
+    def convert input
+      if input.to_i.to_s == input # Integer in string
+        input.to_i
+      elsif input.to_f.to_s == input
+        input.to_f
+      elsif input == "nil"
+        nil
+      else
+        input
+      end 
+    end
+    subject { Daru::DataFrame.rows content[1..-1].map { |x| x.map { |y| convert(y) } }, order: content[0] }
+
+    it_behaves_like 'daru dataframe'
     it { is_expected.to eq(df) }
   end
 
