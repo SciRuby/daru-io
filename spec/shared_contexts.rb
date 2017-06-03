@@ -15,7 +15,7 @@ RSpec.shared_context 'sqlite3 database setup' do |type|
     Daru::IO::Rspec::Account.establish_connection "sqlite3:#{db_name}"
   end
 
-  let(:db_name) { 'daru_test' }
+  let(:db_name)  { 'daru_test' }
   let(:relation) { Daru::IO::Rspec::Account.all }
 
   subject {
@@ -31,27 +31,29 @@ RSpec.shared_context 'sqlite3 database setup' do |type|
 end
 
 RSpec.shared_context 'csv exporter setup' do
+  before { Daru::IO::Exporters::CSV.write df, tempfile.path, opts }
+
   let(:tempfile) { Tempfile.new('data.csv') }
-  let(:df) { 
+  let(:opts)     { {} }
+  let(:df)       { 
     Daru::DataFrame.new({
       'a' => [1,2,3,4,5],
       'b' => [11,22,33,44,55],
       'c' => ['a', 'g', 4, 5,'addadf'],
       'd' => [nil, 23, 4,'a','ff']})
   }
-  subject { File.open(tempfile.path, &:readline).chomp.split(',', -1) }
-  before { Daru::IO::Exporters::CSV.write df, tempfile.path }
 
+  subject { File.open(tempfile.path, &:readline).chomp.split(',', -1) }
 end
 
 RSpec.shared_context 'excel exporter setup' do
   before { Daru::IO::Exporters::Excel.write df, tempfile.path}
 
-  let(:a) { Daru::Vector.new(100.times.map { rand(100) }) }
-  let(:b) { Daru::Vector.new((['b'] * 100)) }
-  let(:df) { Daru::DataFrame.new({ :b => b, :a => a }) }
+  let(:a)        { Daru::Vector.new(100.times.map { rand(100) }) }
+  let(:b)        { Daru::Vector.new((['b'] * 100)) }
+  let(:df)       { Daru::DataFrame.new({ :b => b, :a => a }) }
   let(:tempfile) { Tempfile.new('test_write.xls') }
-  subject { Daru::IO::Importers::Excel.load tempfile.path }
+  subject        { Daru::IO::Importers::Excel.load tempfile.path }
 end
 
 RSpec.shared_context 'csv importer setup' do
@@ -65,11 +67,6 @@ RSpec.shared_context 'csv importer setup' do
   end
 
   let(:path) { 'spec/fixtures/csv/matrix_test.csv' }
-  let(:opts) { 
-    {
-      :col_sep => ' ',
-      :headers => true
-    } 
-  }
-  subject { Daru::IO::Importers::CSV.load(path, opts) }
+  let(:opts) { { col_sep: ' ', headers: true } }
+  subject    { Daru::IO::Importers::CSV.load(path, opts) }
 end
