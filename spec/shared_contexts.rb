@@ -47,7 +47,7 @@ RSpec.shared_context 'csv exporter setup' do
 end
 
 RSpec.shared_context 'excel exporter setup' do
-  before { Daru::IO::Exporters::Excel.write df, tempfile.path}
+  before { Daru::IO::Exporters::Excel.new(df, tempfile.path).write }
 
   let(:a)        { Daru::Vector.new(100.times.map { rand(100) }) }
   let(:b)        { Daru::Vector.new((['b'] * 100)) }
