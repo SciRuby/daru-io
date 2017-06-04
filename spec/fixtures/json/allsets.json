@@ -1,0 +1,469 @@
+{
+  "LEA": {
+    "name": "Limited Edition Alpha",
+    "code": "LEA",
+    "gathererCode": "1E",
+    "magicCardsInfoCode": "al",
+    "releaseDate": "1993-08-05",
+    "border": "black",
+    "type": "core",
+    "booster": [
+      "rare",
+      "uncommon",
+      "uncommon",
+      "uncommon",
+      "common",
+      "common",
+      "common",
+      "common",
+      "common",
+      "common",
+      "common",
+      "common",
+      "common",
+      "common",
+      "common"
+    ],
+    "mkm_name": "Alpha",
+    "mkm_id": 1,
+    "cards": [
+      {
+        "artist": "Richard Thomas",
+        "cmc": 5,
+        "colorIdentity": [
+          "U"
+        ],
+        "colors": [
+          "Blue"
+        ],
+        "flavor": "These spirits of the air are winsome and wild, and cannot be truly contained. Only marginally intelligent, they often substitute whimsy for strategy, delighting in mischief and mayhem.",
+        "id": "926234c2fe8863f49220a878346c4c5ca79b6046",
+        "imageName": "air elemental",
+        "layout": "normal",
+        "manaCost": "{3}{U}{U}",
+        "mciNumber": "47",
+        "multiverseid": 94,
+        "name": "Air Elemental",
+        "power": "4",
+        "rarity": "Uncommon",
+        "subtypes": [
+          "Elemental"
+        ],
+        "text": "Flying",
+        "toughness": "4",
+        "type": "Creature — Elemental",
+        "types": [
+          "Creature"
+        ]
+      },
+      {
+        "artist": "Mark Poole",
+        "cmc": 1,
+        "colorIdentity": [
+          "U"
+        ],
+        "colors": [
+          "Blue"
+        ],
+        "id": "aa74b7dc3b30b2e7559598f983543755e226811d",
+        "imageName": "ancestral recall",
+        "layout": "normal",
+        "manaCost": "{U}",
+        "mciNumber": "48",
+        "multiverseid": 95,
+        "name": "Ancestral Recall",
+        "rarity": "Rare",
+        "reserved": true,
+        "text": "Target player draws three cards.",
+        "type": "Instant",
+        "types": [
+          "Instant"
+        ]
+      },
+      {
+        "artist": "Douglas Shuler",
+        "cmc": 4,
+        "colorIdentity": [
+          "U"
+        ],
+        "colors": [
+          "Blue"
+        ],
+        "id": "9d91ef4896ab4c1a5611d4d06971fc8026dd2f3f",
+        "imageName": "animate artifact",
+        "layout": "normal",
+        "manaCost": "{3}{U}",
+        "mciNumber": "49",
+        "multiverseid": 96,
+        "name": "Animate Artifact",
+        "rarity": "Uncommon",
+        "subtypes": [
+          "Aura"
+        ],
+        "text": "Enchant artifact\nAs long as enchanted artifact isn't a creature, it's an artifact creature with power and toughness each equal to its converted mana cost.",
+        "type": "Enchantment — Aura",
+        "types": [
+          "Enchantment"
+        ]
+      },
+      {
+        "artist": "Anson Maddocks",
+        "cmc": 2,
+        "colorIdentity": [
+          "B"
+        ],
+        "colors": [
+          "Black"
+        ],
+        "id": "d8b74ea7f050c8c05588e002f0264643fc90209b",
+        "imageName": "animate dead",
+        "layout": "normal",
+        "manaCost": "{1}{B}",
+        "mciNumber": "1",
+        "multiverseid": 48,
+        "name": "Animate Dead",
+        "rarity": "Uncommon",
+        "subtypes": [
+          "Aura"
+        ],
+        "text": "Enchant creature card in a graveyard\nWhen Animate Dead enters the battlefield, if it's on the battlefield, it loses \"enchant creature card in a graveyard\" and gains \"enchant creature put onto the battlefield with Animate Dead.\" Return enchanted creature card to the battlefield under your control and attach Animate Dead to it. When Animate Dead leaves the battlefield, that creature's controller sacrifices it.\nEnchanted creature gets -1/-0.",
+        "type": "Enchantment — Aura",
+        "types": [
+          "Enchantment"
+        ]
+      },
+      {
+        "artist": "Dan Frazier",
+        "cmc": 1,
+        "colorIdentity": [
+          "W"
+        ],
+        "colors": [
+          "White"
+        ],
+        "id": "6ba9537d0f1733e4a01927bdf60bfb5122e5a709",
+        "imageName": "animate wall",
+        "layout": "normal",
+        "manaCost": "{W}",
+        "mciNumber": "185",
+        "multiverseid": 232,
+        "name": "Animate Wall",
+        "rarity": "Rare",
+        "subtypes": [
+          "Aura"
+        ],
+        "text": "Enchant Wall\nEnchanted Wall can attack as though it didn't have defender.",
+        "type": "Enchantment — Aura",
+        "types": [
+          "Enchantment"
+        ]
+      },
+      {
+        "artist": "Amy Weber",
+        "cmc": 2,
+        "id": "8a5d85644f546525433c4472b76c3b0ebb495b33",
+        "imageName": "ankh of mishra",
+        "layout": "normal",
+        "manaCost": "{2}",
+        "mciNumber": "230",
+        "multiverseid": 1,
+        "name": "Ankh of Mishra",
+        "rarity": "Rare",
+        "text": "Whenever a land enters the battlefield, Ankh of Mishra deals 2 damage to that land's controller.",
+        "type": "Artifact",
+        "types": [
+          "Artifact"
+        ]
+      },
+      {
+        "artist": "Jesper Myrfors",
+        "cmc": 4,
+        "colorIdentity": [
+          "W"
+        ],
+        "colors": [
+          "White"
+        ],
+        "id": "dad22f637f5738675195185633f48499c03f8adc",
+        "imageName": "armageddon",
+        "layout": "normal",
+        "manaCost": "{3}{W}",
+        "mciNumber": "186",
+        "multiverseid": 233,
+        "name": "Armageddon",
+        "rarity": "Rare",
+        "text": "Destroy all lands.",
+        "type": "Sorcery",
+        "types": [
+          "Sorcery"
+        ]
+      },
+      {
+        "artist": "Jeff A. Menges",
+        "cmc": 2,
+        "colorIdentity": [
+          "G"
+        ],
+        "colors": [
+          "Green"
+        ],
+        "id": "54571e7147917bcb661a87a1fb68070088756ca7",
+        "imageName": "aspect of wolf",
+        "layout": "normal",
+        "manaCost": "{1}{G}",
+        "mciNumber": "93",
+        "multiverseid": 140,
+        "name": "Aspect of Wolf",
+        "rarity": "Rare",
+        "subtypes": [
+          "Aura"
+        ],
+        "text": "Enchant creature\nEnchanted creature gets +X/+Y, where X is half the number of Forests you control, rounded down, and Y is half the number of Forests you control, rounded up.",
+        "type": "Enchantment — Aura",
+        "types": [
+          "Enchantment"
+        ]
+      },
+      {
+        "artist": "Jesper Myrfors",
+        "cmc": 2,
+        "colorIdentity": [
+          "B"
+        ],
+        "colors": [
+          "Black"
+        ],
+        "id": "ffdb600858476fedb2875b7f2e3857da0b7d6fa5",
+        "imageName": "bad moon",
+        "layout": "normal",
+        "manaCost": "{1}{B}",
+        "mciNumber": "2",
+        "multiverseid": 49,
+        "name": "Bad Moon",
+        "rarity": "Rare",
+        "text": "Black creatures get +1/+1.",
+        "type": "Enchantment",
+        "types": [
+          "Enchantment"
+        ]
+      },
+      {
+        "artist": "Rob Alexander",
+        "colorIdentity": [
+          "B",
+          "R"
+        ],
+        "id": "0f5f608944ef8b5570ba0781587c5aa02da89681",
+        "imageName": "badlands",
+        "layout": "normal",
+        "mciNumber": "277",
+        "multiverseid": 279,
+        "name": "Badlands",
+        "rarity": "Rare",
+        "reserved": true,
+        "subtypes": [
+          "Swamp",
+          "Mountain"
+        ],
+        "text": "({T}: Add {B} or {R} to your mana pool.)",
+        "type": "Land — Swamp Mountain",
+        "types": [
+          "Land"
+        ]
+      },
+      {
+        "artist": "Mark Poole",
+        "cmc": 2,
+        "colorIdentity": [
+          "W"
+        ],
+        "colors": [
+          "White"
+        ],
+        "id": "21f307b39c23f1a75c0220995acf179a68aede3b",
+        "imageName": "balance",
+        "layout": "normal",
+        "manaCost": "{1}{W}",
+        "mciNumber": "187",
+        "multiverseid": 234,
+        "name": "Balance",
+        "rarity": "Rare",
+        "text": "Each player chooses a number of lands he or she controls equal to the number of lands controlled by the player who controls the fewest, then sacrifices the rest. Players discard cards and sacrifice creatures the same way.",
+        "type": "Sorcery",
+        "types": [
+          "Sorcery"
+        ]
+      },
+      {
+        "artist": "Jesper Myrfors",
+        "cmc": 3,
+        "id": "5ee4e394468137d597dde9549d705fb31aceb1b9",
+        "imageName": "basalt monolith",
+        "layout": "normal",
+        "manaCost": "{3}",
+        "mciNumber": "231",
+        "multiverseid": 2,
+        "name": "Basalt Monolith",
+        "rarity": "Uncommon",
+        "text": "Basalt Monolith doesn't untap during your untap step.\n{T}: Add {C}{C}{C} to your mana pool.\n{3}: Untap Basalt Monolith.",
+        "type": "Artifact",
+        "types": [
+          "Artifact"
+        ]
+      },
+      {
+        "artist": "Jesper Myrfors",
+        "colorIdentity": [
+          "B",
+          "G"
+        ],
+        "id": "4d90e5d10a541f1926781ff06b438f0db55610c4",
+        "imageName": "bayou",
+        "layout": "normal",
+        "mciNumber": "278",
+        "multiverseid": 280,
+        "name": "Bayou",
+        "rarity": "Rare",
+        "reserved": true,
+        "subtypes": [
+          "Swamp",
+          "Forest"
+        ],
+        "text": "({T}: Add {B} or {G} to your mana pool.)",
+        "type": "Land — Swamp Forest",
+        "types": [
+          "Land"
+        ]
+      },
+      {
+        "artist": "Douglas Shuler",
+        "cmc": 1,
+        "colorIdentity": [
+          "W"
+        ],
+        "colors": [
+          "White"
+        ],
+        "flavor": "Benalia has a complex caste system that changes with the lunar year. No matter what the season, the only caste that cannot be attained by either heredity or money is that of the hero.",
+        "id": "cd95e7fb97aac652351aa61cb81357539b588a94",
+        "imageName": "benalish hero",
+        "layout": "normal",
+        "manaCost": "{W}",
+        "mciNumber": "188",
+        "multiverseid": 235,
+        "name": "Benalish Hero",
+        "power": "1",
+        "rarity": "Common",
+        "subtypes": [
+          "Human",
+          "Soldier"
+        ],
+        "text": "Banding (Any creatures with banding, and up to one without, can attack in a band. Bands are blocked as a group. If any creatures with banding you control are blocking or being blocked by a creature, you divide that creature's combat damage, not its controller, among any of the creatures it's being blocked by or is blocking.)",
+        "toughness": "1",
+        "type": "Creature — Human Soldier",
+        "types": [
+          "Creature"
+        ]
+      },
+      {
+        "artist": "Dan Frazier",
+        "cmc": 1,
+        "colorIdentity": [
+          "G"
+        ],
+        "colors": [
+          "Green"
+        ],
+        "id": "dae107a54a340beba7b57b106e59cf169d9667db",
+        "imageName": "berserk",
+        "layout": "normal",
+        "manaCost": "{G}",
+        "mciNumber": "94",
+        "multiverseid": 141,
+        "name": "Berserk",
+        "rarity": "Uncommon",
+        "text": "Cast Berserk only before the combat damage step.\nTarget creature gains trample and gets +X/+0 until end of turn, where X is its power. At the beginning of the next end step, destroy that creature if it attacked this turn.",
+        "type": "Instant",
+        "types": [
+          "Instant"
+        ]
+      },
+      {
+        "artist": "Mark Poole",
+        "cmc": 1,
+        "colorIdentity": [
+          "G"
+        ],
+        "colors": [
+          "Green"
+        ],
+        "id": "b7a12a86d35d4ac3757bbab6760b650909aefa94",
+        "imageName": "birds of paradise",
+        "layout": "normal",
+        "manaCost": "{G}",
+        "mciNumber": "95",
+        "multiverseid": 142,
+        "name": "Birds of Paradise",
+        "power": "0",
+        "rarity": "Rare",
+        "subtypes": [
+          "Bird"
+        ],
+        "text": "Flying\n{T}: Add one mana of any color to your mana pool.",
+        "toughness": "1",
+        "type": "Creature — Bird",
+        "types": [
+          "Creature"
+        ]
+      },
+      {
+        "artist": "Jeff A. Menges",
+        "cmc": 2,
+        "colorIdentity": [
+          "B"
+        ],
+        "colors": [
+          "Black"
+        ],
+        "flavor": "Battle doesn't need a purpose; the battle is its own purpose. You don't ask why a plague spreads or a field burns. Don't ask why I fight.",
+        "id": "b6f0189721c1f60b91829828d69c29c44bd82697",
+        "imageName": "black knight",
+        "layout": "normal",
+        "manaCost": "{B}{B}",
+        "mciNumber": "3",
+        "multiverseid": 50,
+        "name": "Black Knight",
+        "power": "2",
+        "rarity": "Uncommon",
+        "subtypes": [
+          "Human",
+          "Knight"
+        ],
+        "text": "First strike (This creature deals combat damage before creatures without first strike.)\nProtection from white (This creature can't be blocked, targeted, dealt damage, or enchanted by anything white.)",
+        "toughness": "2",
+        "type": "Creature — Human Knight",
+        "types": [
+          "Creature"
+        ]
+      },
+      {
+        "artist": "Christopher Rush",
+        "cmc": 0,
+        "id": "c944c7dc960c4832604973844edee2a1fdc82d98",
+        "imageName": "black lotus",
+        "layout": "normal",
+        "manaCost": "{0}",
+        "mciNumber": "232",
+        "multiverseid": 3,
+        "name": "Black Lotus",
+        "rarity": "Rare",
+        "reserved": true,
+        "text": "{T}, Sacrifice Black Lotus: Add three mana of any one color to your mana pool.",
+        "type": "Artifact",
+        "types": [
+          "Artifact"
+        ]
+      }
+    ]
+  }
+}
