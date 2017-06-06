@@ -30,10 +30,8 @@ RSpec.shared_context 'sqlite3 database setup' do |type|
   after { FileUtils.rm(db_name) }
 end
 
-RSpec.shared_context 'csv exporter setup' do
-  before { Daru::IO::Exporters::CSV.write df, tempfile.path, opts }
-
-  let(:tempfile) { Tempfile.new('data.csv') }
+RSpec.shared_context 'exporter setup' do
+  let(:tempfile) { Tempfile.new(filename) }
   let(:opts)     { {} }
   let(:df)       { 
     Daru::DataFrame.new({
@@ -43,30 +41,15 @@ RSpec.shared_context 'csv exporter setup' do
       'd' => [nil, 23, 4,'a','ff']})
   }
 
-  subject { File.open(tempfile.path, &:readline).chomp.split(',', -1) }
-end
-
-RSpec.shared_context 'excel exporter setup' do
-  before { Daru::IO::Exporters::Excel.new(df, tempfile.path).write }
-
-  let(:a)        { Daru::Vector.new(100.times.map { rand(100) }) }
-  let(:b)        { Daru::Vector.new((['b'] * 100)) }
-  let(:df)       { Daru::DataFrame.new({ :b => b, :a => a }) }
-  let(:tempfile) { Tempfile.new('test_write.xls') }
-  subject        { Daru::IO::Importers::Excel.load tempfile.path }
-end
-
-RSpec.shared_context 'csv importer setup' do
-  before do
-    %w[matrix_test repeated_fields scientific_notation sales-funnel].each do |file|
-      WebMock
-        .stub_request(:get,"http://dummy-remote-url/#{file}.csv")
-        .to_return(status: 200, body: File.read("spec/fixtures/csv/#{file}.csv"))
-      WebMock.disable_net_connect!(allow: %r{dummy-remote-url})
+  def convert input
+    if input.to_i.to_s == input # Integer in string
+      input.to_i
+    elsif input.to_f.to_s == input # Float in string
+      input.to_f
+    elsif input == "nil" # nil in string
+      nil
+    else
+      input # Just string
     end
   end
-
-  let(:path) { 'spec/fixtures/csv/matrix_test.csv' }
-  let(:opts) { { col_sep: ' ', headers: true } }
-  subject    { Daru::IO::Importers::CSV.load(path, opts) }
 end

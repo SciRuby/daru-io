@@ -9,7 +9,7 @@ RSpec.describe Daru::IO::Importers::Excel do
 
     subject { Daru::IO::Importers::Excel.load path }
 
-    it { is_expected.to be_an(Daru::DataFrame) }
+    it_behaves_like 'daru dataframe'
     its(:nrows) { is_expected.to eq(6) }
     its('vectors.to_a') { is_expected.to eq([:id, :name, :age, :city, :a1]) }
     its('age.to_a.last') { is_expected.to eq(nil) }

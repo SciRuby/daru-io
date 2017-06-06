@@ -1,20 +1,13 @@
 RSpec.describe Daru::IO::Exporters::CSV do
-  include_context 'csv exporter setup'
+  include_context 'exporter setup'
+  let(:filename) { 'test.csv' }
+  subject        { File.open(tempfile.path, &:readline).chomp.split(',', -1) }
+
+  before { Daru::IO::Exporters::CSV.write df, tempfile.path, opts }
+
   context 'writes DataFrame to a CSV file' do
     let(:opts) { {} }
     let(:content) { CSV.read(tempfile.path) }
-
-    def convert input
-      if input.to_i.to_s == input # Integer in string
-        input.to_i
-      elsif input.to_f.to_s == input
-        input.to_f
-      elsif input == "nil"
-        nil
-      else
-        input
-      end 
-    end
     subject { Daru::DataFrame.rows content[1..-1].map { |x| x.map { |y| convert(y) } }, order: content[0] }
 
     it_behaves_like 'daru dataframe'

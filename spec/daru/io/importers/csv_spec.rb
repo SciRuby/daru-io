@@ -1,5 +1,17 @@
 RSpec.describe Daru::IO::Importers::CSV do 
-  include_context 'csv importer setup'
+  before do
+    %w[matrix_test repeated_fields scientific_notation sales-funnel].each do |file|
+      WebMock
+        .stub_request(:get,"http://dummy-remote-url/#{file}.csv")
+        .to_return(status: 200, body: File.read("spec/fixtures/csv/#{file}.csv"))
+      WebMock.disable_net_connect!(allow: %r{dummy-remote-url})
+    end
+  end
+
+  let(:path) { 'spec/fixtures/csv/matrix_test.csv' }
+  let(:opts) { { col_sep: ' ', headers: true } }
+  subject    { Daru::IO::Importers::CSV.load(path, opts) }
+
   context 'loads from a CSV file' do
     let('subject.vectors') { [:image_resolution, :mls, :true_transform].to_index }
 
