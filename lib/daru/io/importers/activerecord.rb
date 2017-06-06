@@ -3,7 +3,7 @@ require 'daru/io/importers/linkages/activerecord'
 module Daru
   module IO
     module Importers
-      module Activerecord
+      module ActiveRecord
         class << self
           def load(relation, *fields)
             if fields.empty?
@@ -26,7 +26,7 @@ module Daru
           end
         end
       end
-      module ActiverecordHelper
+      module ActiveRecordHelper
         class << self
         end
       end

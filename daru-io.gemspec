@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
   spec.email         = ['athityakumar@gmail.com']
   spec.summary       = %q{Daru-IO is a plugin gem to Daru gem, which stands for Data Analysis in RUby.}
   spec.description   = %q{Daru-IO is a plugin gem to Daru gem, which stands for Data Analysis in RUby.}
-  spec.homepage      = 'TODO: Put your gem website or public repo URL here.'
+  spec.homepage      = 'https://github.com/athityakumar/daru-io'
   spec.license       = 'MIT'
 
   spec.files         = `git ls-files -z`.split("\x0").reject do |f|

@@ -1,4 +1,4 @@
-RSpec.describe Daru::IO::Importers::Activerecord do
+RSpec.describe Daru::IO::Importers::ActiveRecord do
   include_context 'sqlite3 database setup'
   context 'without specifying field names' do
   	let(:order) { [:id, :name, :age] }

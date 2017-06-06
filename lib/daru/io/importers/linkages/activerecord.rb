@@ -31,7 +31,7 @@ module Daru
       #
       # @see Daru::IO::Importers::Activerecord.load
       def from_activerecord(relation, *fields)
-        Daru::IO::Importers::Activerecord.load relation, *fields
+        Daru::IO::Importers::ActiveRecord.load relation, *fields
       end
     end
   end

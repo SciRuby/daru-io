@@ -70,7 +70,7 @@ module Daru
             case db
             when DBI::DatabaseHandle
               [db, :dbi]
-            when ActiveRecord::ConnectionAdapters::AbstractAdapter
+            when ::ActiveRecord::ConnectionAdapters::AbstractAdapter
               [db, :activerecord]
             else
               raise ArgumentError, "Unknown database adapter type #{db.class}"

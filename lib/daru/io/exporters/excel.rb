@@ -18,11 +18,7 @@ module Daru
 
           sheet.row(0).concat(@dataframe.vectors.to_a.map(&:to_s)) # Unfreeze strings
           sheet.row(0).default_format = format
-          i = 1
-          @dataframe.each_row do |row|
-            sheet.row(i).concat(row.to_a)
-            i += 1
-          end
+          @dataframe.each_row_with_index { |row, i| sheet.row(i+1).concat(row.to_a) }
         end
 
         def write
