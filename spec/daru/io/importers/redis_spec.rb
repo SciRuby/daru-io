@@ -1,6 +1,6 @@
 RSpec.describe Daru::IO::Importers::Redis do
 	let(:redis) { Redis.new {} }
-	subject { Daru::IO::Importers::Redis.load redis, *keys }
+	subject { Daru::IO::Importers::Redis.new(redis, *keys).load }
 
   after { redis.flushdb }
 
