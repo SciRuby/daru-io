@@ -1,4 +1,4 @@
-# rubocop:disable Mertrics/BlockLength
+# rubocop:disable Metrics/BlockLength
 # coding: utf-8
 
 lib = File.expand_path('../lib', __FILE__)

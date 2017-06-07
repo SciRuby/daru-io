@@ -11,6 +11,7 @@ module Daru
         end
 
         def load
+          require 'mechanize'
           page = Mechanize.new.get(@path)
           page.search('table').map { |table| parse_table table }
               .keep_if { |table| search table }
