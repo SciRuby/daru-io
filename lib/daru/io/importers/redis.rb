@@ -5,24 +5,8 @@ module Daru
   module IO
     module Importers
       class Redis
-        def choose_keys(*keys)
-          if keys.count.zero?
-            @client.keys
-          else
-            keys.to_a
-          end
-        end
-
-        def get_client(redis)
-          if redis.is_a? ::Redis
-            redis
-          elsif redis.is_a? Hash
-            ::Redis.new redis
-          end
-        end
-
-        def initialize(redis={}, *keys)
-          @client = get_client(redis)
+        def initialize(connection={}, *keys)
+          @client = get_client(connection)
           @keys   = choose_keys(*keys)
         end
 
@@ -56,6 +40,24 @@ module Daru
             #   key b: { x: 3, y: 4 }
             # ]
             Daru::DataFrame.new vals.flatten, index: @keys
+          end
+        end
+
+        private
+
+        def choose_keys(*keys)
+          if keys.count.zero?
+            @client.keys
+          else
+            keys.to_a
+          end
+        end
+
+        def get_client(connection)
+          if connection.is_a? ::Redis
+            connection
+          elsif connection.is_a? Hash
+            ::Redis.new connection
           end
         end
       end
