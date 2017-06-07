@@ -47,7 +47,7 @@ module Daru
       #
       # @see Daru::IO::Importers::Excel.load
       def from_excel(path, opts={}, &block)
-        Daru::IO::Importers::Excel.load path, opts, &block
+        Daru::IO::Importers::Excel.new(path, opts, &block).load
       end
     end
   end

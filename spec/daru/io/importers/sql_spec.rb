@@ -6,7 +6,7 @@ RSpec.describe Daru::IO::Importers::SQL do
 
   context 'with a database handler of DBI' do
     let(:db) { DBI.connect("DBI:SQLite3:#{db_name}") }
-    subject { Daru::IO::Importers::SQL.load(db, query) }
+    subject { Daru::IO::Importers::SQL.new(db, query).load }
 
     it_behaves_like 'sql activerecord importer'
   end
@@ -16,20 +16,20 @@ RSpec.describe Daru::IO::Importers::SQL do
       Daru::IO::Rspec::Account.establish_connection "sqlite3:#{db_name}"
       Daru::IO::Rspec::Account.connection
     }
-    subject { Daru::IO::Importers::SQL.load(connection, query) }
+    subject { Daru::IO::Importers::SQL.new(connection, query).load }
 
     it_behaves_like 'sql activerecord importer'
   end
 end
 
-RSpec.describe Daru::IO::Importers::SQLHelper do
+RSpec.describe Daru::IO::Importers::SQL do
   include_context 'sqlite3 database setup'
   let(:query) { 'select * from accounts' }
   let(:source) do
     ActiveRecord::Base.establish_connection("sqlite3:#{db_name}")
     ActiveRecord::Base.connection
   end
-  subject(:df) { Daru::IO::Importers::SQL.load(source, query) }
+  subject(:df) { Daru::IO::Importers::SQL.new(source, query).load }
 
   context 'with DBI::DatabaseHandle' do
     let(:source) { DBI.connect("DBI:SQLite3:#{db_name}") }

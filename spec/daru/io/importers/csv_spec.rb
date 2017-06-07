@@ -10,7 +10,7 @@ RSpec.describe Daru::IO::Importers::CSV do
 
   let(:path) { 'spec/fixtures/csv/matrix_test.csv' }
   let(:opts) { { col_sep: ' ', headers: true } }
-  subject    { Daru::IO::Importers::CSV.load(path, opts) }
+  subject    { Daru::IO::Importers::CSV.new(path, opts).load }
 
   context 'loads from a CSV file' do
     let('subject.vectors') { [:image_resolution, :mls, :true_transform].to_index }
@@ -57,7 +57,7 @@ RSpec.describe Daru::IO::Importers::CSV do
 
   context 'checks for equal parsing of local CSV files and remote CSV files' do
     %w[matrix_test repeated_fields scientific_notation sales-funnel].each do |file|
-      let(:local) { Daru::IO::Importers::CSV.load("spec/fixtures/csv/#{file}.csv") }
+      let(:local) { Daru::IO::Importers::CSV.new("spec/fixtures/csv/#{file}.csv").load }
       let(:path)  { "http://dummy-remote-url/#{file}.csv" }
       let(:opts)  { {} }
 

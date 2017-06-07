@@ -1,6 +1,6 @@
 RSpec.describe Daru::IO::Importers::Plaintext do
   let(:vectors) { [:v1,:v2,:v3] }
-  subject { Daru::IO::Importers::Plaintext.load(path, vectors) }
+  subject { Daru::IO::Importers::Plaintext.new(path, vectors).load }
 
   context 'reads data from plain text files' do
     let(:path)    { 'spec/fixtures/plaintext/bank2.dat' }

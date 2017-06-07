@@ -35,7 +35,7 @@ module Daru
       #
       # @see Daru::IO::Importers::SQL.load
       def from_sql(dbh, query)
-        Daru::IO::Importers::SQL.load dbh, query
+        Daru::IO::Importers::SQL.new(dbh, query).load
       end
     end
   end

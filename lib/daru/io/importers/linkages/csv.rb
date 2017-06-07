@@ -73,7 +73,7 @@ module Daru
       #
       # @see Daru::IO::Importers::CSV.load
       def from_csv(path, opts={}, &block)
-        Daru::IO::Importers::CSV.load(path, opts, &block)
+        Daru::IO::Importers::CSV.new(path, opts, &block).load
       end
     end
   end

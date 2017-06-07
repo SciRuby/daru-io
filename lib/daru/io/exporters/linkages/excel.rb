@@ -25,7 +25,7 @@ module Daru
       #
       # @see Daru::IO::Exporters::Excel.write
       def write_excel(filename, opts={})
-        Daru::IO::Exporters::Excel.write self, filename, opts
+        Daru::IO::Exporters::Excel.new(self, filename, opts).write
       end
     end
   end

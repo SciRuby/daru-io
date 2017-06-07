@@ -50,7 +50,7 @@ module Daru
       #
       # @see Daru::IO::Importers::HTML.load
       def from_html(path, fields={})
-        Daru::IO::Importers::HTML.load path, fields
+        Daru::IO::Importers::HTML.new(path, fields).load
       end
     end
   end

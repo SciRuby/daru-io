@@ -62,7 +62,7 @@ module Daru
       #
       # @see Daru::IO::Exporters::CSV.write
       def write_csv(filename, opts={})
-        Daru::IO::Exporters::CSV.write(self, filename, opts)
+        Daru::IO::Exporters::CSV.new(self, filename, opts).write
       end
     end
   end

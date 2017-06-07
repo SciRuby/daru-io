@@ -20,9 +20,9 @@ RSpec.shared_context 'sqlite3 database setup' do |type|
 
   subject {
     if defined? fields
-      Daru::IO::Importers::ActiveRecord.load relation, *fields
+      Daru::IO::Importers::ActiveRecord.new(relation, *fields).load
     else
-      Daru::IO::Importers::ActiveRecord.load relation
+      Daru::IO::Importers::ActiveRecord.new(relation).load
     end      
 
   }
