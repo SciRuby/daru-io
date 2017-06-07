@@ -18,10 +18,10 @@ module Daru
       #
       # @example Importing with Redis configuration without specifying keys
       #   # Say, the Redis connection has this setup
-      #   # Key "10001" => { "name" => "Tyrion", "age" => 32 }
-      #   # Key "10002" => { "name" => "Jamie", "age" => 37 }
-      #   # Key "10003" => { "name" => "Cersei", "age" => 37 }
-      #   # Key "10004" => { "name" => "Joffrey", "age" => 19 }
+      #   # Key "10001" => { "name" => "Tyrion", "age" => 32 }.to_json
+      #   # Key "10002" => { "name" => "Jamie", "age" => 37 }.to_json
+      #   # Key "10003" => { "name" => "Cersei", "age" => 37 }.to_json
+      #   # Key "10004" => { "name" => "Joffrey", "age" => 19 }.to_json
       #
       #   connection = {url: "redis://:[password]@[hostname]:[port]/[db]"}
       #   df         = Daru::DataFrame.from_redis(connection)
@@ -37,10 +37,10 @@ module Daru
       #
       # @example Importing with Redis configuration by specifying keys
       #   # Say, the Redis connection has this setup
-      #   # Key "10001" => { "name" => "Tyrion", "age" => 32 }
-      #   # Key "10002" => { "name" => "Jamie", "age" => 37 }
-      #   # Key "10003" => { "name" => "Cersei", "age" => 37 }
-      #   # Key "10004" => { "name" => "Joffrey", "age" => 19 }
+      #   # Key "10001" => { "name" => "Tyrion", "age" => 32 }.to_json
+      #   # Key "10002" => { "name" => "Jamie", "age" => 37 }.to_json
+      #   # Key "10003" => { "name" => "Cersei", "age" => 37 }.to_json
+      #   # Key "10004" => { "name" => "Joffrey", "age" => 19 }.to_json
       #
       #   connection = {url: "redis://:[password]@[hostname]:[port]/[db]"}
       #   df         = Daru::DataFrame.from_redis(connection, "10001", "10002")
