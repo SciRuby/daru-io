@@ -2,13 +2,6 @@ AllCops:
   Include:
     - 'lib/**/*'
   Exclude:
-    - 'daru-io.gemspec'
-    - 'Rakefile'
-    - 'Gemfile'
-    - 'Guardfile'
-    - '**/*.erb'
-    - 'spec/*'
-    - 'spec/**/*'
     - 'vendor/**/*'
     - 'benchmarks/*'
     - 'profile/*'
@@ -71,6 +64,9 @@ Layout/SpaceAroundOperators:
   Enabled: false
 
 Style/EmptyCaseCondition:
+  Enabled: false
+
+Style/FileName:
   Enabled: false
 
 Style/MultilineBlockChain:

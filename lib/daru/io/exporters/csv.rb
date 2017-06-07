@@ -11,7 +11,8 @@ module Daru
           @converters    = converters
           @headers       = headers
           @convert_comma = convert_comma
-          @options       = options.merge(converters: @converters, headers: @headers)
+          @options       = options.merge headers: @headers,
+                                         converters: @converters
         end
 
         def write

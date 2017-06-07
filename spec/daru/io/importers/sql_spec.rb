@@ -1,8 +1,8 @@
-RSpec.describe Daru::IO::Importers::SQL do
+RSpec.describe Daru::IO::Importers::SQL do # rubocop:disable Metrics/BlockLength
   include_context 'sqlite3 database setup'
-  let(:query) { "select * from accounts" }
-  let(:order) { [:age, :id, :name] }
-  let(:data)  { [[20, 30],[1,2],['Homer', 'Marge']] }
+  let(:query) { 'select * from accounts' }
+  let(:order) { %i[age id name] }
+  let(:data)  { [[20, 30],[1,2],%w[Homer Marge]] }
 
   context 'with a database handler of DBI' do
     let(:db) { DBI.connect("DBI:SQLite3:#{db_name}") }
@@ -12,24 +12,18 @@ RSpec.describe Daru::IO::Importers::SQL do
   end
 
   context 'with a database connection of ActiveRecord' do
-    let(:connection) {
-      Daru::IO::Rspec::Account.establish_connection "sqlite3:#{db_name}"
-      Daru::IO::Rspec::Account.connection
-    }
+    let(:connection) { Daru::IO::Rspec::Account.connection }
     subject { Daru::IO::Importers::SQL.new(connection, query).load }
+
+    before { Daru::IO::Rspec::Account.establish_connection "sqlite3:#{db_name}" }
 
     it_behaves_like 'sql activerecord importer'
   end
-end
 
-RSpec.describe Daru::IO::Importers::SQL do
-  include_context 'sqlite3 database setup'
-  let(:query) { 'select * from accounts' }
-  let(:source) do
-    ActiveRecord::Base.establish_connection("sqlite3:#{db_name}")
-    ActiveRecord::Base.connection
-  end
+  let(:source) { ActiveRecord::Base.connection }
   subject(:df) { Daru::IO::Importers::SQL.new(source, query).load }
+
+  before { ActiveRecord::Base.establish_connection("sqlite3:#{db_name}") }
 
   context 'with DBI::DatabaseHandle' do
     let(:source) { DBI.connect("DBI:SQLite3:#{db_name}") }

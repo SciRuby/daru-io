@@ -21,8 +21,8 @@ RSpec.describe Daru::IO::Exporters::CSV do
 
   context 'does not write headers when headers=false' do
     let(:headers) { false }
-    let(:opts)    { { headers: headers } }
-    
+    let(:opts)    { {headers: headers} }
+
     it { is_expected.to be_an(Array) }
     it { is_expected.to eq(df.head(1).map { |v| (v.first || '').to_s }) }
   end

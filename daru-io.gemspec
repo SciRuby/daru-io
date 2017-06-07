@@ -1,4 +1,6 @@
+# rubocop:disable Mertrics/BlockLength
 # coding: utf-8
+
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'daru/io/version'
@@ -8,11 +10,10 @@ Gem::Specification.new do |spec|
   spec.version       = Daru::IO::VERSION
   spec.authors       = ['Athitya Kumar']
   spec.email         = ['athityakumar@gmail.com']
-  spec.summary       = %q{Daru-IO is a plugin gem to Daru gem, which stands for Data Analysis in RUby.}
-  spec.description   = %q{Daru-IO is a plugin gem to Daru gem, which stands for Data Analysis in RUby.}
+  spec.summary       = 'Daru-IO is a plugin gem to Daru gem, which stands for Data Analysis in RUby.'
+  spec.description   = 'Daru-IO is a plugin gem to Daru gem, which stands for Data Analysis in RUby.'
   spec.homepage      = 'https://github.com/athityakumar/daru-io'
   spec.license       = 'MIT'
-
   spec.files         = `git ls-files -z`.split("\x0").reject do |f|
     f.match(%r{^(test|spec|features)/})
   end
@@ -37,8 +38,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'spreadsheet', '~> 1.1.1'
   spec.add_development_dependency 'webmock'
   spec.add_development_dependency 'yard'
-
-  if RUBY_VERSION >= '2.2.5'
-    spec.add_development_dependency 'guard-rspec'
-  end
+  spec.add_development_dependency 'guard-rspec' if RUBY_VERSION >= '2.2.5'
 end

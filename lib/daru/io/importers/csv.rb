@@ -4,19 +4,19 @@ module Daru
   module IO
     module Importers
       class CSV
-        def initialize(path, col_sep: ',', converters: :numeric, headers: nil,
+        def initialize(path, headers: nil, col_sep: ',', converters: :numeric,
           header_converters: :symbol, clone: nil, index: nil, order: nil,
           name: nil, **options)
-          @path = path
-          @col_sep = col_sep
-          @converters = converters
+          @path              = path
+          @headers           = headers
+          @col_sep           = col_sep
+          @converters        = converters
           @header_converters = header_converters
-          @headers = headers
-          @daru_options = {clone: clone, index: index, order: order, name: name}
-          @options = options.merge col_sep: @col_sep,
-                                   converters: @converters,
-                                   headers: @headers,
-                                   header_converters: @header_converters
+          @daru_options      = {clone: clone, index: index, order: order, name: name}
+          @options           = options.merge headers: @headers,
+                                             col_sep: @col_sep,
+                                             converters: @converters,
+                                             header_converters: @header_converters
         end
 
         def load
