@@ -21,7 +21,7 @@ module Daru
           end
         end
 
-        def initialize(redis, *keys)
+        def initialize(redis={}, *keys)
           @client = get_client(redis)
           @keys   = choose_keys(*keys)
         end
