@@ -90,7 +90,7 @@ module Daru
       #
       # @see Daru::IO::Importers::Redis
       def from_redis(connection={}, *keys)
-        Daru::IO::Importers::Redis.new(connection, *keys).load
+        Daru::IO::Importers::Redis.new(connection, *keys).call
       end
     end
   end
