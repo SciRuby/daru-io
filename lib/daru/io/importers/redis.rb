@@ -1,4 +1,5 @@
 require 'daru/io/importers/linkages/redis'
+require 'daru/io/importers/base'
 require 'json'
 
 module Daru
