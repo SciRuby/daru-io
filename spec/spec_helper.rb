@@ -1,6 +1,9 @@
 require "bundler/setup"
 require "daru/io"
-require 'fakeredis/rspec'
+require 'redis'
+require 'rspec/its'
+require 'custom_matchers'
+require 'shared_examples'
 
 RSpec::Expectations.configuration.warn_about_potential_false_positives = false
 

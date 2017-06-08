@@ -6,9 +6,11 @@ module Daru
   module IO
     module Importers
       class Redis
-        def initialize(connection={}, *keys)
-          @client = get_client(connection)
-          @keys   = choose_keys(*keys).map(&:to_sym)
+        def initialize(connection={}, *keys, match: nil, count: nil)
+          @client  = get_client(connection)
+          @pattern = match
+          @count   = count
+          @keys    = choose_keys(*keys).map(&:to_sym)
         end
 
         def call
@@ -20,7 +22,7 @@ module Daru
 
         def choose_keys(*keys)
           if keys.count.zero?
-            @client.keys
+            @client.scan(0, match: @pattern, count: @count).last
           else
             keys.to_a
           end
