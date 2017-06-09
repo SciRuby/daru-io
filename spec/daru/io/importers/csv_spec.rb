@@ -10,7 +10,7 @@ RSpec.describe Daru::IO::Importers::CSV do # rubocop:disable Metrics/BlockLength
 
   let(:path) { 'spec/fixtures/csv/matrix_test.csv' }
   let(:opts) { {col_sep: ' ', headers: true} }
-  subject    { described_class.new(path, opts).load }
+  subject    { described_class.new(path, opts).call }
 
   context 'loads from a CSV file' do
     let('subject.vectors') { %I[image_resolution mls true_transform].to_index }
@@ -62,7 +62,7 @@ RSpec.describe Daru::IO::Importers::CSV do # rubocop:disable Metrics/BlockLength
 
   context 'checks for equal parsing of local CSV files and remote CSV files' do
     %w[matrix_test repeated_fields scientific_notation sales-funnel].each do |file|
-      let(:local) { Daru::IO::Importers::CSV.new("spec/fixtures/csv/#{file}.csv").load }
+      let(:local) { described_class.new("spec/fixtures/csv/#{file}.csv").call }
       let(:path)  { "http://dummy-remote-url/#{file}.csv" }
       let(:opts)  { {} }
 

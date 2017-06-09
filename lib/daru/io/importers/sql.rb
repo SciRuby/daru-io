@@ -4,18 +4,43 @@ module Daru
   module IO
     module Importers
       class SQL
+        # Imports a *Daru::DataFrame* from a SQL query.
+        #
+        # @param dbh [DBI::DatabaseHandle or String] A DBI connection OR Path to a
+        #   SQlite3 database.
+        # @param query [String] The query to be executed
+        #
+        # @return A *Daru::DataFrame* imported from the given query
+        #
+        # @example Reading from database with a DBI connection
+        #   dbh = DBI.connect("DBI:Mysql:database:localhost", "user", "password")
+        #   # Use the actual SQL credentials for the above line
+        #
+        #   df = Daru::IO::Importers::SQL.new(dbh, "SELECT * FROM test").call
+        #   df
+        #
+        #   #=> #<Daru::DataFrame(2x3)>
+        #   #=>        id  name   age
+        #   #=>   0     1 Homer    20
+        #   #=>   1     2 Marge    30
+        #
+        # @example Reading from a sqlite.db file
+        #   require 'dbi'
+        #
+        #   path = 'path/to/sqlite.db'
+        #   df = Daru::IO::Importers::SQL.new(path, "SELECT * FROM test").call
+        #   df
+        #
+        #   #=> #<Daru::DataFrame(2x3)>
+        #   #=>        id  name   age
+        #   #=>   0     1 Homer    20
+        #   #=>   1     2 Marge    30
         def initialize(dbh, query)
-          @dbh = dbh
+          @dbh   = dbh
           @query = query
         end
 
-        # Execute a query and create a data frame from the result
-        #
-        # @param dbh [DBI::DatabaseHandle, String] A DBI connection OR Path to a SQlite3 database.
-        # @param query [String] The query to be executed
-        #
-        # @return A dataframe containing the data resulting from the query
-        def load
+        def call
           @conn, @adapter = choose_adapter @dbh, @query
           df_hash         = result_hash
           Daru::DataFrame.new(df_hash).tap(&:update)

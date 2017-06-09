@@ -22,7 +22,7 @@ RSpec.shared_context 'sqlite3 database setup' do
   let(:db_name)  { 'daru_test' }
   let(:relation) { Daru::IO::Rspec::Account.all }
 
-  subject { Daru::IO::Importers::ActiveRecord.new(relation, *fields).load }
+  subject { Daru::IO::Importers::ActiveRecord.new(relation, *fields).call }
 
   after { FileUtils.rm(db_name) }
 end

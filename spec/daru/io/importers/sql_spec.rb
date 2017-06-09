@@ -6,14 +6,14 @@ RSpec.describe Daru::IO::Importers::SQL do # rubocop:disable Metrics/BlockLength
 
   context 'with a database handler of DBI' do
     let(:db) { DBI.connect("DBI:SQLite3:#{db_name}") }
-    subject { described_class.new(db, query).load }
+    subject { described_class.new(db, query).call }
 
     it_behaves_like 'sql activerecord importer'
   end
 
   context 'with a database connection of ActiveRecord' do
     let(:connection) { Daru::IO::Rspec::Account.connection }
-    subject { described_class.new(connection, query).load }
+    subject { described_class.new(connection, query).call }
 
     before { Daru::IO::Rspec::Account.establish_connection "sqlite3:#{db_name}" }
 
@@ -21,7 +21,7 @@ RSpec.describe Daru::IO::Importers::SQL do # rubocop:disable Metrics/BlockLength
   end
 
   let(:source) { ActiveRecord::Base.connection }
-  subject(:df) { described_class.new(source, query).load }
+  subject(:df) { described_class.new(source, query).call }
 
   before { ActiveRecord::Base.establish_connection("sqlite3:#{db_name}") }
 

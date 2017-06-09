@@ -9,7 +9,7 @@ RSpec.describe Daru::IO::Importers::Excel do
     let(:order) { %i[id name age city a1] }
     let(:df)    { Daru::DataFrame.new({id: id, name: name, age: age, city: city, a1: a1},order: order) }
 
-    subject { described_class.new(path).load }
+    subject { described_class.new(path).call }
 
     it_behaves_like 'daru dataframe'
     its(:nrows) { is_expected.to eq(6) }
