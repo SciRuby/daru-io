@@ -3,7 +3,7 @@ RSpec.describe Daru::IO::Exporters::Excel do
 
   let(:filename) { 'test_write.xls' }
   let(:content)  { Spreadsheet.open tempfile.path }
-  before { Daru::IO::Exporters::Excel.new(df, tempfile.path, opts).write }
+  before { described_class.new(df, tempfile.path, opts).write }
 
   subject do
     Daru::DataFrame.rows(

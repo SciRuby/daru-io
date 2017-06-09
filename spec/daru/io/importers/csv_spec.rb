@@ -10,7 +10,7 @@ RSpec.describe Daru::IO::Importers::CSV do # rubocop:disable Metrics/BlockLength
 
   let(:path) { 'spec/fixtures/csv/matrix_test.csv' }
   let(:opts) { {col_sep: ' ', headers: true} }
-  subject    { Daru::IO::Importers::CSV.new(path, opts).load }
+  subject    { described_class.new(path, opts).load }
 
   context 'loads from a CSV file' do
     let('subject.vectors') { %I[image_resolution mls true_transform].to_index }

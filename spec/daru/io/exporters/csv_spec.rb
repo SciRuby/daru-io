@@ -3,7 +3,7 @@ RSpec.describe Daru::IO::Exporters::CSV do
   let(:filename) { 'test.csv' }
   subject        { File.open(tempfile.path, &:readline).chomp.split(',', -1) }
 
-  before { Daru::IO::Exporters::CSV.new(df, tempfile.path, opts).write }
+  before { described_class.new(df, tempfile.path, opts).write }
 
   context 'writes DataFrame to a CSV file' do
     let(:opts) { {} }
