@@ -89,4 +89,37 @@ RSpec.describe Daru::IO::Importers::Redis do # rubocop:disable Metrics/BlockLeng
       it_behaves_like 'redis importer'
     end
   end
+
+  context 'on timestamps' do
+    let(:index) { %i[090620171216 090620171218 090620171222 100620171225] }
+    let(:expected_vectors) { %i[name age]                                 }
+    let(:expected_index) { index                                          }
+    let(:data) do
+      [
+        {name: 'Tyrion',  age: 32},
+        {name: 'Jamie',   age: 37},
+        {name: 'Cersei',  age: 37},
+        {name: 'Joffrey', age: 19}
+      ]
+    end
+
+    context 'gets keys with pattern match and count' do
+      let(:pattern) { '09062017*' }
+      let(:count) { 3 }
+
+      it_behaves_like 'redis importer'
+    end
+
+    context 'gets keys with count' do
+      let(:count) { 3 }
+
+      it_behaves_like 'redis importer'
+    end
+
+    context 'gets keys with pattern match' do
+      let(:pattern) { '09062017*' }
+
+      it_behaves_like 'redis importer'
+    end
+  end
 end
