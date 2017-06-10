@@ -9,6 +9,9 @@ module Daru
         end
       end
 
+      # @note This method currently isn't used. But if we're planning on make
+      #   the linkages part from the user's end, this will turn out to be a
+      #   very useful inclusion.
       def register_all_io_modules
         [Daru::IO::Importers, Daru::IO::Exporters].each do |mod|
           klasses = mod.constants.select { |c| mod.const_get(c).is_a? Class }
