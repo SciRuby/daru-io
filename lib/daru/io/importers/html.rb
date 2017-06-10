@@ -1,9 +1,10 @@
-require 'daru/io/importers/linkages/html'
+require 'daru'
+require 'daru/io/base'
 
 module Daru
   module IO
     module Importers
-      class HTML
+      class HTML < Base
         # Imports a list of *Daru::DataFrame* s from a HTML file or website.
         #
         # @param path [String] Website URL / path to HTML file, where the
@@ -55,9 +56,8 @@ module Daru
         #   HTML page, and won't work in cases where the data is being loaded into
         #   the HTML table by inline Javascript.
         def initialize(path, match: nil, order: nil, index: nil, name: nil)
-          @path    = path
-          @match   = match
-          @options = {name: name, order: order, index: index}
+          super(binding)
+          @options = {name: @name, order: @order, index: @index}
         end
 
         def call
@@ -129,3 +129,6 @@ module Daru
     end
   end
 end
+
+require 'daru/io/link'
+Daru::DataFrame.register_io_module :from_html, Daru::IO::Importers::HTML

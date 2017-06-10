@@ -1,9 +1,10 @@
-require 'daru/io/importers/linkages/csv'
+require 'daru'
+require 'daru/io/base'
 
 module Daru
   module IO
     module Importers
-      class CSV
+      class CSV < Base
         # Imports a *Daru::DataFrame* from a CSV file.
         #
         # @param path [String] Local / Remote path of CSV file, where the
@@ -60,16 +61,12 @@ module Daru
         def initialize(path, headers: nil, col_sep: ',', converters: :numeric,
           header_converters: :symbol, clone: nil, index: nil, order: nil,
           name: nil, **options)
-          @path              = path
-          @headers           = headers
-          @col_sep           = col_sep
-          @converters        = converters
-          @header_converters = header_converters
-          @daru_options      = {clone: clone, index: index, order: order, name: name}
-          @options           = options.merge headers: @headers,
-                                             col_sep: @col_sep,
-                                             converters: @converters,
-                                             header_converters: @header_converters
+          super(binding)
+          @daru_options = {clone: @clone, index: @index, order: @order, name: @name}
+          @options      = @options.merge headers: @headers,
+                                         col_sep: @col_sep,
+                                         converters: @converters,
+                                         header_converters: @header_converters
         end
 
         def call
@@ -107,3 +104,6 @@ module Daru
     end
   end
 end
+
+require 'daru/io/link'
+Daru::DataFrame.register_io_module :from_csv, Daru::IO::Importers::CSV

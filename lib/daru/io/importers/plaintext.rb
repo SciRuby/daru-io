@@ -1,9 +1,10 @@
-require 'daru/io/importers/linkages/plaintext'
+require 'daru'
+require 'daru/io/base'
 
 module Daru
   module IO
     module Importers
-      class Plaintext
+      class Plaintext < Base
         # Imports a *Daru::DataFrame* from a plaintext file.
         #
         # @param path [String] Path of the input plaintext file
@@ -35,8 +36,7 @@ module Daru
         #   #=>   14 215.1 129.9 129.7   7.7  10.8 141.8
         #   #=>  ...   ...   ...   ...   ...   ...   ...
         def initialize(path, fields)
-          @path   = path
-          @fields = fields
+          super(binding)
         end
 
         def call
@@ -84,3 +84,6 @@ module Daru
     end
   end
 end
+
+require 'daru/io/link'
+Daru::DataFrame.register_io_module :from_plaintext, Daru::IO::Importers::Plaintext

@@ -1,9 +1,10 @@
-require 'daru/io/importers/linkages/sql'
+require 'daru'
+require 'daru/io/base'
 
 module Daru
   module IO
     module Importers
-      class SQL
+      class SQL < Base
         # Imports a *Daru::DataFrame* from a SQL query.
         #
         # @param dbh [DBI::DatabaseHandle or String] A DBI connection OR Path to a
@@ -36,8 +37,7 @@ module Daru
         #   #=>   0     1 Homer    20
         #   #=>   1     2 Marge    30
         def initialize(dbh, query)
-          @dbh   = dbh
-          @query = query
+          super(binding)
         end
 
         def call
@@ -109,3 +109,6 @@ module Daru
     end
   end
 end
+
+require 'daru/io/link'
+Daru::DataFrame.register_io_module :from_sql, Daru::IO::Importers::SQL

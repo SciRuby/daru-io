@@ -1,9 +1,10 @@
-require 'daru/io/exporters/linkages/csv'
+require 'daru'
+require 'daru/io/base'
 
 module Daru
   module IO
     module Exporters
-      class CSV
+      class CSV < Base
         # Exports *Daru::DataFrame* to a CSV file.
         #
         # @param dataframe [Daru::DataFrame] A dataframe to export
@@ -37,13 +38,7 @@ module Daru
         #   Daru::IO::Exporters::CSV.new(df, "filename.csv", convert_comma: true).call
         def initialize(dataframe, path, converters: :numeric, headers: nil,
           convert_comma: nil, **options)
-          @dataframe     = dataframe
-          @path          = path
-          @converters    = converters
-          @headers       = headers
-          @convert_comma = convert_comma
-          @options       = options.merge headers: @headers,
-                                         converters: @converters
+          super(binding)
         end
 
         def call
@@ -64,3 +59,6 @@ module Daru
     end
   end
 end
+
+require 'daru/io/link'
+Daru::DataFrame.register_io_module :to_csv, Daru::IO::Exporters::CSV

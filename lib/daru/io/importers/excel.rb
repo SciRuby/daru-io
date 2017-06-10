@@ -1,9 +1,10 @@
-require 'daru/io/importers/linkages/excel'
+require 'daru'
+require 'daru/io/base'
 
 module Daru
   module IO
     module Importers
-      class Excel
+      class Excel < Base
         # Imports a *Daru::DataFrame* from an Excel file.
         #
         # @param path [String] Path of Excel file, where the
@@ -44,8 +45,7 @@ module Daru
         #   #=>       4        5   George      5.5     Tome    a,b,c
         #   #=>       5        6  Fernand      nil      nil      nil
         def initialize(path, worksheet_id: 0)
-          @path         = path
-          @worksheet_id = worksheet_id
+          super(binding)
         end
 
         def call
@@ -66,3 +66,6 @@ module Daru
     end
   end
 end
+
+require 'daru/io/link'
+Daru::DataFrame.register_io_module :from_excel, Daru::IO::Importers::Excel

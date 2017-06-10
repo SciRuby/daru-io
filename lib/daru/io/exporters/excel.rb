@@ -1,9 +1,10 @@
-require 'daru/io/exporters/linkages/excel'
+require 'daru'
+require 'daru/io/base'
 
 module Daru
   module IO
     module Exporters
-      class Excel
+      class Excel < Base
         # Exports *Daru::DataFrame* to an Excel Spreadsheet.
         #
         # @param dataframe [Daru::DataFrame] A dataframe to export
@@ -25,9 +26,7 @@ module Daru
         #   yet. Implementing this feature will greatly allow the user to generate a
         #   Spreadsheet of their choice.
         def initialize(dataframe, path, **options)
-          @dataframe = dataframe
-          @path      = path
-          @options   = options
+          super(binding)
         end
 
         # @note
@@ -52,3 +51,6 @@ module Daru
     end
   end
 end
+
+require 'daru/io/link'
+Daru::DataFrame.register_io_module :to_excel, Daru::IO::Exporters::Excel
