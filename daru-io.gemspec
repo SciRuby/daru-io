@@ -29,6 +29,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rspec-its'
   spec.add_development_dependency 'rubocop', '>= 0.40.0'
   spec.add_development_dependency 'ruby-prof'
+  spec.add_development_dependency 'webmock'
   if RUBY_VERSION >= '2.2.5'
     spec.add_development_dependency 'guard-rspec'
   end

@@ -2,6 +2,7 @@ require "bundler/setup"
 require "daru/io"
 require 'rspec/its'
 require 'shared_examples'
+require 'webmock/rspec'
 
 RSpec::Expectations.configuration.warn_about_potential_false_positives = false
 

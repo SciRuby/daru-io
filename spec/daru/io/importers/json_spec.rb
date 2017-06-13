@@ -128,7 +128,7 @@ RSpec.describe Daru::IO::Importers::JSON do # rubocop:disable Metrics/BlockLengt
       end
     end
 
-    context 'on jsonvat data' do
+    context 'on VAT data' do
       let(:path)         { 'spec/fixtures/json/jsonvat.json' }
       let(:nrows)        { 28                                }
       let(:ncols)        { 2                                 }
@@ -144,5 +144,24 @@ RSpec.describe Daru::IO::Importers::JSON do # rubocop:disable Metrics/BlockLengt
         it_behaves_like 'json importer'
       end
     end
+  end
+
+  context 'parses remote and local file similarly' do
+    let(:local_path)   { 'spec/fixtures/json/nasadata.json'      }
+    let(:path)         { 'http://dummy-remote-url/nasadata.json' }
+    let(:nrows)        { 202                                     }
+    let(:ncols)        { 10                                      }
+    let(:last_index)   { 201                                     }
+    let(:last_vector)  { 'q_au_2'                                }
+    let(:first_vector) { 'designation'                           }
+
+    before do
+      WebMock
+        .stub_request(:get, path)
+        .to_return(status: 200, body: File.read(local_path))
+      WebMock.disable_net_connect!(allow: /dummy-remote-url/)
+    end
+
+    it_behaves_like 'json importer'
   end
 end
