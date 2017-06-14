@@ -5,7 +5,7 @@ module Daru
   module IO
     module Exporters
       class CSV < Base
-        # Exports *Daru::DataFrame* to a CSV file.
+        # Exports +Daru::DataFrame+ to a CSV file.
         #
         # @param dataframe [Daru::DataFrame] A dataframe to export
         # @param path [String] Path of CSV file where the dataframe is to be saved

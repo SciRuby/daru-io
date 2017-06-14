@@ -5,12 +5,12 @@ module Daru
   module IO
     module Importers
       class Plaintext < Base
-        # Imports a *Daru::DataFrame* from a plaintext file.
+        # Imports a +Daru::DataFrame+ from a plaintext file.
         #
         # @param path [String] Path of the input plaintext file
         # @param fields [Array] An array of vectors.
         #
-        # @return A *Daru::DataFrame* imported from the given plaintext file
+        # @return A +Daru::DataFrame+ imported from the given plaintext file
         #
         # @example Reading from a Plaintext file
         #   fields = [:v1, :v2, :v3, :v4, :v5, :v6]

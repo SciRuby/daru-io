@@ -5,13 +5,13 @@ module Daru
   module IO
     module Importers
       class SQL < Base
-        # Imports a *Daru::DataFrame* from a SQL query.
+        # Imports a +Daru::DataFrame+ from a SQL query.
         #
         # @param dbh [DBI::DatabaseHandle or String] A DBI connection OR Path to a
         #   SQlite3 database.
         # @param query [String] The query to be executed
         #
-        # @return A *Daru::DataFrame* imported from the given query
+        # @return A +Daru::DataFrame+ imported from the given query
         #
         # @example Reading from database with a DBI connection
         #   dbh = DBI.connect("DBI:Mysql:database:localhost", "user", "password")

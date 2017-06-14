@@ -5,18 +5,18 @@ module Daru
   module IO
     module Importers
       class CSV < Base
-        # Imports a *Daru::DataFrame* from a CSV file.
+        # Imports a +Daru::DataFrame+ from a CSV file.
         #
         # @param path [String] Local / Remote path of CSV file, where the
         #   dataframe is to be imported from.
         # @param headers [Boolean] If this option is +true+, only those columns
-        #   will be used to import the *Daru::DataFrame* whose header is given.
+        #   will be used to import the +Daru::DataFrame+ whose header is given.
         # @param col_sep [String] A column separator, to be used while
         #   importing from the CSV file. By default, it is set to ','
         # @param converters [Symbol] If set to +:numeric+, each value in
-        #   the imported *Daru::DataFrame* will be numeric and not string.
+        #   the imported +Daru::DataFrame+ will be numeric and not string.
         # @param header_converters [Symbol] If set to +:symbol+, the order of
-        #   the imported *Daru::DataFrame* will be symbol (eg, +:name+) instead
+        #   the imported +Daru::DataFrame+ will be symbol (eg, +:name+) instead
         #   of being a string.
         # @param clone [Boolean] Have a look at +:clone+ option, at
         #   {http://www.rubydoc.info/gems/daru/0.1.5/Daru%2FDataFrame:initialize
@@ -35,7 +35,7 @@ module Daru
         # @param options [Hash] CSV standard library options, to tweak other
         #   default options of CSV gem.
         #
-        # @return A *Daru::DataFrame* imported from the given relation and fields
+        # @return A +Daru::DataFrame+ imported from the given relation and fields
         #
         # @example Reading from a CSV file from columns whose header is given
         #   df = Daru::DataFrame.from_csv("matrix_test.csv", col_sep: ' ', headers: true)
