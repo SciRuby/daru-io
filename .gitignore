@@ -6,3 +6,5 @@ Gemfile.lock
 *.DS_store
 .rspec_status
 coverage/
+doc/
+docs/
