@@ -1,4 +1,6 @@
 require 'daru'
+require 'daru/io/base'
+
 require 'json'
 require 'open-uri'
 require 'jsonpath'
@@ -6,7 +8,7 @@ require 'jsonpath'
 module Daru
   module IO
     module Importers
-      class JSON
+      class JSON < Base
         # Imports a *Daru::DataFrame* from local / remote *JSON* file.
         #
         # @param path [String] Path to remote / local JSON file.
@@ -88,12 +90,8 @@ module Daru
         #   #=>      24 The Ghost           2          5         60
         #   #=>     ...        ...        ...        ...        ...
         def initialize(path, *arrays, order: nil, index: nil, **hashes)
+          super(binding)
           @data       = []
-          @path       = path
-          @hashes     = hashes
-          @arrays     = arrays
-          @order      = order
-          @index      = index
           @auto_order = []
         end
 
@@ -151,3 +149,6 @@ module Daru
     end
   end
 end
+
+require 'daru/io/link'
+Daru::DataFrame.register_io_module :from_json, Daru::IO::Importers::JSON
