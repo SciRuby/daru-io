@@ -1,7 +1,5 @@
-require "spec_helper"
-
 RSpec.describe Daru::IO do
-  it "has a version number" do
-    expect(Daru::IO::VERSION).not_to be nil
+  it 'has a version number' do
+    expect(described_class::VERSION).not_to be nil
   end
 end
