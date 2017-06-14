@@ -72,9 +72,9 @@ module Daru
           raise_error
         end
 
-        def self.raise_error
-          raise 'Install the mechanize gem version 2.7.5 with `gem install mechanize`,'\
-          ' for using the from_html function.'
+        def raise_error
+          raise 'Install the mechanize gem version 2.7.5 with '\
+                '`gem install mechanize`, for using the from_html function.'
         end
 
         private

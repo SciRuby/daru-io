@@ -39,6 +39,7 @@ module Daru
         def initialize(dataframe, path, converters: :numeric, headers: nil,
           convert_comma: nil, **options)
           super(binding)
+          @options = @options.merge converters: @converters
         end
 
         def call

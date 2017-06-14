@@ -4,7 +4,7 @@ RSpec.describe Daru::IO::Importers::HTML do # rubocop:disable Metrics/BlockLengt
       'Install the mechanize gem version 2.7.5 with `gem install mechanize`,'\
       ' for using the from_html function.'
     end
-    subject { -> { described_class.raise_error } }
+    subject { -> { described_class.new('').raise_error } }
 
     it { is_expected.to raise_error(error_msg) }
   end
