@@ -1,6 +1,7 @@
-require 'daru/io/importers/linkages/redis'
-require 'daru/io/importers/importer'
+require 'daru'
 require 'daru/io/base'
+require 'daru/io/importers/importer'
+
 require 'json'
 
 module Daru
@@ -150,3 +151,6 @@ module Daru
     end
   end
 end
+
+require 'daru/io/link'
+Daru::DataFrame.register_io_module :from_redis, Daru::IO::Importers::Redis
