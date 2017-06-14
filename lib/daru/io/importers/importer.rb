@@ -1,7 +1,7 @@
 module Daru
   module IO
     module Importers
-      class Base
+      class Importer
         def self.guess_parse(keys, vals)
           case vals.first
           when Array

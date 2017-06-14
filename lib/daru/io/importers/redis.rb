@@ -1,11 +1,12 @@
 require 'daru/io/importers/linkages/redis'
-require 'daru/io/importers/base'
+require 'daru/io/importers/importer'
+require 'daru/io/base'
 require 'json'
 
 module Daru
   module IO
     module Importers
-      class Redis
+      class Redis < Base
         # Imports a *Daru::DataFrame* from *Redis* connection and keys.
         #
         # @note In Redis, the specified key and count the number of queries that
@@ -118,22 +119,21 @@ module Daru
         #   #=>      timestamp:090620171216  Tyrion      32
         #
         def initialize(connection={}, *keys, match: nil, count: nil)
-          @client  = get_client(connection)
-          @pattern = match
-          @count   = count
-          @keys    = choose_keys(*keys).map(&:to_sym)
+          super(binding)
+          @client = get_client(connection)
+          @keys   = choose_keys(@keys).map(&:to_sym)
         end
 
         def call
           vals = @keys.map { |key| ::JSON.parse(@client.get(key), symbolize_names: true) }
-          Base.guess_parse @keys, vals
+          Importer.guess_parse @keys, vals
         end
 
         private
 
-        def choose_keys(*keys)
+        def choose_keys(keys)
           if keys.count.zero?
-            @client.scan(0, match: @pattern, count: @count).last
+            @client.scan(0, match: @match, count: @count).last
           else
             keys.to_a
           end
