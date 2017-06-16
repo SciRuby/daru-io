@@ -11,7 +11,7 @@ RSpec.describe Daru::IO::Importers::JSON do # rubocop:disable Metrics/BlockLengt
 
   subject { described_class.new(path, *arrays, order: order, index: index, **hashes).call }
 
-  context 'on simple json' do
+  context 'on simple json file' do
     context 'in NASA data' do
       let(:path)         { 'spec/fixtures/json/nasadata.json' }
       let(:nrows)        { 202                                }
@@ -26,7 +26,7 @@ RSpec.describe Daru::IO::Importers::JSON do # rubocop:disable Metrics/BlockLengt
     end
   end
 
-  context 'on nested json' do # rubocop:disable Metrics/BlockLength
+  context 'on nested json file' do # rubocop:disable Metrics/BlockLength
     context 'in temperature data' do # rubocop:disable Metrics/BlockLength
       let(:path)        { 'spec/fixtures/json/temp.json' }
       let(:nrows)       { 122                            }
@@ -144,6 +144,28 @@ RSpec.describe Daru::IO::Importers::JSON do # rubocop:disable Metrics/BlockLengt
         it_behaves_like 'json importer'
       end
     end
+  end
+
+  context 'parses json response' do
+    let(:path)         { ::JSON.parse(File.read('spec/fixtures/json/nasadata.json')) }
+    let(:nrows)        { 202                                           }
+    let(:ncols)        { 10                                            }
+    let(:last_index)   { 201                                           }
+    let(:last_vector)  { 'q_au_2'                                      }
+    let(:first_vector) { 'designation'                                 }
+
+    it_behaves_like 'json importer'
+  end
+
+  context 'parses json string' do
+    let(:path)         { File.read('spec/fixtures/json/nasadata.json') }
+    let(:nrows)        { 202                                           }
+    let(:ncols)        { 10                                            }
+    let(:last_index)   { 201                                           }
+    let(:last_vector)  { 'q_au_2'                                      }
+    let(:first_vector) { 'designation'                                 }
+
+    it_behaves_like 'json importer'
   end
 
   context 'parses remote and local file similarly' do

@@ -9,22 +9,25 @@ module Daru
   module IO
     module Importers
       class JSON < Base
-        # Imports a *Daru::DataFrame* from local / remote *JSON* file.
+        # Imports a +Daru::DataFrame+ from a JSON file or response.
         #
-        # @param path [String] Path to remote / local JSON file.
+        # @param input [String or JSON response] Either the path to local /
+        #   remote JSON file, or JSON response (which can be a
+        #   nested +Hash+ or +Array of Hashes+) from any API.
+        #
         # @param arrays [Array] X-path slectors to select specific fields
-        #   from the JSON file.
+        #   from the JSON input.
         # @param order [String or Array] Either a x-path selector string, or
-        #   an array containing the order of the *Daru::DataFrame*.
+        #   an array containing the order of the +Daru::DataFrame+.
         # @param index [String or Array] Either a x-path selector string, or
-        #   an array containing the order of the *Daru::DataFrame*.
+        #   an array containing the order of the +Daru::DataFrame+.
         # @param hashes [Hash] X-path slectors to select specific fields
-        #   from the JSON file.
+        #   from the JSON input.
         #
         # @note For more information on using x-path selectors, have a look at
-        #   the examples {http://www.rubydoc.info/gems/jsonpath/0.5.8 here}
+        #   the examples {http://www.rubydoc.info/gems/jsonpath/0.5.8 here}.
         #
-        # @return A *Daru::DataFrame* imported from the given JSON file
+        # @return A +Daru::DataFrame+ imported from the given JSON input
         #   and x-path selected fields.
         #
         # @example Importing from remote JSON file without x-path fields
@@ -89,14 +92,14 @@ module Daru
         #   #=>      23 Garden of           2          4         60
         #   #=>      24 The Ghost           2          5         60
         #   #=>     ...        ...        ...        ...        ...
-        def initialize(path, *arrays, order: nil, index: nil, **hashes)
+        def initialize(input, *arrays, order: nil, index: nil, **hashes)
           super(binding)
           @data       = []
           @auto_order = []
         end
 
         def call
-          json = ::JSON.parse(open(@path).read)
+          json = read_json
 
           if @hashes.empty?
             if @arrays.size == 1
@@ -116,6 +119,23 @@ module Daru
         end
 
         private
+
+        def read_json
+          # Checks if input is a remote JSON file, local JSON file,
+          # API JSON response or JSON string
+          if @input.is_a? String
+            if @input.start_with?('http') || @input.end_with?('.json')
+              # A local or remote JSOn file
+              ::JSON.parse(open(@input).read)
+            else
+              # A JSON string
+              ::JSON.parse(@input)
+            end
+          else
+            # A JSON response
+            @input
+          end
+        end
 
         def get_xpath(json, xpath)
           case xpath
