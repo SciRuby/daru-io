@@ -11,7 +11,7 @@
 - `allsets.json` : An ultra-truncated version of the huge zip file available [here](http://mtgjson.com/json/AllSets.json.zip). Contains nested hashes.
 - `got.json` : API response for the popular Game of Thrones series, by TV-Maze website found [here](http://api.tvmaze.com/singlesearch/shows?q=game-of-thrones&embed=episodes). A fairly small data source with nested hashes.
 - `jsonvat.json` : Nested hash response from [this website](http://jsonvat.com/). A fairly small data source.
-- `nasadata.json` : JSON response of Array of hashes, from NASA website. Not complexly nested, but helps to select few keys of the hash without using json-xpath.
+- `nasadata.json` : JSON response of Array of hashes, from [NASA website](https://data.nasa.gov/resource/2vr3-k9wn.json). Not complexly nested, but helps to select few keys of the hash without using json-xpath.
 - `temp.json` : Time-series response for Average temperature data, from [this website](https://www.ncdc.noaa.gov/cag/time-series/us/110/00/tavg/ytd/12/1895-2016.json?base_prd=true&begbaseyear=1901&endbaseyear=2000). A fairly small data source, with relatively simple nesting - to directly get a dataframe from the response field.
 
 ### RData
