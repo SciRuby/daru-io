@@ -5,10 +5,10 @@ module Daru
   module IO
     module Exporters
       class Excel < Base
-        # Exports *Daru::DataFrame* to an Excel Spreadsheet.
+        # Exports +Daru::DataFrame+ to an Excel Spreadsheet.
         #
         # @param dataframe [Daru::DataFrame] A dataframe to export
-        # @param path [String] Path of the file where the *Daru::DataFrame*
+        # @param path [String] Path of the file where the +Daru::DataFrame+
         #   should be written.
         # @param options [Hash] A set of options containing user-preferences
         #

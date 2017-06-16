@@ -27,8 +27,18 @@ RSpec.shared_examples 'html importer' do |symbol|
 end
 
 RSpec.shared_examples 'redis importer' do
-  it            { is_expected.to be_a(Daru::DataFrame)       }
+  it_behaves_like 'daru dataframe'
   its(:index)   { is_expected.to belong_to(expected_index)   }
   its(:vectors) { is_expected.to belong_to(expected_vectors) }
   its(:data)    { is_expected.to contain_from(expected_data) }
+end
+
+RSpec.shared_examples 'json importer' do
+  it_behaves_like 'daru dataframe'
+  its(:nrows)               { is_expected.to eq(nrows)             }
+  its(:ncols)               { is_expected.to eq(ncols)             }
+  its('index.to_a.first')   { is_expected.to eq(first_index)       }
+  its('index.to_a.last')    { is_expected.to eq(last_index)        }
+  its('vectors.to_a.last')  { is_expected.to eq(last_vector)       }
+  its('vectors.to_a.first') { is_expected.to eq(first_vector)      }
 end

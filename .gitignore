@@ -7,3 +7,5 @@ Gemfile.lock
 .rspec_status
 coverage/
 dump.rdb
+doc/
+docs/

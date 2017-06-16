@@ -27,6 +27,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'bundler', '~> 1.15'
   spec.add_development_dependency 'dbd-sqlite3'
   spec.add_development_dependency 'dbi'
+  spec.add_development_dependency 'jsonpath'
   spec.add_development_dependency 'mechanize'
   spec.add_development_dependency 'rake', '~> 10.0'
   spec.add_development_dependency 'redis'

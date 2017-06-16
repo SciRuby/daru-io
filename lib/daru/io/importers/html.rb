@@ -5,11 +5,11 @@ module Daru
   module IO
     module Importers
       class HTML < Base
-        # Imports a list of *Daru::DataFrame* s from a HTML file or website.
+        # Imports a list of +Daru::DataFrame+ s from a HTML file or website.
         #
         # @param path [String] Website URL / path to HTML file, where the
         #   DataFrame is to be imported from.
-        # @param match [String] A *String* to match and choose a particular table(s)
+        # @param match [String] A +String+ to match and choose a particular table(s)
         #   from multiple tables of a HTML page.
         # @param index [Array or Daru::Index or Daru::MultiIndex] If given, it
         #   overrides the parsed index. Have a look at +:index+ option, at
@@ -19,15 +19,15 @@ module Daru
         #   overrides the parsed order. Have a look at +:order+ option, at
         #   {http://www.rubydoc.info/gems/daru/0.1.5/Daru%2FDataFrame:initialize
         #   Daru::DataFrame#initialize}
-        # @param name [String] As +name+ of the imported *Daru::DataFrame* isn't
+        # @param name [String] As +name+ of the imported +Daru::DataFrame+ isn't
         #   parsed automatically by the module, users can set the name attribute to
-        #   their *Daru::DataFrame* manually, through this option.
+        #   their +Daru::DataFrame+ manually, through this option.
         #
         #   See +:name+ option at
         #   {http://www.rubydoc.info/gems/daru/0.1.5/Daru%2FDataFrame:initialize
         #   Daru::DataFrame#initialize}
         #
-        # @return A *Daru::DataFrame* imported from the given HTML page
+        # @return A +Daru::DataFrame+ imported from the given HTML page
         #
         # @example Reading from a website whose tables are static
         #   url = 'http://www.moneycontrol.com/'

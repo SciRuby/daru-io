@@ -5,13 +5,13 @@ module Daru
   module IO
     module Importers
       class ActiveRecord < Base
-        # Imports a *Daru::DataFrame* from an ActiveRecord Relation
+        # Imports a +Daru::DataFrame+ from an ActiveRecord Relation
         #
         # @param relation [ActiveRecord::Relation] A relation to be used to load
         #   the contents of DataFrame
         # @param fields [String or Array of Strings] A set of fields to load from.
         #
-        # @return A *Daru::DataFrame* imported from the given relation and fields
+        # @return A +Daru::DataFrame+ imported from the given relation and fields
         #
         # @example Importing from an ActiveRecord relation without specifying fields
         #   df = Daru::IO::Importers::ActiveRecord.new(Account.all).call

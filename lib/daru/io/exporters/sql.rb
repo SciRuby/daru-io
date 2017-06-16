@@ -5,10 +5,10 @@ module Daru
   module IO
     module Exporters
       class SQL < Base
-        # Exports *Daru::DataFrame* to an SQL table.
+        # Exports +Daru::DataFrame+ to an SQL table.
         #
         # @param dataframe [Daru::DataFrame] A dataframe to export.
-        # @param dbi [DBI] A DBI database connection object.
+        # @param dbh [DBI] A DBI database connection object.
         # @param table [String] The SQL table to export to.
         #
         # @example Writing to an SQL Table with database credentials
