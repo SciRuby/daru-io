@@ -1,6 +1,6 @@
 require 'daru'
 require 'daru/io/base'
-require 'daru/io/importers/importer'
+require 'daru/io/importers/util'
 
 require 'json'
 
@@ -25,6 +25,11 @@ module Daru
         #   connection will be used.
         # @param match [String] A pattern to get matching keys.
         # @param count [Integer] Number of matching keys to be obtained.
+        # @param page [Integer] The page of keys to be fetched from the
+        #   paginated results of matching keys. Defaults to 0 (ie, First
+        #   page results). For the i-th page results, pass the argument
+        #   as i-1. When passed as a negative number, the whole pagination
+        #   is traversed and ALL matching keys are used.
         #
         # @return A *Daru::DataFrame* imported from the given Redis connection
         #   and matching keys
@@ -119,7 +124,8 @@ module Daru
         #   #=>      timestamp:090620171218   Jamie      37
         #   #=>      timestamp:090620171216  Tyrion      32
         #
-        def initialize(connection={}, *keys, match: nil, count: nil)
+        def initialize(connection={}, *keys, match: nil, count: nil,
+          page: 0)
           super(binding)
           @client = get_client(connection)
           @keys   = choose_keys(@keys).map(&:to_sym)
@@ -127,14 +133,28 @@ module Daru
 
         def call
           vals = @keys.map { |key| ::JSON.parse(@client.get(key), symbolize_names: true) }
-          Importer.guess_parse @keys, vals
+          Util.guess_parse @keys, vals
         end
 
         private
 
         def choose_keys(keys)
           if keys.count.zero?
-            @client.scan(0, match: @match, count: @count).last
+            cursor = 0
+            page   = 0
+            cursor, keys = @client.scan(cursor, match: @match, count: @count)
+            return keys.uniq if @page.zero?
+
+            # Loop to iterate through paginated results of Redis#scan
+            # If @pages < 0 or @pages > total_pages, fetch ALL keys.
+            # Else, fetch the particular page of keys.
+            while not cursor.to_i.zero?
+              response = @client.scan(cursor, match: @match, count: @count)
+              return response.last.uniq if @page == (page+=1)
+              cursor = response.first.to_i
+              keys  += response.last
+            end
+            keys.uniq
           else
             keys.to_a
           end

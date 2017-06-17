@@ -1,4 +1,4 @@
-RSpec.describe Daru::IO::Importers::JSON do # rubocop:disable Metrics/BlockLength
+RSpec.describe Daru::IO::Importers::JSON do
   let(:path)         { ''  }
   let(:arrays)       { nil }
   let(:hashes)       { {}  }
@@ -26,8 +26,8 @@ RSpec.describe Daru::IO::Importers::JSON do # rubocop:disable Metrics/BlockLengt
     end
   end
 
-  context 'on nested json file' do # rubocop:disable Metrics/BlockLength
-    context 'in temperature data' do # rubocop:disable Metrics/BlockLength
+  context 'on nested json file' do
+    context 'in temperature data' do
       let(:path)        { 'spec/fixtures/json/temp.json' }
       let(:nrows)       { 122                            }
       let(:ncols)       { 2                              }
@@ -63,7 +63,7 @@ RSpec.describe Daru::IO::Importers::JSON do # rubocop:disable Metrics/BlockLengt
       end
     end
 
-    context 'in tv series data' do # rubocop:disable Metrics/BlockLength
+    context 'in tv series data' do
       let(:path)         { 'spec/fixtures/json/got.json' }
       let(:nrows)        { 61                            }
       let(:ncols)        { 4                             }

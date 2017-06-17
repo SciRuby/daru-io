@@ -28,9 +28,11 @@ end
 
 RSpec.shared_examples 'redis importer' do
   it_behaves_like 'daru dataframe'
-  its(:index)   { is_expected.to belong_to(expected_index)   }
-  its(:vectors) { is_expected.to belong_to(expected_vectors) }
-  its(:data)    { is_expected.to contain_from(expected_data) }
+  its(:data)    { is_expected.to unordered_dataframe(expected_data) }
+  its(:ncols)   { is_expected.to eq(ncols)                          }
+  its(:nrows)   { is_expected.to eq(nrows)                          }
+  its(:index)   { is_expected.to belong_to(expected_index)          }
+  its(:vectors) { is_expected.to belong_to(expected_vectors)        }
 end
 
 RSpec.shared_examples 'json importer' do

@@ -1,4 +1,4 @@
-RSpec.describe Daru::IO::Importers::CSV do # rubocop:disable Metrics/BlockLength
+RSpec.describe Daru::IO::Importers::CSV do
   before do
     %w[matrix_test repeated_fields scientific_notation sales-funnel].each do |file|
       WebMock

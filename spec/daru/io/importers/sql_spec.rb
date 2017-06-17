@@ -1,4 +1,4 @@
-RSpec.describe Daru::IO::Importers::SQL do # rubocop:disable Metrics/BlockLength
+RSpec.describe Daru::IO::Importers::SQL do
   include_context 'sqlite3 database setup'
   let(:query) { 'select * from accounts' }
   let(:order) { %i[age id name] }
