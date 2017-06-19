@@ -11,6 +11,12 @@ script:
   - bundle exec rspec
   - bundle exec rubocop
 
+services:
+  - mongodb
+
+before_install:
+  - sleep 15
+
 install:
   - gem install bundler
   - gem install rainbow -v '2.2.1'

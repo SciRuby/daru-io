@@ -125,7 +125,7 @@ module Daru
           # API JSON response or JSON string
           if @input.is_a? String
             if @input.start_with?('http') || @input.end_with?('.json')
-              # A local or remote JSOn file
+              # A local or remote JSON file
               ::JSON.parse(open(@input).read)
             else
               # A JSON string
