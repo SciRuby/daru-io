@@ -1,15 +1,15 @@
 RSpec.describe Daru::IO::Importers::JSON do
-  let(:path)         { ''  }
-  let(:arrays)       { nil }
-  let(:hashes)       { {}  }
-  let(:index)        { nil }
-  let(:order)        { nil }
-  let(:first_index)  { 0   }
-  let(:last_index)   { nil }
-  let(:first_vector) { nil }
-  let(:last_vector)  { nil }
+  let(:path)          { ''  }
+  let(:index)         { nil }
+  let(:order)         { nil }
+  let(:first_index)   { 0   }
+  let(:last_index)    { nil }
+  let(:first_vector)  { nil }
+  let(:last_vector)   { nil }
+  let(:columns)       { nil }
+  let(:named_columns) { {}  }
 
-  subject { described_class.new(path, *arrays, order: order, index: index, **hashes).call }
+  subject { described_class.new(path, *columns, order: order, index: index, **named_columns).call }
 
   context 'on simple json file' do
     context 'in NASA data' do

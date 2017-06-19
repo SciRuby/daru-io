@@ -19,11 +19,9 @@ module Daru
         end
 
         def call
-          order = @client[@collection].find.map(&:keys)
-          data  = @client[@collection].find.map(&:values)
-
-          documents = []
-          order.each_with_index { |o, i| documents.push(Hash[o.zip data[i]]) }
+          data      = @client[@collection].find.map(&:values)
+          orders    = @client[@collection].find.map(&:keys)
+          documents = orders.map.with_index { |order, i| Hash[order.zip data[i]] }
 
           JSON.new(
             documents,

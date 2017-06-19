@@ -16,6 +16,7 @@ services:
 
 before_install:
   - sleep 15
+  - mongo test --eval 'db.addUser("travis", "test");'
 
 install:
   - gem install bundler
