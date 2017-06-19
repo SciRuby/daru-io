@@ -1,4 +1,4 @@
-RSpec.describe Daru::IO::Importers::Mongo do # rubocop:disable Metrics/BlockLength
+RSpec.describe Daru::IO::Importers::Mongo do
   let(:connection)   { ::Mongo::Client.new('mongodb://127.0.0.1:27017/test')  }
   let(:collection)   { path.split('json').last.tr('/.','').to_sym             }
   let(:arrays)       { nil                                                    }

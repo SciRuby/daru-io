@@ -1,4 +1,4 @@
-RSpec.describe Daru::IO::Importers::HTML do # rubocop:disable Metrics/BlockLength
+RSpec.describe Daru::IO::Importers::HTML do
   context 'raises error when mechanize gem is not installed' do
     let(:error_msg) do
       'Install the mechanize gem version 2.7.5 with `gem install mechanize`,'\
@@ -74,7 +74,7 @@ RSpec.describe Daru::IO::Importers::HTML do # rubocop:disable Metrics/BlockLengt
     end
   end
 
-  context 'in year-wise passengers figure' do # rubocop:disable Metrics/BlockLength
+  context 'in year-wise passengers figure' do
     let(:path) { "file://#{Dir.pwd}/spec/fixtures/html/macau.html" }
     let(:data) do
       [

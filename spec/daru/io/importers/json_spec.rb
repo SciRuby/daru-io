@@ -1,4 +1,4 @@
-RSpec.describe Daru::IO::Importers::JSON do # rubocop:disable Metrics/BlockLength
+RSpec.describe Daru::IO::Importers::JSON do
   let(:path)         { ''  }
   let(:arrays)       { nil }
   let(:hashes)       { {}  }

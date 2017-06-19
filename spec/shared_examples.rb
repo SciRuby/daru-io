@@ -37,8 +37,8 @@ RSpec.shared_examples 'json importer' do
 end
 
 RSpec.shared_examples 'importer with json-path option' do
-  context 'on nested json file' do # rubocop:disable Metrics/BlockLength
-    context 'in temperature data' do # rubocop:disable Metrics/BlockLength
+  context 'on nested json file' do
+    context 'in temperature data' do
       let(:path)        { 'spec/fixtures/json/temp.json' }
       let(:nrows)       { 122                            }
       let(:ncols)       { 2                              }
@@ -74,7 +74,7 @@ RSpec.shared_examples 'importer with json-path option' do
       end
     end
 
-    context 'in tv series data' do # rubocop:disable Metrics/BlockLength
+    context 'in tv series data' do
       let(:path)         { 'spec/fixtures/json/got.json' }
       let(:nrows)        { 61                            }
       let(:ncols)        { 4                             }
