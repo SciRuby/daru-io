@@ -1,10 +1,9 @@
 require 'daru'
-require 'daru/io/base'
 
 module Daru
   module IO
     module Importers
-      class HTML < Base
+      class HTML
         # Imports a list of +Daru::DataFrame+ s from a HTML file or website.
         #
         # @param path [String] Website URL / path to HTML file, where the
@@ -43,12 +42,12 @@ module Daru
         #   # should be obtained (as long as 'Sun Pharma' is there on the website).
         #
         #   #=> <Daru::DataFrame(5x4)>
-        #   #=>          Company      Price     Change Value (Rs
-        #   #=>     0 Sun Pharma     502.60     -65.05   2,117.87
-        #   #=>     1   Reliance    1356.90      19.60     745.10
-        #   #=>     2 Tech Mahin     379.45     -49.70     650.22
-        #   #=>     3        ITC     315.85       6.75     621.12
-        #   #=>     4       HDFC    1598.85      50.95     553.91
+        #   #        Company      Price     Change Value (Rs
+        #   #   0 Sun Pharma     502.60     -65.05   2,117.87
+        #   #   1   Reliance    1356.90      19.60     745.10
+        #   #   2 Tech Mahin     379.45     -49.70     650.22
+        #   #   3        ITC     315.85       6.75     621.12
+        #   #   4       HDFC    1598.85      50.95     553.91
         #
         # @note
         #
@@ -56,8 +55,9 @@ module Daru
         #   HTML page, and won't work in cases where the data is being loaded into
         #   the HTML table by inline Javascript.
         def initialize(path, match: nil, order: nil, index: nil, name: nil)
-          super(binding)
-          @options = {name: @name, order: @order, index: @index}
+          @path  = path
+          @match = match
+          @options = {name: name, order: order, index: index}
         end
 
         def call

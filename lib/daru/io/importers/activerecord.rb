@@ -1,10 +1,9 @@
 require 'daru'
-require 'daru/io/base'
 
 module Daru
   module IO
     module Importers
-      class ActiveRecord < Base
+      class ActiveRecord
         # Imports a +Daru::DataFrame+ from an ActiveRecord Relation
         #
         # @param relation [ActiveRecord::Relation] A relation to be used to load
@@ -31,7 +30,8 @@ module Daru
         #   #=>   0     1 Homer
         #   #=>   1     2 Marge
         def initialize(relation, *fields)
-          super(binding)
+          @relation = relation
+          @fields   = fields
         end
 
         def call

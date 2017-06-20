@@ -1,10 +1,9 @@
 require 'daru'
-require 'daru/io/base'
 
 module Daru
   module IO
     module Exporters
-      class Excel < Base
+      class Excel
         # Exports +Daru::DataFrame+ to an Excel Spreadsheet.
         #
         # @param dataframe [Daru::DataFrame] A dataframe to export
@@ -16,9 +15,9 @@ module Daru
         #   df = Daru::DataFrame.new([[1,2],[3,4]], order: [:a, :b])
         #
         #   #=> #<Daru::DataFrame(2x2)>
-        #   #=>       a   b
-        #   #=>   0   1   3
-        #   #=>   1   2   4
+        #   #      a   b
+        #   #  0   1   3
+        #   #  1   2   4
         #
         #   Daru::IO::Exporters::Excel.new(df, "dataframe_df.xls").call
         #
@@ -26,7 +25,9 @@ module Daru
         #   yet. Implementing this feature will greatly allow the user to generate a
         #   Spreadsheet of their choice.
         def initialize(dataframe, path, **options)
-          super(binding)
+          @dataframe = dataframe
+          @path      = path
+          @options   = options
         end
 
         # @note

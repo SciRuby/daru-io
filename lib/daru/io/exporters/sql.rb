@@ -1,10 +1,9 @@
 require 'daru'
-require 'daru/io/base'
 
 module Daru
   module IO
     module Exporters
-      class SQL < Base
+      class SQL
         # Exports +Daru::DataFrame+ to an SQL table.
         #
         # @param dataframe [Daru::DataFrame] A dataframe to export.
@@ -15,9 +14,9 @@ module Daru
         #   df = Daru::DataFrame.new([[1,2],[3,4]], order: [:a, :b])
         #
         #   #=> #<Daru::DataFrame(2x2)>
-        #   #=>       a   b
-        #   #=>   0   1   3
-        #   #=>   1   2   4
+        #   #      a   b
+        #   #  0   1   3
+        #   #  1   2   4
         #
         #   table = 'test'
         #
@@ -26,7 +25,9 @@ module Daru
         #
         #   Daru::IO::Exporters::SQL.new(df, dbh, table).call
         def initialize(dataframe, dbh, table)
-          super(binding)
+          @dataframe = dataframe
+          @dbh       = dbh
+          @table     = table
         end
 
         def call

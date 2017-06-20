@@ -1,5 +1,4 @@
 require 'daru'
-require 'daru/io/base'
 
 require 'json'
 require 'open-uri'
@@ -8,7 +7,7 @@ require 'jsonpath'
 module Daru
   module IO
     module Importers
-      class JSON < Base
+      class JSON
         # Imports a +Daru::DataFrame+ from a JSON file or response.
         #
         # @param input [String or JSON response] Either the path to local /
@@ -65,7 +64,11 @@ module Daru
         #   #   12  Lord Snow          1          3         60
         #   #  ...        ...        ...        ...        ...
         def initialize(input, *columns, order: nil, index: nil, **named_columns)
-          super(binding)
+          @input         = input
+          @columns       = columns
+          @order         = order
+          @index         = index
+          @named_columns = named_columns
         end
 
         def call
