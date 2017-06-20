@@ -16,7 +16,6 @@ require 'dbi'
 require 'active_record'
 require 'redis'
 
-require_relative 'custom_matchers'
 require_relative 'shared_contexts'
 require_relative 'shared_examples'
 

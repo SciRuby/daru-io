@@ -26,15 +26,6 @@ RSpec.shared_examples 'html importer' do |symbol|
   its(symbol) { is_expected.to eq(df) }
 end
 
-RSpec.shared_examples 'redis importer' do
-  it_behaves_like 'daru dataframe'
-  its(:data)    { is_expected.to unordered_dataframe(expected_data) }
-  its(:ncols)   { is_expected.to eq(ncols)                          }
-  its(:nrows)   { is_expected.to eq(nrows)                          }
-  its(:index)   { is_expected.to belong_to(expected_index)          }
-  its(:vectors) { is_expected.to belong_to(expected_vectors)        }
-end
-
 RSpec.shared_examples 'json importer' do
   it_behaves_like 'daru dataframe'
   its(:nrows)               { is_expected.to eq(nrows)             }

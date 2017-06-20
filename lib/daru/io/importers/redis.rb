@@ -1,13 +1,12 @@
 require 'daru'
-require 'daru/io/base'
-require 'daru/io/importers/util'
 
+require 'daru/io/importers/util'
 require 'json'
 
 module Daru
   module IO
     module Importers
-      class Redis < Base
+      class Redis
         # Imports a *Daru::DataFrame* from *Redis* connection and keys.
         #
         # @note In Redis, the specified key and count the number of queries that
@@ -123,12 +122,13 @@ module Daru
         #   #=>      timestamp:090620171222  Cersei      37
         #   #=>      timestamp:090620171218   Jamie      37
         #   #=>      timestamp:090620171216  Tyrion      32
-        #
         def initialize(connection={}, *keys, match: nil, count: nil,
           page: 0)
-          super(binding)
+          @match  = match
+          @count  = count
+          @page   = page
           @client = get_client(connection)
-          @keys   = choose_keys(@keys).map(&:to_sym)
+          @keys   = choose_keys(*keys).map(&:to_sym)
         end
 
         def call
@@ -138,7 +138,7 @@ module Daru
 
         private
 
-        def choose_keys(keys)
+        def choose_keys(*keys)
           if keys.count.zero?
             cursor = 0
             page   = 0
@@ -148,7 +148,7 @@ module Daru
             # Loop to iterate through paginated results of Redis#scan
             # If @pages < 0 or @pages > total_pages, fetch ALL keys.
             # Else, fetch the particular page of keys.
-            while not cursor.to_i.zero?
+            until cursor.to_i.zero?
               response = @client.scan(cursor, match: @match, count: @count)
               return response.last.uniq if @page == (page+=1)
               cursor = response.first.to_i

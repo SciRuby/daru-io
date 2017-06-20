@@ -7,6 +7,28 @@
 #   the DataFrame is tested to have the same data, in *ANY* order.
 #
 #   Signed off by @athityakumar on 08/16/2017 at 10:00PM IST
+RSpec::Matchers.define :belong_to do |expected|
+  match { |actual| (actual.to_a.uniq - expected.to_a.uniq).empty? }
+end
+
+RSpec::Matchers.define :unordered_dataframe do |expected|
+  match do |actual|
+    actual = actual.to_a.map { |x| x.data.to_a }.flatten.uniq
+    expected.map!(&:values) unless expected.first.is_a? Array
+    expected = expected.flatten.uniq
+    (actual - expected).empty?
+  end
+end
+
+RSpec.shared_examples 'redis importer' do |use_nrows=true|
+  it_behaves_like 'daru dataframe'
+  its(:data)    { is_expected.to unordered_dataframe(expected_data)   }
+  its(:ncols)   { is_expected.to eq(ncols)                            }
+  its(:index)   { is_expected.to belong_to(expected_index)            }
+  its(:vectors) { is_expected.to belong_to(expected_vectors)          }
+
+  its(:nrows) { is_expected.to eq(nrows) } if use_nrows
+end
 
 RSpec.describe Daru::IO::Importers::Redis do
   let(:keys)             { []                    }
@@ -122,7 +144,8 @@ RSpec.describe Daru::IO::Importers::Redis do
       let(:count)   { 3           }
       let(:pattern) { '09062017*' }
 
-      it_behaves_like 'redis importer'
+      it_behaves_like 'redis importer', false
+      its(:nrows)   { is_expected.to be_within(2).of(3) }
     end
 
     context 'gets keys without pattern and count' do
@@ -148,16 +171,15 @@ RSpec.describe Daru::IO::Importers::Redis do
     let(:expected_vectors) { %i[a b]                                          }
 
     context 'parses only 1st page by default' do
-      let(:nrows) { 233 }
-
-      it_behaves_like 'redis importer'
+      it_behaves_like 'redis importer', false
+      its(:nrows) { is_expected.to be_within(100).of(300) }
     end
 
     context 'parses only 2nd page' do
-      let(:page)  { 1   }
-      let(:nrows) { 224 }
+      let(:page) { 1 }
 
-      it_behaves_like 'redis importer'
+      it_behaves_like 'redis importer', false
+      its(:nrows) { is_expected.to be_within(100).of(300) }
     end
 
     context 'parses entire pagination' do
