@@ -1,3 +1,8 @@
+RSpec.shared_examples 'html importer' do |symbol|
+  it          { is_expected.to be_an(Array).and all be_a(Daru::DataFrame) }
+  its(symbol) { is_expected.to eq(df) }
+end
+
 RSpec.describe Daru::IO::Importers::HTML do
   context 'raises error when mechanize gem is not installed' do
     let(:error_msg) do

@@ -1,3 +1,12 @@
+RSpec.shared_examples 'mongo importer' do
+  it_behaves_like 'daru dataframe'
+  its(:nrows)             { is_expected.to eq(nrows)             }
+  its(:ncols)             { is_expected.to eq(ncols)             }
+  its('vectors.to_a')     { is_expected.to match_array(vector)   }
+  its('index.to_a.last')  { is_expected.to eq(last_index)        }
+  its('index.to_a.first') { is_expected.to eq(first_index)       }
+end
+
 # @note
 #
 #   Mongo gem faces the 'wrong argument type, Expected Proc' bug prelavent in
