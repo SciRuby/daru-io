@@ -1,3 +1,10 @@
+# @note
+#
+#   Mongo gem faces the 'wrong argument type, Expected Proc' bug prelavent in
+#   Ruby 2.4.0, whose origin is in MRI 2.4.0. This seems to have been fixed
+#   in Ruby 2.4.1 release.
+#
+#   Signed off by @athityakumar on 19/06/2017 at 11:55PM IST.
 RSpec.describe Daru::IO::Importers::Mongo do
   let(:connection)    { ::Mongo::Client.new('mongodb://127.0.0.1:27017/test') }
   let(:collection)    { path.split('json').last.tr('/.','').to_sym            }
