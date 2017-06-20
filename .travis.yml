@@ -5,7 +5,7 @@ rvm:
   - '2.1'
   - '2.2'
   - '2.3.0'
-  - '2.4.0'
+  - '2.4.1'
 
 script:
   - bundle exec rspec
@@ -16,7 +16,6 @@ services:
 
 before_install:
   - sleep 15
-  - mongo test --eval 'db.addUser("travis", "test");'
 
 install:
   - gem install bundler
