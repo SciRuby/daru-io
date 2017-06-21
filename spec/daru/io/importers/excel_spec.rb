@@ -1,5 +1,7 @@
 RSpec.describe Daru::IO::Importers::Excel do
   context 'loads from excel spreadsheet' do
+    subject { described_class.new(path).call }
+
     let(:id)    { Daru::Vector.new([1, 2, 3, 4, 5, 6]) }
     let(:name)  { Daru::Vector.new(%w[Alex Claude Peter Franz George Fernand]) }
     let(:age)   { Daru::Vector.new([20, 23, 25, nil, 5.5, nil]) }
@@ -8,8 +10,6 @@ RSpec.describe Daru::IO::Importers::Excel do
     let(:path)  { 'spec/fixtures/excel/test_xls.xls' }
     let(:order) { %i[id name age city a1] }
     let(:df)    { Daru::DataFrame.new({id: id, name: name, age: age, city: city, a1: a1},order: order) }
-
-    subject { described_class.new(path).call }
 
     it_behaves_like 'daru dataframe'
     its(:nrows) { is_expected.to eq(6) }

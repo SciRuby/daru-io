@@ -1,6 +1,7 @@
 RSpec.describe Daru::IO::Importers::Plaintext do
-  let(:vectors) { %i[v1 v2 v3] }
   subject { described_class.new(path, vectors).call }
+
+  let(:vectors) { %i[v1 v2 v3] }
 
   context 'reads data from plain text files' do
     let(:path)    { 'spec/fixtures/plaintext/bank2.dat' }

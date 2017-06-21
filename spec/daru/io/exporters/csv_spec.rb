@@ -1,14 +1,17 @@
 RSpec.describe Daru::IO::Exporters::CSV do
+  subject { File.open(tempfile.path, &:readline).chomp.split(',', -1) }
+
   include_context 'exporter setup'
+
   let(:filename) { 'test.csv' }
-  subject        { File.open(tempfile.path, &:readline).chomp.split(',', -1) }
 
   before { described_class.new(df, tempfile.path, opts).call }
 
   context 'writes DataFrame to a CSV file' do
+    subject { Daru::DataFrame.rows content[1..-1].map { |x| x.map { |y| convert(y) } }, order: content[0] }
+
     let(:opts) { {} }
     let(:content) { CSV.read(tempfile.path) }
-    subject { Daru::DataFrame.rows content[1..-1].map { |x| x.map { |y| convert(y) } }, order: content[0] }
 
     it_behaves_like 'daru dataframe'
     it { is_expected.to eq(df) }

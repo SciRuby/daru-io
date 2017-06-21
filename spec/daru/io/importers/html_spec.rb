@@ -1,10 +1,11 @@
-RSpec.describe Daru::IO::Importers::HTML do # rubocop:disable Metrics/BlockLength
+RSpec.describe Daru::IO::Importers::HTML do
   context 'raises error when mechanize gem is not installed' do
+    subject { -> { described_class.new('').raise_error } }
+
     let(:error_msg) do
       'Install the mechanize gem version 2.7.5 with `gem install mechanize`,'\
       ' for using the from_html function.'
     end
-    subject { -> { described_class.new('').raise_error } }
 
     it { is_expected.to raise_error(error_msg) }
   end
@@ -74,7 +75,7 @@ RSpec.describe Daru::IO::Importers::HTML do # rubocop:disable Metrics/BlockLengt
     end
   end
 
-  context 'in year-wise passengers figure' do # rubocop:disable Metrics/BlockLength
+  context 'in year-wise passengers figure' do
     let(:path) { "file://#{Dir.pwd}/spec/fixtures/html/macau.html" }
     let(:data) do
       [
@@ -97,6 +98,7 @@ RSpec.describe Daru::IO::Importers::HTML do # rubocop:disable Metrics/BlockLengt
     let(:match) { '2001' }
     let(:name)  { 'Year-wise Passengers Figure' }
     let(:index) { %w[January February March April May June July August September October November December Total] }
+
     context 'returns matching dataframes with index' do
       let(:opts) { {match: match, name: name} }
       let(:df) { Daru::DataFrame.new(data, order: order, index: index, name: name) }

@@ -1,4 +1,4 @@
-RSpec.describe Daru::IO::Importers::CSV do # rubocop:disable Metrics/BlockLength
+RSpec.describe Daru::IO::Importers::CSV do
   before do
     %w[matrix_test repeated_fields scientific_notation sales-funnel].each do |file|
       WebMock
@@ -8,9 +8,10 @@ RSpec.describe Daru::IO::Importers::CSV do # rubocop:disable Metrics/BlockLength
     end
   end
 
+  subject    { described_class.new(path, opts).call }
+
   let(:path) { 'spec/fixtures/csv/matrix_test.csv' }
   let(:opts) { {col_sep: ' ', headers: true} }
-  subject    { described_class.new(path, opts).call }
 
   context 'loads from a CSV file' do
     let('subject.vectors') { %I[image_resolution mls true_transform].to_index }
@@ -35,18 +36,19 @@ RSpec.describe Daru::IO::Importers::CSV do # rubocop:disable Metrics/BlockLength
   end
 
   context 'accepts scientific notation as float' do
-    let(:path)  { 'spec/fixtures/csv/scientific_notation.csv' }
-    let(:opts)  { {order: %w[x y]} }
-    let(:order) { %w[x y] }
+    let(:path)   { 'spec/fixtures/csv/scientific_notation.csv' }
+    let(:opts)   { {order: %w[x y]} }
+    let(:order)  { %w[x y] }
+    let(:df)     { subject }
 
     it_behaves_like 'csv importer'
-    # SPOILER ALERT : If a better syntax is possible without naming the subject,
+    # @note If a better syntax is possible without naming the subject,
     # feel free to suggest / adopt it.
     #
-    # Signed off by @athityakumar on 31/05/2017 at 10:25PM
+    #   Signed off by @athityakumar on 31/05/2017 at 10:25PM
     it 'checks for float accuracy' do
       y = [9.629587310436753e+127, 1.9341543147883677e+129, 3.88485279048245e+130]
-      y.zip(subject['y']).each do |y_expected, y_ds|
+      y.zip(df['y']).each do |y_expected, y_ds|
         expect(y_ds).to be_within(0.001).of(y_expected)
       end
     end

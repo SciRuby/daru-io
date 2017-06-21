@@ -1,3 +1,5 @@
+require: rubocop-rspec
+
 AllCops:
   Include:
     - 'lib/**/*'
@@ -32,6 +34,10 @@ Layout/AlignParameters:
 
 Style/EmptyElse:
   EnforcedStyle: empty
+
+Metrics/BlockLength:
+  Exclude:
+    - 'spec/**/*'
 
 Metrics/LineLength:
   Max: 120
@@ -71,6 +77,9 @@ Style/FileName:
 
 Style/MultilineBlockChain:
   Enabled: false
+
+RSpec/NestedGroups:
+  Max: 5
 
 # Current preferred metrics --------------------------------------------
 # Better values are encouraged, but not required.
