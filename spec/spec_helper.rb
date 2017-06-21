@@ -5,17 +5,21 @@ SimpleCov.start do
 end
 
 require 'bundler/setup'
-Bundler.require
+Bundler.require(:test)
 
 require 'rspec'
 require 'rspec/its'
 require 'webmock/rspec'
+require 'tempfile'
+require 'active_record'
+require 'sqlite3'
+require 'dbi'
+require 'dbd/sqlite3'
 
 require 'daru/io'
 
 require_relative 'shared_contexts'
 require_relative 'shared_examples'
-
 
 RSpec::Expectations.configuration.warn_about_potential_false_positives = false
 

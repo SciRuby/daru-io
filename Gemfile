@@ -8,4 +8,6 @@ group :test do
   gem 'jsonpath'
   gem 'mechanize'
   gem 'mongo'
+  gem 'spreadsheet', '~> 1.1.1'
+  gem 'sqlite3'
 end

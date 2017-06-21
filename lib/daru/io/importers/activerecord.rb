@@ -3,7 +3,7 @@ require 'daru/io/importers/base'
 module Daru
   module IO
     module Importers
-      class Activerecord < Base
+      class ActiveRecord < Base
         # Imports a +Daru::DataFrame+ from an ActiveRecord Relation
         #
         # @param relation [ActiveRecord::Relation] A relation to be used to load
@@ -35,7 +35,7 @@ module Daru
         end
 
         def call
-          optional_gem 'activerecord', '~> 4.0'
+          optional_gem 'activerecord', '~> 4.0', requires: 'active_record'
 
           if @fields.empty?
             records = @relation.map { |record| record.attributes.symbolize_keys }
@@ -59,4 +59,4 @@ module Daru
 end
 
 require 'daru/io/link'
-Daru::DataFrame.register_io_module :from_activerecord, Daru::IO::Importers::Activerecord
+Daru::DataFrame.register_io_module :from_activerecord, Daru::IO::Importers::ActiveRecord
