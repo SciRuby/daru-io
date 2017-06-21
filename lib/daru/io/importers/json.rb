@@ -1,13 +1,12 @@
-require 'daru'
+require 'daru/io/importers/base'
 
 require 'json'
 require 'open-uri'
-require 'jsonpath'
 
 module Daru
   module IO
     module Importers
-      class JSON
+      class JSON < Base
         # Imports a +Daru::DataFrame+ from a JSON file or response.
         #
         # @param input [String or JSON response] Either the path to local /
@@ -69,17 +68,24 @@ module Daru
           @order         = order
           @index         = index
           @named_columns = named_columns
+
+          return if @order.nil? || @named_columns.empty?
+
+          raise ArgumentError,
+            'Do not pass on order and named columns together, at the same '\
+            'function call. Please use either only order or only named_columns.'
         end
 
         def call
+          optional_gem 'jsonpath'
+
           @json    = read_json
           @data    = fetch_data
           @index   = at_jsonpath(@index)
           @order   = at_jsonpath(@order)
-          @order ||= @columns.map { |col| col.split('.').last } + @named_columns.keys
-          # Alternative : @order ||= (0..@columns.count-1).to_a + @named_columns.keys
+          @order ||= Array.new(@columns.count) { |x| x } + @named_columns.keys
 
-          Daru::DataFrame.new @data, order: @order, index: @index
+          Daru::DataFrame.new(@data, order: @order, index: @index)
         end
 
         private
@@ -96,6 +102,9 @@ module Daru
 
         def fetch_data
           return @json if @columns.empty? && @named_columns.empty?
+
+          # If only one unnamed column is provided without any named_columns,
+          # entire dataset is assumed to reside in that JSON-path.
           return at_jsonpath(@columns.first) if @columns.size == 1 && @named_columns.empty?
           data_columns = @columns + @named_columns.values
           data_columns.map { |col| at_jsonpath(col) }

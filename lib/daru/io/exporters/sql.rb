@@ -1,9 +1,9 @@
-require 'daru'
+require 'daru/io/exporters/base'
 
 module Daru
   module IO
     module Exporters
-      class SQL
+      class SQL < Base
         # Exports +Daru::DataFrame+ to an SQL table.
         #
         # @param dataframe [Daru::DataFrame] A dataframe to export.
@@ -25,13 +25,16 @@ module Daru
         #
         #   Daru::IO::Exporters::SQL.new(df, dbh, table).call
         def initialize(dataframe, dbh, table)
-          @dataframe = dataframe
+          super(dataframe)
           @dbh       = dbh
           @table     = table
         end
 
         def call
-          require 'dbi'
+          optional_gem 'dbd-sqlite3'
+          optional_gem 'dbi'
+          optional_gem 'sqlite3'
+
           query = "INSERT INTO #{@table} (#{@dataframe.vectors.to_a.join(',')}"\
                   ") VALUES (#{(['?']*@dataframe.vectors.size).join(',')})"
           sth   = @dbh.prepare(query)

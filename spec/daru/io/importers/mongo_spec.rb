@@ -1,3 +1,7 @@
+return if RUBY_VERSION == '2.4.0'
+
+::Mongo::Logger.logger.level = ::Logger::FATAL
+
 RSpec.shared_examples 'mongo importer' do
   it_behaves_like 'daru dataframe'
   its(:nrows)             { is_expected.to eq(nrows)             }

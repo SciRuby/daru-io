@@ -1,9 +1,9 @@
-require 'daru'
+require 'daru/io/importers/base'
 
 module Daru
   module IO
     module Importers
-      class Plaintext
+      class Plaintext < Base
         # Imports a +Daru::DataFrame+ from a plaintext file.
         #
         # @param path [String] Path of the input plaintext file

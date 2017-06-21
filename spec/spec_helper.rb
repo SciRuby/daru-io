@@ -3,20 +3,19 @@ SimpleCov.start do
   add_filter 'spec'
   # minimum_coverage_by_file 95
 end
+
+require 'bundler/setup'
+Bundler.require
+
 require 'rspec'
 require 'rspec/its'
 require 'webmock/rspec'
 
 require 'daru/io'
 
-require 'open-uri'
-require 'tempfile'
-require 'sqlite3'
-require 'dbi'
-require 'active_record'
-
 require_relative 'shared_contexts'
 require_relative 'shared_examples'
+
 
 RSpec::Expectations.configuration.warn_about_potential_false_positives = false
 

@@ -1,9 +1,9 @@
-require 'daru'
+require 'daru/io/importers/base'
 
 module Daru
   module IO
     module Importers
-      class HTML
+      class HTML < Base
         # Imports a list of +Daru::DataFrame+ s from a HTML file or website.
         #
         # @param path [String] Website URL / path to HTML file, where the
@@ -61,7 +61,8 @@ module Daru
         end
 
         def call
-          require 'mechanize'
+          optional_gem 'mechanize'
+
           page = Mechanize.new.get(@path)
           page.search('table').map { |table| parse_table table }
               .keep_if { |table| search table }

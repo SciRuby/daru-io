@@ -1,9 +1,9 @@
-require 'daru'
+require 'daru/io/importers/base'
 
 module Daru
   module IO
     module Importers
-      class SQL
+      class SQL < Base
         # Imports a +Daru::DataFrame+ from a SQL query.
         #
         # @param dbh [DBI::DatabaseHandle or String] A DBI connection OR Path to a
@@ -41,6 +41,11 @@ module Daru
         end
 
         def call
+          optional_gem 'activerecord', '~> 4.0'
+          optional_gem 'dbd-sqlite3'
+          optional_gem 'dbi'
+          optional_gem 'sqlite3'
+
           @conn, @adapter = choose_adapter @dbh, @query
           df_hash         = result_hash
           Daru::DataFrame.new(df_hash).tap(&:update)

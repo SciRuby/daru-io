@@ -1,13 +1,9 @@
-require 'daru'
 require 'daru/io/importers/json'
-
-require 'mongo'
-::Mongo::Logger.logger.level = ::Logger::FATAL
 
 module Daru
   module IO
     module Importers
-      class Mongo
+      class Mongo < JSON
         # Imports a +Daru::DataFrame+ from a Mongo collection.
         #
         # @param connection [String or Hash or Mongo::Client] Contains details
@@ -17,15 +13,23 @@ module Daru
         # @param columns [Array] JSON-path slectors to select specific fields
         #   from the JSON input.
         # @param order [String or Array] Either a JSON-path selector string, or
-        #   an array containing the order of the +Daru::DataFrame+.
+        #   an array containing the order of the +Daru::DataFrame+. DO NOT
+        #   provide both +order+ and +named_columns+ at the same time.
         # @param index [String or Array] Either a JSON-path selector string, or
         #   an array containing the order of the +Daru::DataFrame+.
-        # @param named_columns [Hash] JSON-path slectors to select specific fields
-        #   from the JSON input.
+        # @param named_columns [Hash] JSON-path selectors to select specific
+        #   fields from the JSON input. DO NOT provide both +order+ and
+        #   +named_columns+ at the same time.
         #
-        # @note For more information on using JSON-path selectors, have a look at
-        #   the explanations {http://www.rubydoc.info/gems/jsonpath/0.5.8 here}
-        #   and {http://goessner.net/articles/JsonPath/ here}.
+        # @note
+        #   - For more information on using JSON-path selectors, have a look at
+        #     the explanations {http://www.rubydoc.info/gems/jsonpath/0.5.8 here}
+        #     and {http://goessner.net/articles/JsonPath/ here}.
+        #   - The Mongo gem faces +Argument Error : expected Proc Argument+
+        #     issue due to the bug in MRI Ruby 2.4.0 mentioned
+        #     {https://bugs.ruby-lang.org/issues/13107 here}. This seems to have
+        #     been fixed in Ruby 2.4.1 onwards. Hence, please avoid using this
+        #     Mongo Importer in Ruby version 2.4.0.
         #
         # @return A +Daru::DataFrame+ imported from the given Mongo connection,
         #   collection and JSON-path selectors.
@@ -94,7 +98,7 @@ module Daru
         #   # 2 5948d44350      Volvo    29000.0        7.8        9.9
         def initialize(connection, collection, *columns, order: nil, index: nil,
           **named_columns)
-          @client        = get_client(connection)
+          @connection    = connection
           @collection    = collection.to_sym
           @columns       = columns
           @order         = order
@@ -103,9 +107,10 @@ module Daru
         end
 
         def call
-          data      = @client[@collection].find.map(&:values)
-          orders    = @client[@collection].find.map(&:keys)
-          documents = orders.map.with_index { |order, i| Hash[order.zip data[i]] }
+          optional_gem 'mongo'
+
+          client    = get_client(@connection)
+          documents = client[@collection].find.to_json
 
           JSON.new(
             documents,
@@ -119,13 +124,19 @@ module Daru
         private
 
         def get_client(connection)
-          if connection.is_a? ::Mongo::Client
+          case connection
+          when ::Mongo::Client
             connection
-          elsif connection.is_a? Hash
-            ip = connection.delete :hosts
-            ::Mongo::Client.new ip, connection
-          elsif connection.is_a? String
-            ::Mongo::Client.new connection
+          when Hash
+            hosts = connection.delete :hosts
+            ::Mongo::Client.new(hosts, connection)
+          when String
+            ::Mongo::Client.new(connection)
+          else
+            raise ArgumentError,
+              "Expected #{connection} to be either a Mongo instance, "\
+              'Mongo connection Hash, or Mongo connection URL String. '\
+              "Received #{connection.class} instead."
           end
         end
       end

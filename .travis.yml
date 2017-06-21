@@ -5,7 +5,7 @@ rvm:
   - '2.1'
   - '2.2'
   - '2.3.0'
-  - '2.4.1'
+  - '2.4.0'
 
 script:
   - bundle exec rspec
@@ -13,9 +13,6 @@ script:
 
 services:
   - mongodb
-
-before_install:
-  - sleep 15
 
 install:
   - gem install bundler

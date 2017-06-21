@@ -30,8 +30,8 @@ RSpec.shared_examples 'importer with json-path option' do
 
     context 'with only jsonpath columns' do
       let(:columns)      { %w[value anomaly].map { |x| '$..data..'+x } }
-      let(:last_vector)  { 'anomaly'                                   }
-      let(:first_vector) { 'value'                                     }
+      let(:last_vector)  { 1                                           }
+      let(:first_vector) { 0                                           }
 
       it_behaves_like 'json importer'
     end
@@ -50,7 +50,7 @@ RSpec.shared_examples 'importer with json-path option' do
 
     context 'with both jsonpath columns and named columns' do
       let(:columns)       { %w[$..data..anomaly]    }
-      let(:first_vector)  { 'anomaly'               }
+      let(:first_vector)  { 0                       }
       let(:named_columns) { {Val: '$..data..value'} }
 
       it_behaves_like 'json importer'
@@ -62,8 +62,8 @@ RSpec.shared_examples 'importer with json-path option' do
     let(:nrows)        { 61                            }
     let(:ncols)        { 4                             }
     let(:last_index)   { 60                            }
-    let(:last_vector)  { 'runtime'                     }
-    let(:first_vector) { 'name'                        }
+    let(:last_vector)  { 3                             }
+    let(:first_vector) { 0                             }
 
     context 'with jsonpath columns' do
       let(:columns) do
@@ -92,7 +92,7 @@ RSpec.shared_examples 'importer with json-path option' do
     context 'with jsonpath columns' do
       let(:first_index)  { 0        }
       let(:last_vector)  { :Runtime }
-      let(:first_vector) { 'name'   }
+      let(:first_vector) { 0        }
       let(:columns) { %w[$.._embedded..episodes..name $.._embedded..episodes..season] }
       let(:named_columns) do
         {
@@ -111,8 +111,8 @@ RSpec.shared_examples 'importer with json-path option' do
     let(:ncols)        { 3                                 }
     let(:last_index)   { 3                                 }
     let(:first_index)  { 94                                }
-    let(:last_vector)  { 'mciNumber'                       }
-    let(:first_vector) { 'artist'                          }
+    let(:last_vector)  { 2                                 }
+    let(:first_vector) { 0                                 }
 
     context 'with jsonpath columns' do
       let(:columns) { %w[artist cmc mciNumber].map { |x| '$..LEA..cards..' + x } }
@@ -128,8 +128,8 @@ RSpec.shared_examples 'importer with json-path option' do
     let(:ncols)        { 2                                 }
     let(:last_index)   { 'IE'                              }
     let(:first_index)  { 'DE'                              }
-    let(:last_vector)  { 'periods'                         }
-    let(:first_vector) { 'name'                            }
+    let(:last_vector)  { 1                                 }
+    let(:first_vector) { 0                                 }
 
     context 'with jsonpath columns' do
       let(:columns) { %w[name periods].map { |x| '$..rates..'+x } }

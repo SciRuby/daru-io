@@ -1,9 +1,9 @@
-require 'daru'
+require 'daru/io/importers/base'
 
 module Daru
   module IO
     module Importers
-      class CSV
+      class CSV < Base
         # Imports a +Daru::DataFrame+ from a CSV file.
         #
         # @param path [String] Local / Remote path of CSV file, where the

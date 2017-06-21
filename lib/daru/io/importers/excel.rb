@@ -1,9 +1,9 @@
-require 'daru'
+require 'daru/io/importers/base'
 
 module Daru
   module IO
     module Importers
-      class Excel
+      class Excel < Base
         # Imports a +Daru::DataFrame+ from an Excel file.
         #
         # @param path [String] Path of Excel file, where the
@@ -49,6 +49,8 @@ module Daru
         end
 
         def call
+          optional_gem 'spreadsheet', '~> 1.1.1'
+
           book       = Spreadsheet.open @path
           worksheet  = book.worksheet @worksheet_id
           headers    = ArrayHelper.recode_repeated(worksheet.row(0)).map(&:to_sym)

@@ -1,9 +1,9 @@
-require 'daru'
+require 'daru/io/exporters/base'
 
 module Daru
   module IO
     module Exporters
-      class Excel
+      class Excel < Base
         # Exports +Daru::DataFrame+ to an Excel Spreadsheet.
         #
         # @param dataframe [Daru::DataFrame] A dataframe to export
@@ -25,7 +25,7 @@ module Daru
         #   yet. Implementing this feature will greatly allow the user to generate a
         #   Spreadsheet of their choice.
         def initialize(dataframe, path, **options)
-          @dataframe = dataframe
+          super(dataframe)
           @path      = path
           @options   = options
         end
@@ -37,6 +37,8 @@ module Daru
         #
         #   Signed off by @athityakumar on 03/06/2017 at 7:00PM
         def call
+          optional_gem 'spreadsheet', '~> 1.1.1'
+
           book  = Spreadsheet::Workbook.new
           sheet = book.create_worksheet
 
