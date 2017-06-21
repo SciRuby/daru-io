@@ -2,6 +2,7 @@ require 'daru'
 
 require 'daru/io/importers/util'
 require 'json'
+require 'redis'
 
 module Daru
   module IO
@@ -24,11 +25,8 @@ module Daru
         #   connection will be used.
         # @param match [String] A pattern to get matching keys.
         # @param count [Integer] Number of matching keys to be obtained.
-        # @param page [Integer] The page of keys to be fetched from the
-        #   paginated results of matching keys. Defaults to 0 (ie, First
-        #   page results). For the i-th page results, pass the argument
-        #   as i-1. When passed as a negative number, the whole pagination
-        #   is traversed and ALL matching keys are used.
+        # @param offset [Integer] An offset from which matching keys are to be
+        #   fetched from the paginated results of matching keys. Defaults to 1.
         #
         # @return A *Daru::DataFrame* imported from the given Redis connection
         #   and matching keys
@@ -46,11 +44,11 @@ module Daru
         #   df
         #
         #   #=> <Daru::DataFrame(4x2)>
-        #   #=>             name     age
-        #   #=>   10001  Tyrion      32
-        #   #=>   10002   Jamie      37
-        #   #=>   10003  Cersei      37
-        #   #=>   10004 Joffrey      19
+        #   #           name     age
+        #   # 10001  Tyrion      32
+        #   # 10002   Jamie      37
+        #   # 10003  Cersei      37
+        #   # 10004 Joffrey      19
         #
         # @example Importing with Redis configuration by specifying keys
         #   # Say, the Redis connection has this setup
@@ -65,9 +63,9 @@ module Daru
         #   df
         #
         #   #=> <Daru::DataFrame(2x2)>
-        #   #=>             name     age
-        #   #=>   10001  Tyrion      32
-        #   #=>   10002   Jamie      37
+        #   #           name     age
+        #   # 10001  Tyrion      32
+        #   # 10002   Jamie      37
         #
         # @example Importing with Redis instance without specifying keys
         #   # Say, the Redis connection has this setup
@@ -75,17 +73,17 @@ module Daru
         #   # Key "age"    => [32, 37, 37, 19]
         #   # Key "living" => [true, true, true, false]
         #
-        #   # Say `connection` is a Redis instance
+        #   connection = Redis.new({url: "redis://:[password]@[hostname]:[port]/[db]"})
         #   df         = Daru::DataFrame.from_redis(connection)
         #
         #   df
         #
         #   #=> <Daru::DataFrame(4x3)>
-        #   #=>           name     age  living
-        #   #=>      0  Tyrion      32    true
-        #   #=>      1   Jamie      37    true
-        #   #=>      2  Cersei      37    true
-        #   #=>      3 Joffrey      19   false
+        #   #         name     age  living
+        #   #    0  Tyrion      32    true
+        #   #    1   Jamie      37    true
+        #   #    2  Cersei      37    true
+        #   #    3 Joffrey      19   false
         #
         # @example Importing with Redis instance by specifying keys
         #   # Say, the Redis connection has this setup
@@ -93,78 +91,99 @@ module Daru
         #   # Key "age"    => [32, 37, 37, 19]
         #   # Key "living" => [true, true, true, false]
         #
-        #   # Say `connection` is a Redis instance
+        #   connection = Redis.new({url: "redis://:[password]@[hostname]:[port]/[db]"})
         #   df         = Daru::DataFrame.from_redis(connection, "name", "age")
         #
         #   df
         #
         #   #=> <Daru::DataFrame(4x2)>
-        #   #=>           name     age
-        #   #=>      0  Tyrion      32
-        #   #=>      1   Jamie      37
-        #   #=>      2  Cersei      37
-        #   #=>      3 Joffrey      19
+        #   #         name     age
+        #   #    0  Tyrion      32
+        #   #    1   Jamie      37
+        #   #    2  Cersei      37
+        #   #    3 Joffrey      19
         #
-        # @example Querying for matching keys with count
+        # @example Querying for matching keys with count and offset
         #   # Say, the Redis connection has this setup
-        #   # Key "timestamp:100620171225" => { "name" => "Joffrey", "age" => 19 }.to_json
-        #   # Key "timestamp:090620171222" => { "name" => "Cersei",  "age" => 37 }.to_json
-        #   # Key "timestamp:090620171218" => { "name" => "Jamie",   "age" => 37 }.to_json
-        #   # Key "timestamp:090620171216" => { "name" => "Tyrion",  "age" => 32 }.to_json
+        #   # Key "key:1" => { "name" => "name1", "age" => "age1" }.to_json
+        #   # Key "key:2" => { "name" => "name2", "age" => "age2" }.to_json
+        #   # Key "key:3" => { "name" => "name3", "age" => "age3" }.to_json
+        #   # ...
+        #   # Key "key:2000" => { "name" => "name2000", "age" => "age2000" }.to_json
         #
-        #   # Say `connection` is a Redis instance
-        #   df = Daru::DataFrame.from_redis(connection, match: "timestamp:09*", count: 3)
+        #   connection = {url: "redis://:[password]@[hostname]:[port]/[db]"}
+        #   Daru::DataFrame.from_redis(connection, match: "key:1*")
         #
-        #   df
+        #   #=> #<Daru::DataFrame(1111x2)>
+        #   #              name      age
+        #   # key:1045 name1045  age1045
+        #   # key:1919 name1919  age1919
+        #   # key:1155 name1155  age1155
+        #   # key:1649 name1649  age1649
+        #   #      ...      ...      ...
         #
-        #   #=> <Daru::DataFrame(3x2)>
-        #   #=>                               name     age
-        #   #=>      timestamp:090620171222  Cersei      37
-        #   #=>      timestamp:090620171218   Jamie      37
-        #   #=>      timestamp:090620171216  Tyrion      32
+        #   Daru::DataFrame.from_redis({}, match: "key:1*", offset: 400, count: 200)
+        #
+        #   #=> #<Daru::DataFrame(200x2)>
+        #   #              name      age
+        #   # key:1927 name1927  age1927
+        #   # key:1759 name1759  age1759
+        #   # key:1703 name1703  age1703
+        #   # key:1640 name1640  age1640
+        #   #   ...        ...      ...
+        #
+        #   Daru::DataFrame.from_redis({}, match: "key:1*", offset: 1100, count: 200)
+        #   #=> #<Daru::DataFrame(12x2)>
+        #   #              name      age
+        #   # key:1084 name1084  age1084
+        #   # key:1195 name1195  age1195
+        #   # key:1250 name1250  age1250
+        #   # key:1303 name1303  age1303
+        #   # key:1341 name1341  age1341
+        #   #   ...        ...      ...
         def initialize(connection={}, *keys, match: nil, count: nil,
-          page: 0)
+          offset: 1)
           @match  = match
           @count  = count
-          @page   = page
+          @offset = offset-1
           @client = get_client(connection)
           @keys   = choose_keys(*keys).map(&:to_sym)
         end
 
         def call
           vals = @keys.map { |key| ::JSON.parse(@client.get(key), symbolize_names: true) }
-          Util.guess_parse @keys, vals
+          Util.guess_parse(@keys, vals)
         end
 
         private
 
         def choose_keys(*keys)
           if keys.count.zero?
-            cursor = 0
-            page   = 0
-            cursor, keys = @client.scan(cursor, match: @match, count: @count)
-            return keys.uniq if @page.zero?
+            cursor = nil
 
-            # Loop to iterate through paginated results of Redis#scan
-            # If @pages < 0 or @pages > total_pages, fetch ALL keys.
-            # Else, fetch the particular page of keys.
-            until cursor.to_i.zero?
+            # Loop to iterate through paginated results of Redis#scan.
+            until cursor == '0'
               response = @client.scan(cursor, match: @match, count: @count)
-              return response.last.uniq if @page == (page+=1)
-              cursor = response.first.to_i
-              keys  += response.last
+              cursor, chunk = response
+              keys.concat(chunk).uniq!
+              return keys[@offset..@offset+@count-1] unless @count.nil? || keys.count < (@offset+@count)
             end
-            keys.uniq
+            keys[@offset..-1]
           else
             keys.to_a
           end
         end
 
         def get_client(connection)
-          if connection.is_a? ::Redis
+          case connection
+          when ::Redis
             connection
-          elsif connection.is_a? Hash
+          when Hash
             ::Redis.new connection
+          else
+            raise ArgumentError, "Expected '#{connection}' to be either "\
+                                 'a Hash or an initialized Redis instance, '\
+                                 "but received #{connection.class} instead."
           end
         end
       end

@@ -20,19 +20,18 @@ RSpec::Matchers.define :unordered_dataframe do |expected|
   end
 end
 
-RSpec.shared_examples 'redis importer' do |use_nrows=true|
+RSpec.shared_examples 'redis importer' do
   it_behaves_like 'daru dataframe'
-  its(:data)    { is_expected.to unordered_dataframe(expected_data)   }
-  its(:ncols)   { is_expected.to eq(ncols)                            }
-  its(:index)   { is_expected.to belong_to(expected_index)            }
-  its(:vectors) { is_expected.to belong_to(expected_vectors)          }
-
-  its(:nrows) { is_expected.to eq(nrows) } if use_nrows
+  its(:data)    { is_expected.to unordered_dataframe(expected_data) }
+  its(:ncols)   { is_expected.to eq(ncols)                          }
+  its(:nrows)   { is_expected.to eq(nrows)                          }
+  its(:index)   { is_expected.to belong_to(expected_index)          }
+  its(:vectors) { is_expected.to belong_to(expected_vectors)        }
 end
 
 RSpec.describe Daru::IO::Importers::Redis do
   let(:keys)             { []                    }
-  let(:page)             { 0                     }
+  let(:offset)           { 1                     }
   let(:count)            { nil                   }
   let(:pattern)          { nil                   }
   let(:connection)       { Redis.new(port: 6379) }
@@ -40,7 +39,7 @@ RSpec.describe Daru::IO::Importers::Redis do
   let(:expected_index)   { (0..3)                }
   let(:expected_vectors) { %i[name age]          }
 
-  subject { described_class.new(connection, *keys, match: pattern, count: count, page: page).call }
+  subject { described_class.new(connection, *keys, match: pattern, count: count, offset: offset).call }
 
   before { index.each_with_index { |k,i| store(k, data[i]) } }
 
@@ -170,20 +169,20 @@ RSpec.describe Daru::IO::Importers::Redis do
     let(:expected_index)   { index.keep_if { |x| x.to_s.start_with? 'key1' }  }
     let(:expected_vectors) { %i[a b]                                          }
 
-    context 'parses only 1st page by default' do
-      it_behaves_like 'redis importer', false
-      its(:nrows) { is_expected.to be_within(100).of(300) }
+    context 'parses only 1st offset by default' do
+      let(:nrows) { 400 }
+
+      it_behaves_like 'redis importer'
     end
 
-    context 'parses only 2nd page' do
-      let(:page) { 1 }
-
-      it_behaves_like 'redis importer', false
-      its(:nrows) { is_expected.to be_within(100).of(300) }
+    context 'parses only 2nd offset' do
+      let(:offset) { 801 }
+      let(:nrows)  { 311 }
+      it_behaves_like 'redis importer'
     end
 
     context 'parses entire pagination' do
-      let(:page)  { -1   }
+      let(:count) { nil }
       let(:nrows) { 1111 }
 
       it_behaves_like 'redis importer'
