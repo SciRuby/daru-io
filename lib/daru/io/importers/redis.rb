@@ -142,10 +142,10 @@ module Daru
         #   # key:1341 name1341  age1341
         #   #   ...        ...      ...
         def initialize(connection={}, *keys, match: nil, count: nil,
-          offset: 1)
+          offset: 0)
           @match  = match
           @count  = count
-          @offset = offset-1
+          @offset = offset
           @client = get_client(connection)
           @keys   = choose_keys(*keys).map(&:to_sym)
         end
@@ -158,20 +158,16 @@ module Daru
         private
 
         def choose_keys(*keys)
-          if keys.count.zero?
-            cursor = nil
+          return keys.to_a unless keys.empty?
 
-            # Loop to iterate through paginated results of Redis#scan.
-            until cursor == '0'
-              response = @client.scan(cursor, match: @match, count: @count)
-              cursor, chunk = response
-              keys.concat(chunk).uniq!
-              return keys[@offset..@offset+@count-1] unless @count.nil? || keys.count < (@offset+@count)
-            end
-            keys[@offset..-1]
-          else
-            keys.to_a
+          cursor = nil
+          # Loop to iterate through paginated results of Redis#scan.
+          until cursor == '0' || (!@count.nil? && keys.count > (@offset+@count-1))
+            cursor, chunk = @client.scan(cursor, match: @match, count: @count)
+            keys.concat(chunk).uniq!
           end
+          return keys[@offset..-1] if @count.nil?
+          keys[@offset..@offset+@count-1]
         end
 
         def get_client(connection)

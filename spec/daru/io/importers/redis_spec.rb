@@ -31,7 +31,7 @@ end
 
 RSpec.describe Daru::IO::Importers::Redis do
   let(:keys)             { []                    }
-  let(:offset)           { 1                     }
+  let(:offset)           { 0                     }
   let(:count)            { nil                   }
   let(:pattern)          { nil                   }
   let(:connection)       { Redis.new(port: 6379) }
@@ -176,7 +176,7 @@ RSpec.describe Daru::IO::Importers::Redis do
     end
 
     context 'parses only 2nd offset' do
-      let(:offset) { 801 }
+      let(:offset) { 800 }
       let(:nrows)  { 311 }
       it_behaves_like 'redis importer'
     end
