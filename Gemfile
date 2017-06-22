@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 gemspec
 
-group :test do
+group :optional do
   gem 'activerecord', '~> 4.0'
   gem 'dbd-sqlite3'
   gem 'dbi'

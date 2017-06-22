@@ -4,17 +4,21 @@ SimpleCov.start do
   # minimum_coverage_by_file 95
 end
 
-require 'bundler/setup'
-Bundler.require(:test)
-
 require 'rspec'
 require 'rspec/its'
 require 'webmock/rspec'
+
 require 'tempfile'
+require 'open-uri'
+
+require 'dbd/SQLite3'
 require 'active_record'
-require 'sqlite3'
 require 'dbi'
-require 'dbd/sqlite3'
+require 'jsonpath'
+require 'mechanize'
+require 'mongo'
+require 'spreadsheet'
+require 'sqlite3'
 
 require 'daru/io'
 

@@ -2,7 +2,7 @@ RSpec.shared_context 'sqlite3 database setup' do
   module Daru
     module IO
       module Rspec
-        class Account < ::ActiveRecord::Base
+        class Account < ActiveRecord::Base
           self.table_name = 'accounts'
         end
       end

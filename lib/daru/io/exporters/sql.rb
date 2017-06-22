@@ -31,7 +31,7 @@ module Daru
         end
 
         def call
-          optional_gem 'dbd-sqlite3', requires: 'dbd/sqlite3'
+          optional_gem 'dbd-sqlite3', requires: 'dbd/SQLite3'
           optional_gem 'dbi'
           optional_gem 'sqlite3'
 

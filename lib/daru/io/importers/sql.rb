@@ -41,8 +41,8 @@ module Daru
         end
 
         def call
+          optional_gem 'dbd-sqlite3', requires: 'dbd/SQLite3'
           optional_gem 'activerecord', '~> 4.0', requires: 'active_record'
-          optional_gem 'dbd-sqlite3', requires: 'dbd/sqlite3'
           optional_gem 'dbi'
           optional_gem 'sqlite3'
 
