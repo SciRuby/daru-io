@@ -100,25 +100,18 @@ module Daru
           **named_columns)
           @connection    = connection
           @collection    = collection.to_sym
-          @columns       = columns
-          @order         = order
-          @index         = index
-          @named_columns = named_columns
+          @json_input    = []
+
+          super(@json_input, *columns, order: order, index: index, **named_columns)
         end
 
         def call
           optional_gem 'mongo'
 
-          client    = get_client(@connection)
-          documents = client[@collection].find.to_json
+          client      = get_client(@connection)
+          @json_input = client[@collection].find.to_json
 
-          JSON.new(
-            documents,
-            *@columns,
-            order: @order,
-            index: @index,
-            **@named_columns
-          ).call
+          super
         end
 
         private

@@ -9,7 +9,7 @@ module Daru
       class JSON < Base
         # Imports a +Daru::DataFrame+ from a JSON file or response.
         #
-        # @param input [String or JSON response] Either the path to local /
+        # @param json_input [String or JSON response] Either the path to local /
         #   remote JSON file, or JSON response (which can be a
         #   nested +Hash+ or +Array of Hashes+) from any API.
         #
@@ -62,8 +62,9 @@ module Daru
         #   #   11 The Kingsr          1          2         60
         #   #   12  Lord Snow          1          3         60
         #   #  ...        ...        ...        ...        ...
-        def initialize(input, *columns, order: nil, index: nil, **named_columns)
-          @input         = input
+        def initialize(json_input, *columns, order: nil, index: nil,
+          **named_columns)
+          @json_input    = json_input
           @columns       = columns
           @order         = order
           @index         = index
@@ -91,9 +92,9 @@ module Daru
         private
 
         def read_json
-          return @input unless @input.is_a?(String)
-          return ::JSON.parse(@input) unless @input.start_with?('http') || @input.end_with?('.json')
-          ::JSON.parse(open(@input).read)
+          return @json_input unless @json_input.is_a?(String)
+          return ::JSON.parse(@json_input) unless @json_input.start_with?('http') || @json_input.end_with?('.json')
+          ::JSON.parse(open(@json_input).read)
         end
 
         def at_jsonpath(jsonpath)
