@@ -4,6 +4,8 @@ module Daru
   module IO
     module Importers
       class Plaintext < Base
+        Daru::DataFrame.register_io_module :from_plaintext, self
+
         # Imports a +Daru::DataFrame+ from a plaintext file.
         #
         # @param path [String] Path of the input plaintext file
@@ -84,6 +86,3 @@ module Daru
     end
   end
 end
-
-require 'daru/io/link'
-Daru::DataFrame.register_io_module :from_plaintext, Daru::IO::Importers::Plaintext

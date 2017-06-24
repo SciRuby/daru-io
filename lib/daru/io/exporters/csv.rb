@@ -4,6 +4,8 @@ module Daru
   module IO
     module Exporters
       class CSV < Base
+        Daru::DataFrame.register_io_module :to_csv, self
+
         # Exports +Daru::DataFrame+ to a CSV file.
         #
         # @param dataframe [Daru::DataFrame] A dataframe to export
@@ -37,6 +39,8 @@ module Daru
         #   Daru::IO::Exporters::CSV.new(df, "filename.csv", convert_comma: true).call
         def initialize(dataframe, path, converters: :numeric, headers: nil,
           convert_comma: nil, **options)
+          require 'csv'
+
           super(dataframe)
           @path          = path
           @headers       = headers
@@ -62,6 +66,3 @@ module Daru
     end
   end
 end
-
-require 'daru/io/link'
-Daru::DataFrame.register_io_module :to_csv, Daru::IO::Exporters::CSV

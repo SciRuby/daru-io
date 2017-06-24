@@ -3,15 +3,14 @@ require 'daru/io/base'
 module Daru
   module IO
     module Exporters
-      class Base < Base
+      class Base < Daru::IO::Base
         def initialize(dataframe)
-          if dataframe.is_a?(Daru::DataFrame)
-            @dataframe = dataframe
-          else
+          unless dataframe.is_a?(Daru::DataFrame)
             raise ArgumentError,
               'Expected first argument to be a Daru::DataFrame, '\
-              "received #{dataframe.class} instead."
+              "received #{dataframe.class} instead."\
           end
+          @dataframe = dataframe
         end
       end
     end

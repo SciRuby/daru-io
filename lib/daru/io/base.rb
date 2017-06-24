@@ -1,9 +1,11 @@
 require 'daru'
+require 'daru/io/link'
 
 module Daru
   module IO
     class Base
-      def optional_gem(dependency, version=nil, requires: nil)
+      def optional_gem(dependency, version=nil, requires: nil,
+        callback: self.class.name)
         gem dependency, version
         require requires || dependency
       rescue LoadError
@@ -14,8 +16,8 @@ module Daru
             "gem install #{dependency} -v '#{version}'"
           end
         raise LoadError,
-          "Please install the #{dependency} gem #{version} version, "\
-          "with #{statement} to use the required daru-io Importer / Exporter."
+          "Please install the #{dependency} gem #{version} version, with "\
+          "#{statement} to use the #{callback} module."
       end
     end
   end

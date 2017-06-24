@@ -1,12 +1,11 @@
 require 'daru/io/importers/base'
 
-require 'json'
-require 'open-uri'
-
 module Daru
   module IO
     module Importers
       class JSON < Base
+        Daru::DataFrame.register_io_module :from_json, self
+
         # Imports a +Daru::DataFrame+ from a JSON file or response.
         #
         # @param json_input [String or JSON response] Either the path to local /
@@ -64,22 +63,24 @@ module Daru
         #   #  ...        ...        ...        ...        ...
         def initialize(json_input, *columns, order: nil, index: nil,
           **named_columns)
+          unless @order.nil? || @named_columns.empty?
+            raise ArgumentError,
+              'Do not pass on order and named columns together, at the same '\
+              'function call. Please use only order or only named_columns.'\
+          end
+
+          require 'open-uri'
+          optional_gem 'json'
+          optional_gem 'jsonpath'
+
           @json_input    = json_input
           @columns       = columns
           @order         = order
           @index         = index
           @named_columns = named_columns
-
-          return if @order.nil? || @named_columns.empty?
-
-          raise ArgumentError,
-            'Do not pass on order and named columns together, at the same '\
-            'function call. Please use either only order or only named_columns.'
         end
 
         def call
-          optional_gem 'jsonpath'
-
           @json    = read_json
           @data    = fetch_data
           @index   = at_jsonpath(@index)
@@ -114,6 +115,3 @@ module Daru
     end
   end
 end
-
-require 'daru/io/link'
-Daru::DataFrame.register_io_module :from_json, Daru::IO::Importers::JSON

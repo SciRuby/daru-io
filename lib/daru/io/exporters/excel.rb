@@ -4,6 +4,8 @@ module Daru
   module IO
     module Exporters
       class Excel < Base
+        Daru::DataFrame.register_io_module :to_excel, self
+
         # Exports +Daru::DataFrame+ to an Excel Spreadsheet.
         #
         # @param dataframe [Daru::DataFrame] A dataframe to export
@@ -25,6 +27,8 @@ module Daru
         #   yet. Implementing this feature will greatly allow the user to generate a
         #   Spreadsheet of their choice.
         def initialize(dataframe, path, **options)
+          optional_gem 'spreadsheet', '~> 1.1.1'
+
           super(dataframe)
           @path      = path
           @options   = options
@@ -37,8 +41,6 @@ module Daru
         #
         #   Signed off by @athityakumar on 03/06/2017 at 7:00PM
         def call
-          optional_gem 'spreadsheet', '~> 1.1.1'
-
           book  = Spreadsheet::Workbook.new
           sheet = book.create_worksheet
 
@@ -54,6 +56,3 @@ module Daru
     end
   end
 end
-
-require 'daru/io/link'
-Daru::DataFrame.register_io_module :to_excel, Daru::IO::Exporters::Excel

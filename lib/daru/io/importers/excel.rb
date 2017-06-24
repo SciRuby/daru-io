@@ -4,6 +4,8 @@ module Daru
   module IO
     module Importers
       class Excel < Base
+        Daru::DataFrame.register_io_module :from_excel, self
+
         # Imports a +Daru::DataFrame+ from an Excel file.
         #
         # @param path [String] Path of Excel file, where the
@@ -44,13 +46,13 @@ module Daru
         #   #    4        5   George      5.5     Tome    a,b,c
         #   #    5        6  Fernand      nil      nil      nil
         def initialize(path, worksheet_id: 0)
+          optional_gem 'spreadsheet', '~> 1.1.1'
+
           @path         = path
           @worksheet_id = worksheet_id
         end
 
         def call
-          optional_gem 'spreadsheet', '~> 1.1.1'
-
           book       = Spreadsheet.open @path
           worksheet  = book.worksheet @worksheet_id
           headers    = ArrayHelper.recode_repeated(worksheet.row(0)).map(&:to_sym)
@@ -68,6 +70,3 @@ module Daru
     end
   end
 end
-
-require 'daru/io/link'
-Daru::DataFrame.register_io_module :from_excel, Daru::IO::Importers::Excel

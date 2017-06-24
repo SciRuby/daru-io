@@ -4,16 +4,6 @@ RSpec.shared_examples 'html importer' do |symbol|
 end
 
 RSpec.describe Daru::IO::Importers::HTML do
-  context 'raises error when mechanize gem is not installed' do
-    let(:error_msg) do
-      'Install the mechanize gem version 2.7.5 with `gem install mechanize`,'\
-      ' for using the from_html function.'
-    end
-    subject { -> { described_class.new('').raise_error } }
-
-    it { is_expected.to raise_error(error_msg) }
-  end
-
   subject { described_class.new(path, opts).call }
 
   context 'in wiki info table' do

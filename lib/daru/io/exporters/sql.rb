@@ -4,6 +4,8 @@ module Daru
   module IO
     module Exporters
       class SQL < Base
+        Daru::DataFrame.register_io_module :to_sql, self
+
         # Exports +Daru::DataFrame+ to an SQL table.
         #
         # @param dataframe [Daru::DataFrame] A dataframe to export.
@@ -25,16 +27,16 @@ module Daru
         #
         #   Daru::IO::Exporters::SQL.new(df, dbh, table).call
         def initialize(dataframe, dbh, table)
+          optional_gem 'dbd-sqlite3', requires: 'dbd/SQLite3'
+          optional_gem 'dbi'
+          optional_gem 'sqlite3'
+
           super(dataframe)
           @dbh       = dbh
           @table     = table
         end
 
         def call
-          optional_gem 'dbd-sqlite3', requires: 'dbd/SQLite3'
-          optional_gem 'dbi'
-          optional_gem 'sqlite3'
-
           query = "INSERT INTO #{@table} (#{@dataframe.vectors.to_a.join(',')}"\
                   ") VALUES (#{(['?']*@dataframe.vectors.size).join(',')})"
           sth   = @dbh.prepare(query)
@@ -45,6 +47,3 @@ module Daru
     end
   end
 end
-
-require 'daru/io/link'
-Daru::DataFrame.register_io_module :to_sql, Daru::IO::Exporters::SQL

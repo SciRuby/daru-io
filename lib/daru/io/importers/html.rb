@@ -4,6 +4,8 @@ module Daru
   module IO
     module Importers
       class HTML < Base
+        Daru::DataFrame.register_io_module :from_html, self
+
         # Imports a list of +Daru::DataFrame+ s from a HTML file or website.
         #
         # @param path [String] Website URL / path to HTML file, where the
@@ -55,27 +57,21 @@ module Daru
         #   HTML page, and won't work in cases where the data is being loaded into
         #   the HTML table by inline Javascript.
         def initialize(path, match: nil, order: nil, index: nil, name: nil)
+          optional_gem 'mechanize'
+
           @path  = path
           @match = match
           @options = {name: name, order: order, index: index}
         end
 
         def call
-          optional_gem 'mechanize'
-
           page = Mechanize.new.get(@path)
-          page.search('table').map { |table| parse_table table }
-              .keep_if { |table| search table }
-              .compact
-              .map { |table| decide_values table, @options }
-              .map { |table| table_to_dataframe table }
-        rescue LoadError
-          raise_error
-        end
-
-        def raise_error
-          raise 'Install the mechanize gem version 2.7.5 with '\
-                '`gem install mechanize`, for using the from_html function.'
+          page
+            .search('table').map { |table| parse_table table }
+            .keep_if { |table| search table }
+            .compact
+            .map { |table| decide_values table, @options }
+            .map { |table| table_to_dataframe table }
         end
 
         private
@@ -130,6 +126,3 @@ module Daru
     end
   end
 end
-
-require 'daru/io/link'
-Daru::DataFrame.register_io_module :from_html, Daru::IO::Importers::HTML

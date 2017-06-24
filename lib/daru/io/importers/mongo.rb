@@ -4,6 +4,8 @@ module Daru
   module IO
     module Importers
       class Mongo < JSON
+        Daru::DataFrame.register_io_module :from_mongo, self
+
         # Imports a +Daru::DataFrame+ from a Mongo collection.
         #
         # @param connection [String or Hash or Mongo::Client] Contains details
@@ -17,6 +19,12 @@ module Daru
         #   provide both +order+ and +named_columns+ at the same time.
         # @param index [String or Array] Either a JSON-path selector string, or
         #   an array containing the order of the +Daru::DataFrame+.
+        # @param filter [Hash] Filters and chooses Mongo documents that match
+        #   the given +filter+ from the collection.
+        # @param limit [Interger] Limits the number of Mongo documents to be
+        #   parsed from the collection.
+        # @param skip [Integer] Skips +skip+ number of documents from the Mongo
+        #   collection.
         # @param named_columns [Hash] JSON-path selectors to select specific
         #   fields from the JSON input. DO NOT provide both +order+ and
         #   +named_columns+ at the same time.
@@ -97,20 +105,21 @@ module Daru
         #   # 1 5948d42850   Mercedes    57127.0        9.3        8.9
         #   # 2 5948d44350      Volvo    29000.0        7.8        9.9
         def initialize(connection, collection, *columns, order: nil, index: nil,
-          **named_columns)
-          @connection    = connection
-          @collection    = collection.to_sym
-          @json_input    = []
+          filter: nil, limit: nil, skip: nil, **named_columns)
+          optional_gem 'mongo'
 
-          super(@json_input, *columns, order: order, index: index, **named_columns)
+          super([], *columns, order: order, index: index, **named_columns)
+          @skip       = skip
+          @limit      = limit
+          @filter     = filter
+          @client     = get_client(connection)
+          @collection = collection.to_sym
         end
 
         def call
-          optional_gem 'mongo'
-
-          client      = get_client(@connection)
-          @json_input = client[@collection].find.to_json
-
+          @json_input = @client[@collection]
+                        .find(@filter, skip: @skip, limit: @limit)
+                        .to_json
           super
         end
 
@@ -136,6 +145,3 @@ module Daru
     end
   end
 end
-
-require 'daru/io/link'
-Daru::DataFrame.register_io_module :from_mongo, Daru::IO::Importers::Mongo
