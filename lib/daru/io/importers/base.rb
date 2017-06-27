@@ -3,7 +3,7 @@ require 'daru/io/base'
 module Daru
   module IO
     module Importers
-      class Base < Base
+      class Base < Daru::IO::Base
       end
     end
   end

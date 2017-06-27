@@ -4,9 +4,12 @@ SimpleCov.start do
   # minimum_coverage_by_file 95
 end
 
+require 'bundler/setup'
+
 require 'rspec'
 require 'rspec/its'
 require 'webmock/rspec'
+require 'saharspec/its_call'
 
 require 'tempfile'
 require 'open-uri'

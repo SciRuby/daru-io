@@ -1,7 +1,7 @@
 RSpec.describe Daru::IO::Importers::SQL do
   include_context 'sqlite3 database setup'
 
-  subject(:df) { described_class.new(source, query).call }
+  subject { described_class.new(source, query).call }
 
   let(:query)  { 'select * from accounts'         }
   let(:source) { ActiveRecord::Base.connection    }
@@ -62,21 +62,10 @@ RSpec.describe Daru::IO::Importers::SQL do
       data: [[20, 30],[1,2],%w[Homer Marge]]
   end
 
-  context 'with an object not a string as a query' do
-    let(:query) { Object.new }
-
-    it { expect { df }.to raise_error(ArgumentError) }
-  end
-
-  context 'with an object not a database connection' do
-    let(:source) { Object.new }
-
-    it { expect { df }.to raise_error(ArgumentError) }
-  end
-
-  context 'with path to unsupported db file' do
+  context 'raises error for invalid arguments' do # rubocop:disable RSpec/EmptyExampleGroup
+    let(:query)  { Object.new                          }
     let(:source) { 'spec/fixtures/plaintext/bank2.dat' }
 
-    it { expect { df }.to raise_error(ArgumentError) }
+    its_call { is_expected.to raise_error(ArgumentError) }
   end
 end

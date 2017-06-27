@@ -11,3 +11,5 @@ group :optional do
   gem 'spreadsheet', '~> 1.1.1'
   gem 'sqlite3'
 end
+
+gem 'saharspec', git: 'https://github.com/zverok/saharspec.git'

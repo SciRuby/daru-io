@@ -56,4 +56,10 @@ RSpec.describe Daru::IO::Importers::JSON do
       nrows: 202,
       order: %w[designation discovery_date h_mag i_deg moid_au orbit_class period_yr pha q_au_1 q_au_2]
   end
+
+  context 'raises error for invalid argument' do # rubocop:disable RSpec/EmptyExampleGroup
+    let(:path) { Object.new }
+
+    its_call { is_expected.to raise_error(ArgumentError) }
+  end
 end
