@@ -4,8 +4,6 @@ RSpec.describe Daru::IO::Importers::SQL do
   subject(:df) { described_class.new(source, query).call }
 
   let(:query)  { 'select * from accounts'         }
-  let(:order)  { %i[age id name]                  }
-  let(:data)   { [[20, 30],[1,2],%w[Homer Marge]] }
   let(:source) { ActiveRecord::Base.connection    }
 
   context 'with a database handler of DBI' do
@@ -13,7 +11,11 @@ RSpec.describe Daru::IO::Importers::SQL do
 
     let(:db) { DBI.connect("DBI:SQLite3:#{db_name}") }
 
-    it_behaves_like 'sql activerecord importer'
+    it_behaves_like 'exact daru dataframe',
+      ncols: 3,
+      nrows: 2,
+      order: %i[age id name],
+      data: [[20, 30],[1,2],%w[Homer Marge]]
   end
 
   context 'with a database connection of ActiveRecord' do
@@ -23,7 +25,11 @@ RSpec.describe Daru::IO::Importers::SQL do
 
     before { Daru::IO::Rspec::Account.establish_connection "sqlite3:#{db_name}" }
 
-    it_behaves_like 'sql activerecord importer'
+    it_behaves_like 'exact daru dataframe',
+      ncols: 3,
+      nrows: 2,
+      order: %i[age id name],
+      data: [[20, 30],[1,2],%w[Homer Marge]]
   end
 
   before { ActiveRecord::Base.establish_connection("sqlite3:#{db_name}") }
@@ -31,17 +37,29 @@ RSpec.describe Daru::IO::Importers::SQL do
   context 'with DBI::DatabaseHandle' do
     let(:source) { DBI.connect("DBI:SQLite3:#{db_name}") }
 
-    it_behaves_like 'sql helper importer'
+    it_behaves_like 'exact daru dataframe',
+      ncols: 3,
+      nrows: 2,
+      order: %i[age id name],
+      data: [[20, 30],[1,2],%w[Homer Marge]]
   end
 
   context 'with ActiveRecord::Connection' do
-    it_behaves_like 'sql helper importer'
+    it_behaves_like 'exact daru dataframe',
+      ncols: 3,
+      nrows: 2,
+      order: %i[age id name],
+      data: [[20, 30],[1,2],%w[Homer Marge]]
   end
 
   context 'with path to sqlite3 file' do
     let(:source) { db_name }
 
-    it_behaves_like 'sql helper importer'
+    it_behaves_like 'exact daru dataframe',
+      ncols: 3,
+      nrows: 2,
+      order: %i[age id name],
+      data: [[20, 30],[1,2],%w[Homer Marge]]
   end
 
   context 'with an object not a string as a query' do

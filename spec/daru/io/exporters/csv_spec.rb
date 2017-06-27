@@ -13,8 +13,16 @@ RSpec.describe Daru::IO::Exporters::CSV do
     let(:opts) { {} }
     let(:content) { CSV.read(tempfile.path) }
 
-    it_behaves_like 'daru dataframe'
-    it { is_expected.to eq(df) }
+    it_behaves_like 'exact daru dataframe',
+      ncols: 4,
+      nrows: 5,
+      order: %w[a b c d],
+      data: [
+        [1,2,3,4,5],
+        [11,22,33,44,55],
+        ['a', 'g', 4, 5,'addadf'],
+        [nil, 23, 4,'a','ff']
+      ]
   end
 
   context 'writes headers unless headers=false' do
@@ -23,7 +31,7 @@ RSpec.describe Daru::IO::Exporters::CSV do
   end
 
   context 'does not write headers when headers=false' do
-    let(:headers) { false }
+    let(:headers) { false              }
     let(:opts)    { {headers: headers} }
 
     it { is_expected.to be_an(Array) }

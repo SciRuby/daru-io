@@ -17,6 +17,7 @@ require 'active_record'
 
 require_relative 'shared_contexts'
 require_relative 'shared_examples'
+require_relative 'custom_matchers'
 
 RSpec::Expectations.configuration.warn_about_potential_false_positives = false
 
