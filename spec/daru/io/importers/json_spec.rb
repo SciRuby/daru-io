@@ -58,8 +58,17 @@ RSpec.describe Daru::IO::Importers::JSON do
   end
 
   context 'raises error for invalid argument' do # rubocop:disable RSpec/EmptyExampleGroup
-    let(:path) { Object.new }
+    context 'json input is invalid' do # rubocop:disable RSpec/EmptyExampleGroup
+      let(:path) { Object.new }
 
-    its_call { is_expected.to raise_error(ArgumentError) }
+      its_call { is_expected.to raise_error(ArgumentError) }
+    end
+
+    context 'json input is invalid' do # rubocop:disable RSpec/EmptyExampleGroup
+      let(:order)         { %i[a b] }
+      let(:named_columns) { {x: 1, y: 2} }
+
+      its_call { is_expected.to raise_error(ArgumentError) }
+    end
   end
 end
