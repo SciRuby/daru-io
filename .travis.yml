@@ -16,6 +16,7 @@ services:
 
 before_install:
   - redis-server --daemonize yes
+  - mongodb
 
 install:
   - gem install bundler

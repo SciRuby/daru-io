@@ -1,3 +1,8 @@
+RSpec.shared_examples 'csv importer' do
+  it_behaves_like 'daru dataframe'
+  its('vectors.to_a') { is_expected.to eq(order) }
+end
+
 RSpec.describe Daru::IO::Importers::CSV do
   before do
     %w[matrix_test repeated_fields scientific_notation sales-funnel].each do |file|

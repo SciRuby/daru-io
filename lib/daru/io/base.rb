@@ -1,15 +1,23 @@
+require 'daru'
+require 'daru/io/link'
+
 module Daru
   module IO
     class Base
-      def initialize(binding)
-        args = method(__method__).parameters.map do |_, name|
-          [name, binding.local_variable_get(name.to_s)]
-        end.to_h
-
-        args.each do |k, v|
-          instance_variable_set("@#{k}", v)
-          define_singleton_method(k) { instance_variable_get("@#{k}") }
-        end
+      def optional_gem(dependency, version=nil, requires: nil,
+        callback: self.class.name)
+        gem dependency, version
+        require requires || dependency
+      rescue LoadError
+        statement =
+          if version.nil?
+            "gem install #{dependency}"
+          else
+            "gem install #{dependency} -v '#{version}'"
+          end
+        raise LoadError,
+          "Please install the #{dependency} gem #{version} version, with "\
+          "#{statement} to use the #{callback} module."
       end
     end
   end
