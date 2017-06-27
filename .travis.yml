@@ -13,10 +13,10 @@ script:
 
 services:
   - redis-server
+  - mongodb
 
 before_install:
   - redis-server --daemonize yes
-  - mongodb
 
 install:
   - gem install bundler
