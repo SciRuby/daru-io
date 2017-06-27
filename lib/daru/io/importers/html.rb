@@ -1,10 +1,11 @@
-require 'daru'
-require 'daru/io/base'
+require 'daru/io/importers/base'
 
 module Daru
   module IO
     module Importers
       class HTML < Base
+        Daru::DataFrame.register_io_module :from_html, self
+
         # Imports a list of +Daru::DataFrame+ s from a HTML file or website.
         #
         # @param path [String] Website URL / path to HTML file, where the
@@ -43,12 +44,12 @@ module Daru
         #   # should be obtained (as long as 'Sun Pharma' is there on the website).
         #
         #   #=> <Daru::DataFrame(5x4)>
-        #   #=>          Company      Price     Change Value (Rs
-        #   #=>     0 Sun Pharma     502.60     -65.05   2,117.87
-        #   #=>     1   Reliance    1356.90      19.60     745.10
-        #   #=>     2 Tech Mahin     379.45     -49.70     650.22
-        #   #=>     3        ITC     315.85       6.75     621.12
-        #   #=>     4       HDFC    1598.85      50.95     553.91
+        #   #        Company      Price     Change Value (Rs
+        #   #   0 Sun Pharma     502.60     -65.05   2,117.87
+        #   #   1   Reliance    1356.90      19.60     745.10
+        #   #   2 Tech Mahin     379.45     -49.70     650.22
+        #   #   3        ITC     315.85       6.75     621.12
+        #   #   4       HDFC    1598.85      50.95     553.91
         #
         # @note
         #
@@ -56,25 +57,21 @@ module Daru
         #   HTML page, and won't work in cases where the data is being loaded into
         #   the HTML table by inline Javascript.
         def initialize(path, match: nil, order: nil, index: nil, name: nil)
-          super(binding)
-          @options = {name: @name, order: @order, index: @index}
+          optional_gem 'mechanize'
+
+          @path  = path
+          @match = match
+          @options = {name: name, order: order, index: index}
         end
 
         def call
-          require 'mechanize'
           page = Mechanize.new.get(@path)
-          page.search('table').map { |table| parse_table table }
-              .keep_if { |table| search table }
-              .compact
-              .map { |table| decide_values table, @options }
-              .map { |table| table_to_dataframe table }
-        rescue LoadError
-          raise_error
-        end
-
-        def raise_error
-          raise 'Install the mechanize gem version 2.7.5 with '\
-                '`gem install mechanize`, for using the from_html function.'
+          page
+            .search('table').map { |table| parse_table table }
+            .keep_if { |table| search table }
+            .compact
+            .map { |table| decide_values table, @options }
+            .map { |table| table_to_dataframe table }
         end
 
         private
@@ -129,6 +126,3 @@ module Daru
     end
   end
 end
-
-require 'daru/io/link'
-Daru::DataFrame.register_io_module :from_html, Daru::IO::Importers::HTML

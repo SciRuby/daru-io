@@ -1,10 +1,11 @@
-require 'daru'
-require 'daru/io/base'
+require 'daru/io/importers/base'
 
 module Daru
   module IO
     module Importers
       class CSV < Base
+        Daru::DataFrame.register_io_module :from_csv, self
+
         # Imports a +Daru::DataFrame+ from a CSV file.
         #
         # @param path [String] Local / Remote path of CSV file, where the
@@ -41,32 +42,36 @@ module Daru
         #   df = Daru::DataFrame.from_csv("matrix_test.csv", col_sep: ' ', headers: true)
         #
         #   #=> #<Daru::DataFrame(99x3)>
-        #   #=>           image_reso        mls true_trans
-        #   #=>         0    6.55779          0 -0.2362347
-        #   #=>         1    2.14746          0 -0.1539447
-        #   #=>         2    8.31104          0 0.3832846,
-        #   #=>         3    3.47872          0 0.3832846,
-        #   #=>         4    4.16725          0 -0.2362347
-        #   #=>         5    5.79983          0 -0.2362347
-        #   #=>         6     1.9058          0 -0.895577,
-        #   #=>         7     1.9058          0 -0.2362347
-        #   #=>         8    4.11806          0 -0.895577,
-        #   #=>         9    6.26622          0 -0.2362347
-        #   #=>        10    2.57805          0 -0.1539447
-        #   #=>        11    4.76151          0 -0.2362347
-        #   #=>        12    7.11002          0 -0.895577,
-        #   #=>        13    5.40811          0 -0.2362347
-        #   #=>        14    8.19567          0 -0.1539447
-        #   #=>       ...        ...        ...        ...
+        #   #        image_reso        mls true_trans
+        #   #      0    6.55779          0 -0.2362347
+        #   #      1    2.14746          0 -0.1539447
+        #   #      2    8.31104          0 0.3832846,
+        #   #      3    3.47872          0 0.3832846,
+        #   #      4    4.16725          0 -0.2362347
+        #   #      5    5.79983          0 -0.2362347
+        #   #      6     1.9058          0 -0.895577,
+        #   #      7     1.9058          0 -0.2362347
+        #   #      8    4.11806          0 -0.895577,
+        #   #      9    6.26622          0 -0.2362347
+        #   #     10    2.57805          0 -0.1539447
+        #   #     11    4.76151          0 -0.2362347
+        #   #     12    7.11002          0 -0.895577,
+        #   #     13    5.40811          0 -0.2362347
+        #   #     14    8.19567          0 -0.1539447
+        #   #    ...        ...        ...        ...
         def initialize(path, headers: nil, col_sep: ',', converters: :numeric,
           header_converters: :symbol, clone: nil, index: nil, order: nil,
           name: nil, **options)
-          super(binding)
-          @daru_options = {clone: @clone, index: @index, order: @order, name: @name}
-          @options      = @options.merge headers: @headers,
-                                         col_sep: @col_sep,
-                                         converters: @converters,
-                                         header_converters: @header_converters
+          require 'csv'
+          require 'open-uri'
+
+          @path         = path
+          @headers      = headers
+          @daru_options = {clone: clone, index: index, order: order, name: name}
+          @options      = options.merge headers: @headers,
+                                        col_sep: col_sep,
+                                        converters: converters,
+                                        header_converters: header_converters
         end
 
         def call
@@ -104,6 +109,3 @@ module Daru
     end
   end
 end
-
-require 'daru/io/link'
-Daru::DataFrame.register_io_module :from_csv, Daru::IO::Importers::CSV
