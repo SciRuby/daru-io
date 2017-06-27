@@ -6,7 +6,7 @@ AllCops:
     - 'benchmarks/*'
     - 'profile/*'
   DisplayCopNames: true
-  TargetRubyVersion: 2.0
+  TargetRubyVersion: 2.1
 
 # Preferred codebase style ---------------------------------------------
 Layout/ExtraSpacing:
@@ -33,6 +33,9 @@ Layout/AlignParameters:
 Style/EmptyElse:
   EnforcedStyle: empty
 
+Metrics/BlockLength:
+  Exclude:
+    - 'spec/**/*'
 Metrics/LineLength:
   Max: 120
 

@@ -3,17 +3,24 @@ SimpleCov.start do
   add_filter 'spec'
   # minimum_coverage_by_file 95
 end
+
 require 'rspec'
 require 'rspec/its'
 require 'webmock/rspec'
 
-require 'daru/io'
-
-require 'open-uri'
 require 'tempfile'
-require 'sqlite3'
-require 'dbi'
+require 'open-uri'
+
+require 'dbd/SQLite3'
 require 'active_record'
+require 'dbi'
+require 'jsonpath'
+require 'mechanize'
+require 'mongo'
+require 'spreadsheet'
+require 'sqlite3'
+
+require 'daru/io'
 
 require_relative 'shared_contexts'
 require_relative 'shared_examples'

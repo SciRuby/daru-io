@@ -1,4 +1,10 @@
-RSpec.describe Daru::IO::Importers::SQL do # rubocop:disable Metrics/BlockLength
+RSpec.shared_examples 'sql helper importer' do
+  it_behaves_like 'daru dataframe'
+  it          { expect(df.row[0]).to have_attributes(id: 1, age: 20) }
+  its(:nrows) { is_expected.to eq 2 }
+end
+
+RSpec.describe Daru::IO::Importers::SQL do
   include_context 'sqlite3 database setup'
   let(:query) { 'select * from accounts' }
   let(:order) { %i[age id name] }

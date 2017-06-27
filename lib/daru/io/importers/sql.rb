@@ -1,10 +1,11 @@
-require 'daru'
-require 'daru/io/base'
+require 'daru/io/importers/base'
 
 module Daru
   module IO
     module Importers
       class SQL < Base
+        Daru::DataFrame.register_io_module :from_sql, self
+
         # Imports a +Daru::DataFrame+ from a SQL query.
         #
         # @param dbh [DBI::DatabaseHandle or String] A DBI connection OR Path to a
@@ -21,9 +22,9 @@ module Daru
         #   df
         #
         #   #=> #<Daru::DataFrame(2x3)>
-        #   #=>        id  name   age
-        #   #=>   0     1 Homer    20
-        #   #=>   1     2 Marge    30
+        #   #      id  name   age
+        #   # 0     1 Homer    20
+        #   # 1     2 Marge    30
         #
         # @example Reading from a sqlite.db file
         #   require 'dbi'
@@ -33,11 +34,17 @@ module Daru
         #   df
         #
         #   #=> #<Daru::DataFrame(2x3)>
-        #   #=>        id  name   age
-        #   #=>   0     1 Homer    20
-        #   #=>   1     2 Marge    30
+        #   #      id  name   age
+        #   # 0     1 Homer    20
+        #   # 1     2 Marge    30
         def initialize(dbh, query)
-          super(binding)
+          optional_gem 'dbd-sqlite3', requires: 'dbd/SQLite3'
+          optional_gem 'activerecord', '~> 4.0', requires: 'active_record'
+          optional_gem 'dbi'
+          optional_gem 'sqlite3'
+
+          @dbh   = dbh
+          @query = query
         end
 
         def call
@@ -109,6 +116,3 @@ module Daru
     end
   end
 end
-
-require 'daru/io/link'
-Daru::DataFrame.register_io_module :from_sql, Daru::IO::Importers::SQL

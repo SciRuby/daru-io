@@ -1,14 +1,9 @@
-RSpec.describe Daru::IO::Importers::HTML do # rubocop:disable Metrics/BlockLength
-  context 'raises error when mechanize gem is not installed' do
-    let(:error_msg) do
-      'Install the mechanize gem version 2.7.5 with `gem install mechanize`,'\
-      ' for using the from_html function.'
-    end
-    subject { -> { described_class.new('').raise_error } }
+RSpec.shared_examples 'html importer' do |symbol|
+  it          { is_expected.to be_an(Array).and all be_a(Daru::DataFrame) }
+  its(symbol) { is_expected.to eq(df) }
+end
 
-    it { is_expected.to raise_error(error_msg) }
-  end
-
+RSpec.describe Daru::IO::Importers::HTML do
   subject { described_class.new(path, opts).call }
 
   context 'in wiki info table' do
@@ -74,7 +69,7 @@ RSpec.describe Daru::IO::Importers::HTML do # rubocop:disable Metrics/BlockLengt
     end
   end
 
-  context 'in year-wise passengers figure' do # rubocop:disable Metrics/BlockLength
+  context 'in year-wise passengers figure' do
     let(:path) { "file://#{Dir.pwd}/spec/fixtures/html/macau.html" }
     let(:data) do
       [

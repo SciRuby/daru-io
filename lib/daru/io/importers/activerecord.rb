@@ -1,10 +1,11 @@
-require 'daru'
-require 'daru/io/base'
+require 'daru/io/importers/base'
 
 module Daru
   module IO
     module Importers
       class ActiveRecord < Base
+        Daru::DataFrame.register_io_module :from_activerecord, self
+
         # Imports a +Daru::DataFrame+ from an ActiveRecord Relation
         #
         # @param relation [ActiveRecord::Relation] A relation to be used to load
@@ -31,14 +32,15 @@ module Daru
         #   #=>   0     1 Homer
         #   #=>   1     2 Marge
         def initialize(relation, *fields)
-          super(binding)
+          optional_gem 'activerecord', '~> 4.0', requires: 'active_record'
+
+          @relation = relation
+          @fields   = fields
         end
 
         def call
           if @fields.empty?
-            records = @relation.map do |record|
-              record.attributes.symbolize_keys
-            end
+            records = @relation.map { |record| record.attributes.symbolize_keys }
             return Daru::DataFrame.new(records)
           else
             @fields.map!(&:to_sym)
@@ -57,6 +59,3 @@ module Daru
     end
   end
 end
-
-require 'daru/io/link'
-Daru::DataFrame.register_io_module :from_activerecord, Daru::IO::Importers::ActiveRecord
