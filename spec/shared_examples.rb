@@ -1,13 +1,3 @@
-RSpec.shared_examples 'json importer' do
-  it                        { is_expected.to be_a(Daru::DataFrame) }
-  its(:nrows)               { is_expected.to eq(nrows)             }
-  its(:ncols)               { is_expected.to eq(ncols)             }
-  its('index.to_a.first')   { is_expected.to eq(first_index)       }
-  its('index.to_a.last')    { is_expected.to eq(last_index)        }
-  its('vectors.to_a.first') { is_expected.to eq(first_vector)      }
-  its('vectors.to_a.last')  { is_expected.to eq(last_vector)       }
-end
-
 RSpec.shared_examples 'exact daru dataframe' do |dataframe: nil, data: nil, nrows: nil, ncols: nil, order: nil, index: nil, name: nil, **opts| # rubocop:disable Metrics/LineLength
   it            { is_expected.to be_a(Daru::DataFrame) }
 
@@ -24,48 +14,39 @@ end
 
 RSpec.shared_examples 'importer with json-path option' do
   context 'in temperature data' do
-    let(:path)        { 'spec/fixtures/json/temp.json' }
-    let(:nrows)       { 122                            }
-    let(:ncols)       { 2                              }
-    let(:last_index)  { 121                            }
-    let(:last_vector) { :Val                           }
+    let(:path) { 'spec/fixtures/json/temp.json' }
 
     context 'with only jsonpath columns' do
-      let(:columns)      { %w[value anomaly].map { |x| '$..data..'+x } }
-      let(:last_vector)  { 1                                           }
-      let(:first_vector) { 0                                           }
+      let(:columns) { %w[value anomaly].map { |x| '$..data..'+x } }
 
-      it_behaves_like 'json importer'
+      it_behaves_like 'exact daru dataframe',
+        ncols: 2,
+        nrows: 122,
+        order: (0..1).to_a
     end
 
     context 'with only jsonpath named columns' do
-      let(:first_vector) { :Anom }
-      let(:named_columns) do
-        {
-          Anom: '$..data..anomaly',
-          Val: '$..data..value'
-        }
-      end
+      let(:named_columns) { {Anom: '$..data..anomaly', Val: '$..data..value'} }
 
-      it_behaves_like 'json importer'
+      it_behaves_like 'exact daru dataframe',
+        ncols: 2,
+        nrows: 122,
+        order: %i[Anom Val]
     end
 
     context 'with both jsonpath columns and named columns' do
       let(:columns)       { %w[$..data..anomaly]    }
-      let(:first_vector)  { 0                       }
       let(:named_columns) { {Val: '$..data..value'} }
 
-      it_behaves_like 'json importer'
+      it_behaves_like 'exact daru dataframe',
+        ncols: 2,
+        nrows: 122,
+        order: [0, :Val]
     end
   end
 
   context 'in tv series data' do
-    let(:path)         { 'spec/fixtures/json/got.json' }
-    let(:nrows)        { 61                            }
-    let(:ncols)        { 4                             }
-    let(:last_index)   { 60                            }
-    let(:last_vector)  { 3                             }
-    let(:first_vector) { 0                             }
+    let(:path) { 'spec/fixtures/json/got.json' }
 
     context 'with jsonpath columns' do
       let(:columns) do
@@ -73,12 +54,13 @@ RSpec.shared_examples 'importer with json-path option' do
           .map { |x| '$.._embedded..episodes..' + x }
       end
 
-      it_behaves_like 'json importer'
+      it_behaves_like 'exact daru dataframe',
+        ncols: 4,
+        nrows: 61,
+        order: (0..3).to_a
     end
 
     context 'with jsonpath named columns' do
-      let(:first_vector) { :Name    }
-      let(:last_vector)  { :Runtime }
       let(:named_columns) do
         {
           Name: '$.._embedded..episodes..name',
@@ -88,13 +70,13 @@ RSpec.shared_examples 'importer with json-path option' do
         }
       end
 
-      it_behaves_like 'json importer'
+      it_behaves_like 'exact daru dataframe',
+        ncols: 4,
+        nrows: 61,
+        order: %i[Name Season Number Runtime]
     end
 
     context 'with jsonpath columns' do
-      let(:first_index)  { 0        }
-      let(:last_vector)  { :Runtime }
-      let(:first_vector) { 0        }
       let(:columns) { %w[$.._embedded..episodes..name $.._embedded..episodes..season] }
       let(:named_columns) do
         {
@@ -103,41 +85,40 @@ RSpec.shared_examples 'importer with json-path option' do
         }
       end
 
-      it_behaves_like 'json importer'
+      it_behaves_like 'exact daru dataframe',
+        ncols: 4,
+        nrows: 61,
+        order: [0, 1, :Number, :Runtime]
     end
   end
 
   context 'on allsets data' do
-    let(:path)         { 'spec/fixtures/json/allsets.json' }
-    let(:nrows)        { 18                                }
-    let(:ncols)        { 3                                 }
-    let(:last_index)   { 3                                 }
-    let(:first_index)  { 94                                }
-    let(:last_vector)  { 2                                 }
-    let(:first_vector) { 0                                 }
+    let(:path) { 'spec/fixtures/json/allsets.json' }
 
     context 'with jsonpath columns' do
       let(:columns) { %w[artist cmc mciNumber].map { |x| '$..LEA..cards..' + x } }
       let(:index)   { '$..LEA..cards..multiverseid'                              }
 
-      it_behaves_like 'json importer'
+      it_behaves_like 'exact daru dataframe',
+        ncols: 3,
+        nrows: 18,
+        order: (0..2).to_a,
+        index: [94, 95, 96, 48, 232, 1, 233, 140, 49, 279, 234, 2, 280, 235, 141, 142, 50, 3]
     end
   end
 
   context 'on VAT data' do
-    let(:path)         { 'spec/fixtures/json/jsonvat.json' }
-    let(:nrows)        { 28                                }
-    let(:ncols)        { 2                                 }
-    let(:last_index)   { 'IE'                              }
-    let(:first_index)  { 'DE'                              }
-    let(:last_vector)  { 1                                 }
-    let(:first_vector) { 0                                 }
+    let(:path) { 'spec/fixtures/json/jsonvat.json' }
 
     context 'with jsonpath columns' do
       let(:columns) { %w[name periods].map { |x| '$..rates..'+x } }
       let(:index)   { '$..rates..code'                            }
 
-      it_behaves_like 'json importer'
+      it_behaves_like 'exact daru dataframe',
+        ncols: 2,
+        nrows: 28,
+        order: [0, 1],
+        index: %w[DE PL HU SI SK PT FR DK RO UK SE HR FI NL LU BE ES LT EL LV CZ MT IT AT EE BG CY IE]
     end
   end
 end

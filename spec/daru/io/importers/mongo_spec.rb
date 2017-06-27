@@ -1,15 +1,6 @@
 unless RUBY_VERSION == '2.4.0'
   ::Mongo::Logger.logger.level = ::Logger::FATAL
 
-  RSpec.shared_examples 'mongo importer' do
-    # it_behaves_like 'daru dataframe'
-    its(:nrows)             { is_expected.to eq(nrows)             }
-    its(:ncols)             { is_expected.to eq(ncols)             }
-    its('vectors.to_a')     { is_expected.to match_array(vector)   }
-    its('index.to_a.last')  { is_expected.to eq(last_index)        }
-    its('index.to_a.first') { is_expected.to eq(first_index)       }
-  end
-
   # @note
   #
   #   Mongo gem faces the 'wrong argument type, Expected Proc' bug prelavent in
@@ -39,10 +30,6 @@ unless RUBY_VERSION == '2.4.0'
     let(:skip)          { nil                                                   }
     let(:limit)         { nil                                                   }
     let(:filter)        { nil                                                   }
-    let(:first_index)   { 0                                                     }
-    let(:last_index)    { nil                                                   }
-    let(:first_vector)  { nil                                                   }
-    let(:last_vector)   { nil                                                   }
     let(:columns)       { nil                                                   }
     let(:named_columns) { {}                                                    }
 
