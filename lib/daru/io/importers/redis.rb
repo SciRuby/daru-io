@@ -25,8 +25,6 @@ module Daru
         #   connection will be used.
         # @param match [String] A pattern to get matching keys.
         # @param count [Integer] Number of matching keys to be obtained.
-        # @param offset [Integer] An offset from which matching keys are to be
-        #   fetched from the paginated results of matching keys. Defaults to 1.
         #
         # @return A *Daru::DataFrame* imported from the given Redis connection
         #   and matching keys
@@ -103,7 +101,7 @@ module Daru
         #   #    2  Cersei      37
         #   #    3 Joffrey      19
         #
-        # @example Querying for matching keys with count and offset
+        # @example Querying for matching keys with count
         #   # Say, the Redis connection has this setup
         #   # Key "key:1" => { "name" => "name1", "age" => "age1" }.to_json
         #   # Key "key:2" => { "name" => "name2", "age" => "age2" }.to_json
@@ -122,7 +120,7 @@ module Daru
         #   # key:1649 name1649  age1649
         #   #      ...      ...      ...
         #
-        #   Daru::DataFrame.from_redis({}, match: "key:1*", offset: 400, count: 200)
+        #   Daru::DataFrame.from_redis({}, match: "key:1*", count: 200)
         #
         #   #=> #<Daru::DataFrame(200x2)>
         #   #              name      age
@@ -131,21 +129,9 @@ module Daru
         #   # key:1703 name1703  age1703
         #   # key:1640 name1640  age1640
         #   #   ...        ...      ...
-        #
-        #   Daru::DataFrame.from_redis({}, match: "key:1*", offset: 1100, count: 200)
-        #   #=> #<Daru::DataFrame(12x2)>
-        #   #              name      age
-        #   # key:1084 name1084  age1084
-        #   # key:1195 name1195  age1195
-        #   # key:1250 name1250  age1250
-        #   # key:1303 name1303  age1303
-        #   # key:1341 name1341  age1341
-        #   #   ...        ...      ...
-        def initialize(connection={}, *keys, match: nil, count: nil,
-          offset: 0)
+        def initialize(connection={}, *keys, match: nil, count: nil)
           @match  = match
           @count  = count
-          @offset = offset
           @client = get_client(connection)
           @keys   = choose_keys(*keys).map(&:to_sym)
         end
@@ -162,12 +148,12 @@ module Daru
 
           cursor = nil
           # Loop to iterate through paginated results of Redis#scan.
-          until cursor == '0' || (!@count.nil? && keys.count > (@offset+@count-1))
+          until cursor == '0' || (!@count.nil? && keys.count > (@count-1))
             cursor, chunk = @client.scan(cursor, match: @match, count: @count)
             keys.concat(chunk).uniq!
           end
-          return keys[@offset..-1] if @count.nil?
-          keys[@offset..@offset+@count-1]
+          return keys[0..-1] if @count.nil?
+          keys[0..@count-1]
         end
 
         def get_client(connection)

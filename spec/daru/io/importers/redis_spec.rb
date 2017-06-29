@@ -31,7 +31,6 @@ end
 
 RSpec.describe Daru::IO::Importers::Redis do
   let(:keys)             { []                    }
-  let(:offset)           { 0                     }
   let(:count)            { nil                   }
   let(:pattern)          { nil                   }
   let(:connection)       { Redis.new(port: 6379) }
@@ -39,7 +38,7 @@ RSpec.describe Daru::IO::Importers::Redis do
   let(:expected_index)   { (0..3)                }
   let(:expected_vectors) { %i[name age]          }
 
-  subject { described_class.new(connection, *keys, match: pattern, count: count, offset: offset).call }
+  subject { described_class.new(connection, *keys, match: pattern, count: count).call }
 
   before { index.each_with_index { |k,i| store(k, data[i]) } }
 
@@ -164,20 +163,14 @@ RSpec.describe Daru::IO::Importers::Redis do
     let(:data)             { Array.new(2000) { |i| {a: "a#{i}", b: "b#{i}"} } }
     let(:ncols)            { 2                                                }
     let(:index)            { Array.new(2000) { |i| "key#{i}".to_sym }         }
-    let(:count)            { 400                                              }
     let(:pattern)          { 'key1*'                                          }
     let(:expected_index)   { index.keep_if { |x| x.to_s.start_with? 'key1' }  }
     let(:expected_vectors) { %i[a b]                                          }
 
-    context 'parses only 1st offset by default' do
+    context 'parses only 1st page by default' do
+      let(:count) { 400 }
       let(:nrows) { 400 }
 
-      it_behaves_like 'redis importer'
-    end
-
-    context 'parses only 2nd offset' do
-      let(:offset) { 800 }
-      let(:nrows)  { 311 }
       it_behaves_like 'redis importer'
     end
 
