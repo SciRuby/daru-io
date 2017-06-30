@@ -1,34 +1,37 @@
+RSpec::Matchers.define :belong_to do |expected|
+  match { |actual| (expected.to_a.uniq - actual.to_a.uniq).empty? }
+end
+
+RSpec::Matchers.define :unordered_data do |expected|
+  match do |actual|
+    actual = actual.to_a.map { |x| x.data.to_a }.flatten.uniq
+    expected.map!(&:values) unless expected.first.is_a? Array
+    expected = expected.flatten.uniq
+    (expected - actual).empty?
+  end
+end
+
+RSpec.shared_examples 'unordered daru dataframe' do |data: nil, nrows: nil, ncols: nil, order: nil, index: nil, name: nil, **opts| # rubocop:disable Metrics/LineLength
+  it_behaves_like 'a daru dataframe',
+    name: name,
+    nrows: nrows,
+    ncols: ncols,
+    **opts
+
+  its(:data)    { is_expected.to unordered_data(data)        } if data
+  its(:index)   { is_expected.to belong_to(index.to_index)   } if index
+  its(:vectors) { is_expected.to belong_to(order.to_index)   } if order
+end
+
 # @note
 #
-#   Custom matchers +belong_to+ and +contain_from+ have been used,
+#   Custom matchers +belong_to+ and +unordered_data+ have been used,
 #   as Redis doesn't necessarily insert keys in the given order. Due
 #   to this, some rows and columns might be jumbled, and there is no
 #   way to expect for an exact match while testing on RSpec. Rather,
 #   the DataFrame is tested to have the same data, in *ANY* order.
 #
 #   Signed off by @athityakumar on 08/16/2017 at 10:00PM IST
-RSpec::Matchers.define :belong_to do |expected|
-  match { |actual| (actual.to_a.uniq - expected.to_a.uniq).empty? }
-end
-
-RSpec::Matchers.define :unordered_dataframe do |expected|
-  match do |actual|
-    actual = actual.to_a.map { |x| x.data.to_a }.flatten.uniq
-    expected.map!(&:values) unless expected.first.is_a? Array
-    expected = expected.flatten.uniq
-    (actual - expected).empty?
-  end
-end
-
-RSpec.shared_examples 'redis importer' do
-  it_behaves_like 'exact daru dataframe'
-  its(:data)    { is_expected.to unordered_dataframe(expected_data) }
-  its(:ncols)   { is_expected.to eq(ncols)                          }
-  its(:nrows)   { is_expected.to eq(nrows)                          }
-  its(:index)   { is_expected.to belong_to(expected_index)          }
-  its(:vectors) { is_expected.to belong_to(expected_vectors)        }
-end
-
 RSpec.describe Daru::IO::Importers::Redis do
   subject { described_class.new(connection, *keys, match: pattern, count: count).call }
 
@@ -36,9 +39,6 @@ RSpec.describe Daru::IO::Importers::Redis do
   let(:count)            { nil                   }
   let(:pattern)          { nil                   }
   let(:connection)       { Redis.new(port: 6379) }
-  let(:expected_data)    { data                  }
-  let(:expected_index)   { (0..3)                }
-  let(:expected_vectors) { %i[name age]          }
 
   before { index.each_with_index { |k,i| store(k, data[i]) } }
 
@@ -49,9 +49,7 @@ RSpec.describe Daru::IO::Importers::Redis do
   after { connection.flushdb }
 
   context 'on array of keys having hashes' do
-    let(:ncols) { 2 }
-    let(:index)          { %i[10001 10002 10003 10004] }
-    let(:expected_index) { index                       }
+    let(:index) { %i[10001 10002 10003 10004] }
     let(:data) do
       [
         {name: 'Tyrion',  age: 32},
@@ -62,23 +60,36 @@ RSpec.describe Daru::IO::Importers::Redis do
     end
 
     context 'without key options' do
-      let(:nrows) { 4 }
-
-      it_behaves_like 'redis importer'
+      it_behaves_like 'unordered daru dataframe',
+        nrows: 4,
+        ncols: 2,
+        index: %i[10001 10002 10003 10004],
+        order: %i[name age],
+        data: [
+          ['Tyrion', 32],
+          ['Jamie', 37],
+          ['Cersei', 37],
+          ['Joffrey', 19]
+        ]
     end
 
     context 'with key options' do
       let(:keys)  { index[0..1] }
-      let(:nrows) { 2           }
 
-      it_behaves_like 'redis importer'
+      it_behaves_like 'unordered daru dataframe',
+        nrows: 2,
+        ncols: 2,
+        index: %i[10001 10002],
+        order: %i[name age],
+        data: [
+          ['Tyrion', 32],
+          ['Jamie', 37]
+        ]
     end
   end
 
   context 'on keys having array of hashes' do
-    let(:ncols)         { 2               }
-    let(:index)         { %i[10001 10003] }
-    let(:expected_data) { data.flatten    }
+    let(:index) { %i[10001 10003] }
     let(:data) do
       [
         [{name: 'Tyrion', age: 32},{name: 'Jamie',   age: 37}],
@@ -87,23 +98,36 @@ RSpec.describe Daru::IO::Importers::Redis do
     end
 
     context 'without key options' do
-      let(:nrows) { 4 }
-
-      it_behaves_like 'redis importer'
+      it_behaves_like 'unordered daru dataframe',
+        nrows: 4,
+        ncols: 2,
+        index: (0..3).to_a,
+        order: %i[name age],
+        data: [
+          ['Tyrion', 32],
+          ['Jamie', 37],
+          ['Cersei', 37],
+          ['Joffrey', 19]
+        ]
     end
 
     context 'with key options' do
       let(:keys)  { index[0..0] }
-      let(:nrows) { 2           }
 
-      it_behaves_like 'redis importer'
+      it_behaves_like 'unordered daru dataframe',
+        nrows: 2,
+        ncols: 2,
+        index: (0..1).to_a,
+        order: %i[name age],
+        data: [
+          ['Tyrion', 32],
+          ['Jamie', 37]
+        ]
     end
   end
 
   context 'on hash keys having arrays' do
-    let(:nrows)            { 4                   }
-    let(:index)            { %i[age living name] }
-    let(:expected_vectors) { index               }
+    let(:index) { %i[age living name] }
     let(:data) do
       [
         [32,37,37,19],
@@ -113,25 +137,31 @@ RSpec.describe Daru::IO::Importers::Redis do
     end
 
     context 'without key options' do
-      let(:ncols) { 3 }
-
-      it_behaves_like 'redis importer'
+      it_behaves_like 'unordered daru dataframe',
+        nrows: 4,
+        ncols: 3,
+        index: (0..3).to_a,
+        order: %i[name age living],
+        data: [
+          [32, true, 'Tyrion'],
+          [37, true, 'Jamie'],
+          [37, true, 'Cersei'],
+          [19, false, 'Joffrey']
+        ]
     end
 
     context 'with key options' do
       let(:keys) { index[0..1] }
-      let(:ncols) { 2 }
 
-      it_behaves_like 'redis importer'
+      it_behaves_like 'unordered daru dataframe',
+        nrows: 4,
+        ncols: 2,
+        index: (0..3).to_a
     end
   end
 
   context 'on timestamps' do
-    let(:nrows)   { 3           }
-    let(:ncols)   { 2           }
     let(:index) { %i[090620171216 090620171218 090620171222 100620171225] }
-    let(:expected_index) { index                                          }
-    let(:expected_vectors) { %i[name age]                                 }
     let(:data) do
       [
         {name: 'Tyrion',  age: 32},
@@ -145,43 +175,69 @@ RSpec.describe Daru::IO::Importers::Redis do
       let(:count)   { 3           }
       let(:pattern) { '09062017*' }
 
-      it_behaves_like 'redis importer', false
-      its(:nrows)   { is_expected.to be_within(2).of(3) }
+      it_behaves_like 'unordered daru dataframe',
+        nrows: 3,
+        ncols: 2,
+        index: %i[090620171216 090620171218 090620171222],
+        order: %i[name age],
+        data: [
+          ['Tyrion', 32],
+          ['Jamie', 37],
+          ['Cersei', 37]
+        ]
     end
 
     context 'gets keys without pattern and count' do
-      let(:nrows) { 4 }
-
-      it_behaves_like 'redis importer'
+      it_behaves_like 'unordered daru dataframe',
+        nrows: 4,
+        ncols: 2,
+        index: %i[090620171216 090620171218 090620171222],
+        order: %i[name age],
+        data: [
+          ['Tyrion', 32],
+          ['Jamie', 37],
+          ['Cersei', 37],
+          ['Joffrey', 19]
+        ]
     end
 
     context 'gets keys with pattern match' do
       let(:pattern) { '09062017*' }
 
-      it_behaves_like 'redis importer'
+      it_behaves_like 'unordered daru dataframe',
+        nrows: 3,
+        ncols: 2,
+        index: %i[090620171216 090620171218 090620171222],
+        order: %i[name age],
+        data: [
+          ['Tyrion', 32],
+          ['Jamie', 37],
+          ['Cersei', 37]
+        ]
     end
   end
 
   context 'on dummy data of paginated keys' do
-    let(:data)             { Array.new(2000) { |i| {a: "a#{i}", b: "b#{i}"} } }
-    let(:ncols)            { 2                                                }
-    let(:index)            { Array.new(2000) { |i| "key#{i}".to_sym }         }
-    let(:pattern)          { 'key1*'                                          }
-    let(:expected_index)   { index.keep_if { |x| x.to_s.start_with? 'key1' }  }
-    let(:expected_vectors) { %i[a b]                                          }
+    let(:data)    { Array.new(2000) { |i| {a: "a#{i}", b: "b#{i}"} } }
+    let(:index)   { Array.new(2000) { |i| "key#{i}".to_sym }         }
+    let(:pattern) { 'key1*'                                          }
 
     context 'parses only 1st page by default' do
       let(:count) { 400 }
-      let(:nrows) { 400 }
 
-      it_behaves_like 'redis importer'
+      it_behaves_like 'unordered daru dataframe',
+        nrows: 400,
+        ncols: 2,
+        order: %i[a b]
     end
 
     context 'parses entire pagination' do
       let(:count) { nil }
-      let(:nrows) { 1111 }
 
-      it_behaves_like 'redis importer'
+      it_behaves_like 'unordered daru dataframe',
+        nrows: 1111,
+        ncols: 2,
+        order: %i[a b]
     end
   end
 end

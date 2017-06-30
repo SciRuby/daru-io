@@ -8,12 +8,6 @@ module Daru
 
         # Imports a *Daru::DataFrame* from *Redis* connection and keys.
         #
-        # @note In Redis, the specified key and count the number of queries that
-        #   do not always fit perfectly. This persists in this module too,
-        #   as this module is built on top of redis Ruby gem. Hence, if a query
-        #   for 100 keys doesn't return exactly 100 keys, it is not a bug in
-        #   this module. It is just how Redis works.
-        #
         # @param connection [Hash or Redis Instance] Either a Hash of *Redis* configurations,
         #   or an existing *Redis* instance. For the hash configurations, have a
         #   look at {http://www.rubydoc.info/github/redis/redis-rb/Redis:initialize
@@ -22,7 +16,8 @@ module Daru
         #   should be constructed. If no keys are given, all keys in the *Redis*
         #   connection will be used.
         # @param match [String] A pattern to get matching keys.
-        # @param count [Integer] Number of matching keys to be obtained.
+        # @param count [Integer] Number of matching keys to be obtained. Defaults to
+        #   nil, to collect ALL matching keys.
         #
         # @return A *Daru::DataFrame* imported from the given Redis connection
         #   and matching keys
