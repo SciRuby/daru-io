@@ -6,7 +6,7 @@ module Daru
       class Redis < Base
         Daru::DataFrame.register_io_module :from_redis, self
 
-        # Imports a *Daru::DataFrame* from *Redis* connection and keys.
+        # Imports a +Daru::DataFrame+ from Redis connection and matching keys.
         #
         # @param connection [Hash or Redis Instance] Either a Hash of *Redis* configurations,
         #   or an existing *Redis* instance. For the hash configurations, have a
