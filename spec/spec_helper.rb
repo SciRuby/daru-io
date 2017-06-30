@@ -13,6 +13,7 @@ require 'open-uri'
 
 require 'dbd/SQLite3'
 require 'active_record'
+require 'redis'
 require 'dbi'
 require 'jsonpath'
 require 'mechanize'
