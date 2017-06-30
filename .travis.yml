@@ -12,7 +12,11 @@ script:
   - bundle exec rubocop
 
 services:
+  - redis-server
   - mongodb
+
+before_install:
+  - redis-server --daemonize yes
 
 install:
   - gem install bundler
