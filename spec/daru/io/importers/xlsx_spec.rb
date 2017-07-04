@@ -1,5 +1,5 @@
 RSpec.describe Daru::IO::Importers::XLSX do
-  subject { described_class.new(path, sheet, headers: headers).call }
+  subject { described_class.new(path, sheet: sheet, headers: headers).call }
 
   let(:sheet)   { 0    }
   let(:headers) { true }
