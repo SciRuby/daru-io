@@ -37,8 +37,6 @@ module Daru
           @path    = path
           @sheet   = sheet
           @headers = headers
-
-          raise_errors
         end
 
         def call
@@ -52,10 +50,6 @@ module Daru
         end
 
         private
-
-        def raise_errors
-          raise ArgumentError, "No XLSX file found in the given path #{@path}." unless File.exist?(@path)
-        end
 
         def strip_html_tags(data)
           data.map do |row|
