@@ -45,4 +45,23 @@ RSpec.describe Daru::IO::Importers::XLSX do
       )
     end
   end
+
+  before do
+    %w[LOBSTAHS_rt.windows Microcode Stock-counts-sheet].each do |file|
+      WebMock
+        .stub_request(:get,"http://dummy-remote-url/#{file}.xlsx")
+        .to_return(status: 200, body: File.read("spec/fixtures/excelx/#{file}.xlsx"))
+      WebMock.disable_net_connect!(allow: /dummy-remote-url/)
+    end
+  end
+
+  context 'checks for equal parsing of local XLSX files and remote XLSX files' do
+    %w[LOBSTAHS_rt.windows Microcode Stock-counts-sheet].each do |file|
+      let(:local) { described_class.new("spec/fixtures/excelx/#{file}.xlsx").call }
+      let(:path)  { "http://dummy-remote-url/#{file}.xlsx" }
+
+      it { is_expected.to be_an(Daru::DataFrame) }
+      it { is_expected.to eq(local)              }
+    end
+  end
 end
