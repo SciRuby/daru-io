@@ -19,6 +19,8 @@ module Daru
         # @param header_converters [Symbol] If set to +:symbol+, the order of
         #   the imported +Daru::DataFrame+ will be symbol (eg, +:name+) instead
         #   of being a string.
+        # @param skiprows [Integer] Skips the first +skiprows+ number of rows from
+        #   the CSV file. Defaults to 0.
         # @param clone [Boolean] Have a look at +:clone+ option, at
         #   {http://www.rubydoc.info/gems/daru/0.1.5/Daru%2FDataFrame:initialize
         #   Daru::DataFrame#initialize}
@@ -60,8 +62,8 @@ module Daru
         #   #     14    8.19567          0 -0.1539447
         #   #    ...        ...        ...        ...
         def initialize(path, headers: nil, col_sep: ',', converters: :numeric,
-          header_converters: :symbol, clone: nil, index: nil, order: nil,
-          name: nil, skiprows: 0, **options)
+          header_converters: :symbol, skiprows: 0, clone: nil, index: nil, order: nil,
+          name: nil, **options)
           require 'csv'
           require 'open-uri'
 
