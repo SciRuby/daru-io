@@ -61,12 +61,13 @@ module Daru
         #   #    ...        ...        ...        ...
         def initialize(path, headers: nil, col_sep: ',', converters: :numeric,
           header_converters: :symbol, clone: nil, index: nil, order: nil,
-          name: nil, **options)
+          name: nil, skiprows: 0, **options)
           require 'csv'
           require 'open-uri'
 
           @path         = path
           @headers      = headers
+          @skiprows     = skiprows
           @daru_options = {clone: clone, index: index, order: order, name: name}
           @options      = options.merge headers: @headers,
                                         col_sep: col_sep,
@@ -96,7 +97,7 @@ module Daru
             .by_col
             .map do |col_name, values|
               next [col_name, []] if values.nil?
-              [col_name, values]
+              [col_name, values[@skiprows..-1]]
             end
             .to_h
         end
@@ -108,7 +109,7 @@ module Daru
             .tap { |c| yield c if block_given? }
             .to_a
           headers       = ArrayHelper.recode_repeated(csv_as_arrays.shift)
-          csv_as_arrays = csv_as_arrays.transpose
+          csv_as_arrays = csv_as_arrays[@skiprows..-1].transpose
           headers
             .each_with_index
             .map do |h, i|

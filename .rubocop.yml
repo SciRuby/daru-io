@@ -47,7 +47,7 @@ Metrics/ClassLength:
   Max: 200
 
 Metrics/ParameterLists:
-  Max: 10
+  Max: 15
 
 Style/ParallelAssignment:
   Enabled: false

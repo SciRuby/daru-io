@@ -70,9 +70,29 @@ RSpec.describe Daru::IO::Importers::CSV do
     let(:opts)  { {} }
 
     it            { is_expected.to be_a(Daru::DataFrame)           }
-    its(:vectors) { is_expected.to eq(%w[col0 col1 col2].to_index) }
     its(:ncols)   { is_expected.to eq(3)                           }
     its(:nrows)   { is_expected.to eq(0)                           }
+    its(:vectors) { is_expected.to eq(%w[col0 col1 col2].to_index) }
+  end
+
+  context 'skips rows from CSV files with headers option' do
+    let(:path)  { 'spec/fixtures/csv/sales-funnel.csv' }
+    let(:opts)  { {skiprows: 8, headers: true} }
+
+    it            { is_expected.to be_a(Daru::DataFrame)                                }
+    its(:ncols)   { is_expected.to eq(8)                                                }
+    its(:nrows)   { is_expected.to eq(9)                                                }
+    its(:vectors) { %w[Account Name Rep Manager Product Quantity Price Status].to_index }
+  end
+
+  context 'skips rows from CSV files without headers option' do
+    let(:path)  { 'spec/fixtures/csv/sales-funnel.csv' }
+    let(:opts)  { {skiprows: 8} }
+
+    it            { is_expected.to be_a(Daru::DataFrame)                                }
+    its(:ncols)   { is_expected.to eq(8)                                                }
+    its(:nrows)   { is_expected.to eq(9)                                                }
+    its(:vectors) { %w[Account Name Rep Manager Product Quantity Price Status].to_index }
   end
 
   context 'checks for equal parsing of local CSV files and remote CSV files' do
