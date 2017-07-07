@@ -5,7 +5,7 @@ end
 
 RSpec.describe Daru::IO::Importers::CSV do
   before do
-    %w[matrix_test repeated_fields scientific_notation sales-funnel].each do |file|
+    %w[matrix_test repeated_fields scientific_notation sales-funnel column_headers_only].each do |file|
       WebMock
         .stub_request(:get,"http://dummy-remote-url/#{file}.csv")
         .to_return(status: 200, body: File.read("spec/fixtures/csv/#{file}.csv"))
@@ -95,8 +95,23 @@ RSpec.describe Daru::IO::Importers::CSV do
     its(:vectors) { %w[Account Name Rep Manager Product Quantity Price Status].to_index }
   end
 
+  context 'checks for equal parsing of csv and csv.gz files' do
+    %w[matrix_test repeated_fields scientific_notation sales-funnel column_headers_only].each do |file|
+      before { Zlib::GzipWriter.open(path) { |gz| gz.write File.read(csv_path) } }
+
+      let(:csv_path) { "spec/fixtures/csv/#{file}.csv"    }
+      let(:tempfile) { Tempfile.new("#{file}.csv.gz")     }
+      let(:csv)      { described_class.new(csv_path).call }
+      let(:path)     { tempfile.path                      }
+      let(:opts)     { {compression: :gzip}               }
+
+      it_behaves_like 'daru dataframe'
+      it { is_expected.to eq(csv) }
+    end
+  end
+
   context 'checks for equal parsing of local CSV files and remote CSV files' do
-    %w[matrix_test repeated_fields scientific_notation sales-funnel].each do |file|
+    %w[matrix_test repeated_fields scientific_notation sales-funnel column_headers_only].each do |file|
       let(:local) { described_class.new("spec/fixtures/csv/#{file}.csv").call }
       let(:path)  { "http://dummy-remote-url/#{file}.csv" }
       let(:opts)  { {} }

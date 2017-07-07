@@ -21,6 +21,8 @@ module Daru
         #   of being a string.
         # @param skiprows [Integer] Skips the first +skiprows+ number of rows from
         #   the CSV file. Defaults to 0.
+        # @param compression [Symbol] For parsing data from a +.csv.gz+ file, set
+        #   +:compression+ as +:gzip+. Defaults to +false+.
         # @param clone [Boolean] Have a look at +:clone+ option, at
         #   {http://www.rubydoc.info/gems/daru/0.1.5/Daru%2FDataFrame:initialize
         #   Daru::DataFrame#initialize}
@@ -62,14 +64,16 @@ module Daru
         #   #     14    8.19567          0 -0.1539447
         #   #    ...        ...        ...        ...
         def initialize(path, headers: nil, col_sep: ',', converters: :numeric,
-          header_converters: :symbol, skiprows: 0, clone: nil, index: nil, order: nil,
-          name: nil, **options)
+          header_converters: :symbol, skiprows: 0, compression: false,
+          clone: nil, index: nil, order: nil, name: nil, **options)
           require 'csv'
           require 'open-uri'
+          require 'zlib'
 
           @path         = path
           @headers      = headers
           @skiprows     = skiprows
+          @compression  = compression
           @daru_options = {clone: clone, index: index, order: order, name: name}
           @options      = options.merge headers: @headers,
                                         col_sep: col_sep,
@@ -81,12 +85,15 @@ module Daru
           # Preprocess headers for detecting and correcting repetition in
           # case the :headers option is not specified.
 
+          @file_string = process_compression
+
           hsh =
             if @headers
               hash_with_headers
             else
               hash_without_headers.tap { |hash| @daru_options[:order] = hash.keys }
             end
+
           Daru::DataFrame.new(hsh,@daru_options)
         end
 
@@ -94,7 +101,7 @@ module Daru
 
         def hash_with_headers
           ::CSV
-            .parse(open(@path), @options)
+            .parse(@file_string, @options)
             .tap { |c| yield c if block_given? }
             .by_col
             .map do |col_name, values|
@@ -107,7 +114,7 @@ module Daru
         def hash_without_headers
           csv_as_arrays =
             ::CSV
-            .parse(open(@path), @options)
+            .parse(@file_string, @options)
             .tap { |c| yield c if block_given? }
             .to_a
           headers       = ArrayHelper.recode_repeated(csv_as_arrays.shift)
@@ -119,6 +126,11 @@ module Daru
               [h, csv_as_arrays[i]]
             end
             .to_h
+        end
+
+        def process_compression
+          return ::Zlib::GzipReader.new(open(@path)).read if @compression == :gzip
+          open(@path)
         end
       end
     end
