@@ -65,6 +65,16 @@ RSpec.describe Daru::IO::Importers::CSV do
     it_behaves_like 'csv importer'
   end
 
+  context 'parses empty dataframe from CSV with only headers' do
+    let(:path)  { 'spec/fixtures/csv/column_headers_only.csv' }
+    let(:opts)  { {} }
+
+    it            { is_expected.to be_a(Daru::DataFrame)           }
+    its(:vectors) { is_expected.to eq(%w[col0 col1 col2].to_index) }
+    its(:ncols)   { is_expected.to eq(3)                           }
+    its(:nrows)   { is_expected.to eq(0)                           }
+  end
+
   context 'checks for equal parsing of local CSV files and remote CSV files' do
     %w[matrix_test repeated_fields scientific_notation sales-funnel].each do |file|
       let(:local) { described_class.new("spec/fixtures/csv/#{file}.csv").call }

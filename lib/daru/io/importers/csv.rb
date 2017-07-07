@@ -77,6 +77,7 @@ module Daru
         def call
           # Preprocess headers for detecting and correcting repetition in
           # case the :headers option is not specified.
+
           hsh =
             if @headers
               hash_with_headers
@@ -92,7 +93,12 @@ module Daru
           ::CSV
             .parse(open(@path), @options)
             .tap { |c| yield c if block_given? }
-            .by_col.map { |col_name, values| [col_name, values] }.to_h
+            .by_col
+            .map do |col_name, values|
+              next [col_name, []] if values.nil?
+              [col_name, values]
+            end
+            .to_h
         end
 
         def hash_without_headers
@@ -103,7 +109,13 @@ module Daru
             .to_a
           headers       = ArrayHelper.recode_repeated(csv_as_arrays.shift)
           csv_as_arrays = csv_as_arrays.transpose
-          headers.each_with_index.map { |h, i| [h, csv_as_arrays[i]] }.to_h
+          headers
+            .each_with_index
+            .map do |h, i|
+              next [h, []] if csv_as_arrays[i].nil?
+              [h, csv_as_arrays[i]]
+            end
+            .to_h
         end
       end
     end
