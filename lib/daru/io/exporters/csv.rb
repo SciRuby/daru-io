@@ -50,14 +50,11 @@ module Daru
         end
 
         def call
-          contents = process_string
+          contents = process_dataframe
 
           if @compression == :gzip
             ::Zlib::GzipWriter.open(@path) do |gz|
-              contents.each do |content|
-                gz.write(content.join(','))
-                gz.write("\n")
-              end
+              contents.each { |content| gz.write("#{content.join(',')}\n") }
               gz.close
             end
           else
@@ -69,16 +66,16 @@ module Daru
 
         private
 
-        def process_string
-          contents = []
-
-          contents.push(@dataframe.vectors.to_a) unless @headers == false
-          @dataframe.each_row do |row|
-            next contents.push(row.to_a) unless @convert_comma
-            contents.push(row.map { |v| v.to_s.tr('.', ',') })
+        def process_dataframe
+          order = [@dataframe.vectors.to_a] unless @headers == false
+          data  = @dataframe.map_rows do |row|
+            next row.to_a unless @convert_comma
+            row.map { |v| v.to_s.tr('.', ',') }
           end
 
-          contents
+          return data  if order.nil?
+          return order if data.empty?
+          order + data
         end
       end
     end
