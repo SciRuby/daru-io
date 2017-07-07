@@ -26,4 +26,14 @@ RSpec.describe Daru::IO::Exporters::CSV do
     it { is_expected.to be_an(Array) }
     it { is_expected.to eq(df.head(1).map { |v| (v.first || '').to_s }) }
   end
+
+  context 'writes into .csv.gz format' do
+    let(:opts)     { {compression: :gzip} }
+    let(:filename) { 'test.csv.gz'        }
+
+    subject        { Zlib::GzipReader.new(open(tempfile.path)).read.split("\n") }
+
+    it { is_expected.to be_an(Array).and all be_an(String) }
+    it { is_expected.to eq(['a,b,c,d', '1,11,a,', '2,22,g,23', '3,33,4,4', '4,44,5,a', '5,55,addadf,ff']) }
+  end
 end

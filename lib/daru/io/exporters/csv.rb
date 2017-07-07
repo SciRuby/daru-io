@@ -37,30 +37,49 @@ module Daru
         #   #  1   2   4
         #
         #   Daru::IO::Exporters::CSV.new(df, "filename.csv", convert_comma: true).call
-        def initialize(dataframe, path, converters: :numeric, headers: nil,
-          convert_comma: nil, **options)
+        def initialize(dataframe, path, converters: :numeric, compression: false,
+          headers: nil, convert_comma: nil, **options)
           require 'csv'
 
           super(dataframe)
           @path          = path
           @headers       = headers
+          @compression   = compression
           @convert_comma = convert_comma
           @options       = options.merge converters: converters
         end
 
         def call
-          writer = ::CSV.open(@path, 'w', @options)
-          writer << @dataframe.vectors.to_a unless @headers == false
+          contents = process_string
 
+          if @compression == :gzip
+            ::Zlib::GzipWriter.open(@path) do |gz|
+              contents.each do |content|
+                gz.write(content.join(','))
+                gz.write("\n")
+              end
+              gz.close
+            end
+          else
+            ::CSV.open(@path, 'w', @options) do |csv|
+              contents.each { |content| csv << content }
+              csv.close
+            end
+          end
+        end
+
+        private
+
+        def process_string
+          contents = []
+
+          contents.push(@dataframe.vectors.to_a) unless @headers == false
           @dataframe.each_row do |row|
-            writer << if @convert_comma
-                        row.map { |v| v.to_s.tr('.', ',') }
-                      else
-                        row.to_a
-                      end
+            next contents.push(row.to_a) unless @convert_comma
+            contents.push(row.map { |v| v.to_s.tr('.', ',') })
           end
 
-          writer.close
+          contents
         end
       end
     end
