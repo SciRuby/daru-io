@@ -61,10 +61,9 @@ module Daru
               gz.close
             end
           else
-            ::CSV.open(@path, 'w', @options) do |csv|
-              contents.each { |content| csv << content }
-              csv.close
-            end
+            csv = ::CSV.open(@path, 'w', @options)
+            contents.each { |content| csv << content }
+            csv.close
           end
         end
 
