@@ -1,4 +1,4 @@
-RSpec.describe Daru::IO::Importers::XLSX do
+RSpec.describe Daru::IO::Importers::Excelx do
   subject { described_class.new(path, sheet: sheet, headers: headers).call }
 
   let(:sheet)   { 0    }

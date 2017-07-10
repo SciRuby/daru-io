@@ -1,4 +1,4 @@
-require 'daru/io/importers/base'
+require 'daru/io/importers/excelx'
 
 module Daru
   module IO
@@ -6,17 +6,20 @@ module Daru
       class Excel < Base
         Daru::DataFrame.register_io_module :from_excel, self
 
-        # Imports a +Daru::DataFrame+ from an Excel file.
+        # Imports a +Daru::DataFrame+ from an Excel file (.xls, or .xlsx formats)
         #
         # @param path [String] Path of Excel file, where the
         #   DataFrame is to be imported from.
-        # @param worksheet_id [Interger] The index of the worksheet in the excel file,
+        # @param sheet [Integer] The index of the worksheet in the excel file,
         #   from where the +Daru::DataFrame+ will be imported. By default, the first
-        #   worksheet has +worksheet_id+ as 0. In general, the n-th worksheet has
-        #   its worksheet_id as n-1.
+        #   worksheet has +sheet+ as 0. In general, the n-th worksheet has
+        #   its sheet as n-1.
         #
-        #   If worksheet_id option is not given, it is taken as 0 by default and the
+        #   If sheet option is not given, it is taken as 0 by default and the
         #   +Daru::DataFrame+ will be imported from the first worksheet in the excel file.
+        # @param headers [Boolean] Defaults to true. When set to true, first row of the
+        #   given sheet is used as the order of the Daru::DataFrame and data of
+        #   the Dataframe consists of the remaining rows.
         #
         # @return A +Daru::DataFrame+ imported from the given excel worksheet
         #
@@ -34,7 +37,7 @@ module Daru
         #   #    5        6  Fernand      nil      nil      nil
         #
         # @example Reading from a specific worksheet of an Excel file
-        #   df = Daru::IO::Importers::Excel.new("test_xls.xls", worksheet_id: 0).call
+        #   df = Daru::IO::Importers::Excel.new("test_xls.xls", sheet: 0).call
         #   df
         #
         #   #=> #<Daru::DataFrame(6x5)>
@@ -45,22 +48,31 @@ module Daru
         #   #    3        4    Franz      nil    Paris      nil
         #   #    4        5   George      5.5     Tome    a,b,c
         #   #    5        6  Fernand      nil      nil      nil
-        def initialize(path, worksheet_id: 0)
+        def initialize(path, sheet: 0, headers: true)
+          @xlsx = Excelx.new(path, sheet: sheet, headers: headers) if path.end_with? '.xlsx'
+          return if @xlsx
+
           optional_gem 'spreadsheet', '~> 1.1.1'
 
-          @path         = path
-          @worksheet_id = worksheet_id
+          @path    = path
+          @sheet   = sheet
+          @headers = headers
         end
 
         def call
-          book       = Spreadsheet.open @path
-          worksheet  = book.worksheet @worksheet_id
-          headers    = ArrayHelper.recode_repeated(worksheet.row(0)).map(&:to_sym)
+          return @xlsx.call if @xlsx
+
+          worksheet = Spreadsheet.open(@path).worksheet(@sheet)
+          headers   = if @headers
+                        ArrayHelper.recode_repeated(worksheet.row(0)).map(&:to_sym)
+                      else
+                        (0..worksheet.row(0).to_a.size-1).to_a
+                      end
 
           df = Daru::DataFrame.new({})
           headers.each_with_index do |h,i|
             col = worksheet.column(i).to_a
-            col.delete_at 0
+            col.delete_at(0) if @headers
             df[h] = col
           end
 

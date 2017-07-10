@@ -3,9 +3,7 @@ require 'daru/io/importers/base'
 module Daru
   module IO
     module Importers
-      class XLSX < Base
-        Daru::DataFrame.register_io_module :from_xlsx, self
-
+      class Excelx < Base
         # Imports a +Daru::DataFrame+ from a given XLSX file and sheet.
         #
         # @param path [String] Local / Remote path to XLSX file
