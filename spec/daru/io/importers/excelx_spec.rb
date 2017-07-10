@@ -4,8 +4,8 @@ RSpec.describe Daru::IO::Importers::Excelx do
   let(:sheet)   { 0    }
   let(:headers) { true }
 
-  context 'parses default sheet' do
-    let(:path) { 'spec/fixtures/excelx/Microcode.xlsx' }
+  context 'when sheet is not specified' do
+    subject { described_class.new('spec/fixtures/excelx/Microcode.xlsx').call }
 
     it          { is_expected.to be_an(Daru::DataFrame)    }
     its(:ncols) { is_expected.to eq(32)                    }
@@ -14,7 +14,7 @@ RSpec.describe Daru::IO::Importers::Excelx do
     its('State.first') { is_expected.to eq('FETCH0')       }
   end
 
-  context 'parses named sheet' do
+  context 'when sheet name is given' do
     let(:path)  { 'spec/fixtures/excelx/LOBSTAHS_rt.windows.xlsx' }
     let(:sheet) { 'LOBSTAHS_rt.windows' }
 
@@ -26,7 +26,7 @@ RSpec.describe Daru::IO::Importers::Excelx do
     its('lipid_class.first') { is_expected.to eq('DGCC')                                         }
   end
 
-  context 'parses nil elements in sheet' do
+  context 'when sheet contains nil elements' do
     let(:path)  { 'spec/fixtures/excelx/Stock-counts-sheet.xlsx' }
     let(:sheet) { 2 }
 

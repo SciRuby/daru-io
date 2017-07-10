@@ -1,10 +1,17 @@
-require 'daru/io/importers/excelx'
+require 'daru/io/importers/base'
 
 module Daru
   module IO
     module Importers
       class Excel < Base
-        Daru::DataFrame.register_io_module :from_excel, self
+        Daru::DataFrame.register_io_module :from_excel do |*args|
+          if args.first.end_with? '.xlsx'
+            require 'daru/io/importers/excelx'
+            Daru::IO::Importers::Excelx.new(*args).call
+          else
+            Daru::IO::Importers::Excel.new(*args).call
+          end
+        end
 
         # Imports a +Daru::DataFrame+ from an Excel file (.xls, or .xlsx formats)
         #
@@ -49,9 +56,6 @@ module Daru
         #   #    4        5   George      5.5     Tome    a,b,c
         #   #    5        6  Fernand      nil      nil      nil
         def initialize(path, sheet: 0, headers: true)
-          @xlsx = Excelx.new(path, sheet: sheet, headers: headers) if path.end_with? '.xlsx'
-          return if @xlsx
-
           optional_gem 'spreadsheet', '~> 1.1.1'
 
           @path    = path
@@ -60,8 +64,6 @@ module Daru
         end
 
         def call
-          return @xlsx.call if @xlsx
-
           worksheet = Spreadsheet.open(@path).worksheet(@sheet)
           headers   = if @headers
                         ArrayHelper.recode_repeated(worksheet.row(0)).map(&:to_sym)
