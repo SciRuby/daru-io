@@ -2,7 +2,7 @@ RSpec::Matchers.define :belong_to do |expected|
   match { |actual| (expected.to_a.uniq - actual.to_a.uniq).empty? }
 end
 
-RSpec::Matchers.define :unordered_data do |expected|
+RSpec::Matchers.define :match_unordered_data do |expected|
   match do |actual|
     actual = actual.to_a.map { |x| x.data.to_a }.flatten.uniq
     expected.map!(&:values) unless expected.first.is_a? Array
@@ -18,9 +18,9 @@ RSpec.shared_examples 'unordered daru dataframe' do |data: nil, nrows: nil, ncol
     ncols: ncols,
     **opts
 
-  its(:data)    { is_expected.to unordered_data(data)        } if data
-  its(:index)   { is_expected.to belong_to(index.to_index)   } if index
-  its(:vectors) { is_expected.to belong_to(order.to_index)   } if order
+  its(:data)    { is_expected.to match_unordered_data(data) } if data
+  its(:index)   { is_expected.to belong_to(index.to_index)  } if index
+  its(:vectors) { is_expected.to belong_to(order.to_index)  } if order
 end
 
 # @note

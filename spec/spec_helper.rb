@@ -26,9 +26,9 @@ require 'sqlite3'
 
 require 'daru/io'
 
-require_relative 'shared_contexts'
-require_relative 'shared_examples'
-require_relative 'custom_matchers'
+require_relative 'support/shared_contexts'
+require_relative 'support/shared_examples'
+require_relative 'support/custom_matchers'
 
 RSpec::Expectations.configuration.warn_about_potential_false_positives = false
 

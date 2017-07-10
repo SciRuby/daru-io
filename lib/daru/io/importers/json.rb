@@ -73,7 +73,7 @@ module Daru
           @index         = index
           @named_columns = named_columns
 
-          raise_errors
+          validate_params
         end
 
         def call
@@ -102,7 +102,7 @@ module Daru
           data_columns.map { |col| at_jsonpath(col) }
         end
 
-        def raise_errors
+        def validate_params
           unless @order.nil? || @named_columns.empty?
             raise ArgumentError,
               'Do not pass on order and named columns together, at the same '\
