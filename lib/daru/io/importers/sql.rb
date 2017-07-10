@@ -59,8 +59,6 @@ module Daru
           DBI.connect("DBI:SQLite3:#{db}")
         rescue SQLite3::NotADatabaseException
           raise ArgumentError, "Expected #{db} to point to a SQLite3 database"
-        rescue NameError
-          raise NameError, "In order to establish a connection to #{db}, please require 'dbi'"
         end
 
         def choose_adapter(db, query)
