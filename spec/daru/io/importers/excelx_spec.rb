@@ -4,7 +4,7 @@ RSpec.describe Daru::IO::Importers::Excelx do
   let(:opts) { {} }
 
   context 'when sheet is not specified' do
-    let(:path) { 'spec/fixtures/excelx/Microcode.XLSX' }
+    let(:path) { 'spec/fixtures/excelx/Microcode.xlsx' }
 
     it          { is_expected.to be_an(Daru::DataFrame)    }
     its(:ncols) { is_expected.to eq(32)                    }
