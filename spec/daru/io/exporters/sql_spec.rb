@@ -6,7 +6,7 @@ RSpec.describe Daru::IO::Exporters::SQL do
   let(:prepared_query) { double }
 
   it 'writes to an SQL table' do
-    allow(dbh).to receive(:prepare)
+    expect(dbh).to receive(:prepare)
       .with("INSERT INTO #{table} (a,b,c,d) VALUES (?,?,?,?)")
       .and_return(prepared_query)
 

@@ -78,6 +78,9 @@ Style/FileName:
 Style/MultilineBlockChain:
   Enabled: false
 
+RSpec/MessageSpies:
+  EnforcedStyle: receive
+
 RSpec/NestedGroups:
   Max: 5
 
