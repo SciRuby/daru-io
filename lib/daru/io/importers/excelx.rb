@@ -9,9 +9,16 @@ module Daru
         # @param path [String] Local / Remote path to XLSX file
         # @param sheet [String] Sheet name in the given XLSX file. Defaults to 0,
         #   to parse the dataframe from the first sheet.
-        # @param headers [Boolean] Defaults to true. When set to true, first row of the
+        # @param skiprows [Integer] Skips the first +:skiprows+ number of rows from the
+        #   sheet being parsed.
+        # @param skipcols [Integer] Skips the first +:skipcols+ number of columns from the
+        #   sheet being parsed.
+        # @param order [Boolean] Defaults to true. When set to true, first row of the
         #   given sheet is used as the order of the Daru::DataFrame and data of
         #   the Dataframe consists of the remaining rows.
+        # @param index [Boolean] Defaults to false. When set to true, first column of the
+        #   given sheet is used as the index of the Daru::DataFrame and data of
+        #   the Dataframe consists of the remaining columns.
         #
         #   When set to false, a default order (0 to n-1) is chosen for the DataFrame,
         #   and the data of the DataFrame consists of all rows in the sheet.
@@ -60,25 +67,56 @@ module Daru
         #        2        nil          1   IND43201          5 New stock  2014-08-01      51035
         #        3        nil          1   OUT30045          3 New stock  2014-08-01      51035
         #       ...       ...        ...     ...           ...     ...       ...           ...
-        def initialize(path, sheet: 0, headers: true)
+        def initialize(path, sheet: 0, order: true, index: false, skiprows: 0, skipcols: 0)
           optional_gem 'roo', '~> 2.7.0'
 
-          @path    = path
-          @sheet   = sheet
-          @headers = headers
+          @path     = path
+          @sheet    = sheet
+          @order    = order
+          @index    = index
+          @skiprows = skiprows
+          @skipcols = skipcols
         end
 
         def call
           book      = Roo::Excelx.new(@path)
           worksheet = book.sheet(@sheet)
-          data      = worksheet.to_a
-          data      = strip_html_tags(data)
-          order     = @headers ? data.delete_at(0) : (0..data.first.length-1).to_a
 
-          Daru::DataFrame.rows(data, order: order)
+          @data     = strip_html_tags(skip_data(worksheet.to_a, @skiprows, @skipcols))
+          @index    = process_index
+          @order    = process_order || (0..@data.first.length-1)
+          @data     = process_data
+
+          Daru::DataFrame.rows(@data, order: @order, index: @index)
         end
 
         private
+
+        def process_data
+          return skip_data(@data, 1, 1) if @order && @index
+          return skip_data(@data, 1, 0) if @order
+          return skip_data(@data, 0, 1) if @index
+          @data
+        end
+
+        def process_index
+          return nil unless @index
+          @index = @data.transpose.first
+          @index = skip_data(@index, 1) if @order
+          @index
+        end
+
+        def process_order
+          return nil unless @order
+          @order = @data.first
+          @order = skip_data(@order, 1) if @index
+          @order
+        end
+
+        def skip_data(data, rows, cols=nil)
+          return data[rows..-1].map { |row| row[cols..-1] } unless cols.nil?
+          data[rows..-1]
+        end
 
         def strip_html_tags(data)
           data.map do |row|

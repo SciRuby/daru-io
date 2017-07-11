@@ -11,6 +11,7 @@
 - `LOBSTAHS_rt.windows.xlsx` : Downloaded from [here](https://github.com/vanmooylipidomics/LOBSTAHS/blob/master/inst/doc/xlsx/LOBSTAHS_rt.windows.xlsx). Contains data about Lipid and Oxylipin Biomarker Screening Through Adduct Hierarchy Sequences (LOBSTASHS). Conatins two sheets called `LOBSTAHS_rt.windows` and `Notes`.
 - `Microcode.xlsx` : Downloaded from [here](https://github.com/tkim371/CS2200/blob/master/proj2/project2/Microcode.xlsx).
 - `Stock-counts-sheet.xlsx` : Downloaded from [here](https://www.exact.com/uk/images/downloads/getting-started-excel-sheets/Stock-counts-sheet.xlsx). Contains data about stocks. Helps in ensuring that HTML tags of cell attributes are striped off, while constructing the DataFrame.
+- `pivot.xlsx` : Downloaded from [here](myy.haaga-helia.fi/~taaak/r/pivot.xlsx). Contains pivot tables, which requires `:skiprows` and `:skipcols` functionality.
 
 ### JSON
 

@@ -1,11 +1,10 @@
 RSpec.describe Daru::IO::Importers::Excelx do
-  subject { described_class.new(path, sheet: sheet, headers: headers).call }
+  subject { described_class.new(path, opts).call }
 
-  let(:sheet)   { 0    }
-  let(:headers) { true }
+  let(:opts) { {} }
 
   context 'when sheet is not specified' do
-    subject { described_class.new('spec/fixtures/excelx/Microcode.xlsx').call }
+    let(:path) { 'spec/fixtures/excelx/Microcode.XLSX' }
 
     it          { is_expected.to be_an(Daru::DataFrame)    }
     its(:ncols) { is_expected.to eq(32)                    }
@@ -15,8 +14,8 @@ RSpec.describe Daru::IO::Importers::Excelx do
   end
 
   context 'when sheet name is given' do
-    let(:path)  { 'spec/fixtures/excelx/LOBSTAHS_rt.windows.xlsx' }
-    let(:sheet) { 'LOBSTAHS_rt.windows' }
+    let(:path) { 'spec/fixtures/excelx/LOBSTAHS_rt.windows.xlsx' }
+    let(:opts) { {sheet: 'LOBSTAHS_rt.windows'} }
 
     it                       { is_expected.to be_an(Daru::DataFrame)                             }
     its(:ncols)              { is_expected.to eq(3)                                              }
@@ -27,8 +26,8 @@ RSpec.describe Daru::IO::Importers::Excelx do
   end
 
   context 'when sheet contains nil elements' do
-    let(:path)  { 'spec/fixtures/excelx/Stock-counts-sheet.xlsx' }
-    let(:sheet) { 2 }
+    let(:path) { 'spec/fixtures/excelx/Stock-counts-sheet.xlsx' }
+    let(:opts) { {sheet: 2} }
 
     it                              { is_expected.to be_an(Daru::DataFrame)    }
     its(:ncols)                     { is_expected.to eq(7)                     }
@@ -44,6 +43,17 @@ RSpec.describe Daru::IO::Importers::Excelx do
         ].to_index
       )
     end
+  end
+
+  context 'when skipping rows and columns' do
+    let(:path) { 'spec/fixtures/excelx/pivot.xlsx' }
+    let(:opts) { {sheet: 'Data1', skiprows: 2, skipcols: 1} }
+
+    it                      { is_expected.to be_an(Daru::DataFrame)      }
+    its(:ncols)             { is_expected.to eq(9)                       }
+    its(:nrows)             { is_expected.to eq(2155)                    }
+    its(:index)             { is_expected.to eq((0..2154).to_a.to_index) }
+    its('Unit Price.first') { is_expected.to eq(14)                      }
   end
 
   before do
