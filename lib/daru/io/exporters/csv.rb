@@ -56,6 +56,7 @@ module Daru
           contents = process_dataframe
 
           if compression?(:gzip, '.csv.gz')
+            require 'zlib'
             ::Zlib::GzipWriter.open(@path) do |gz|
               contents.each { |content| gz.write(content.to_csv(@options)) }
               gz.close
@@ -77,10 +78,10 @@ module Daru
 
         def process_dataframe
           [].tap do |result|
-            result << [@dataframe.vectors.to_a] unless @headers == false
-            result << @dataframe.map_rows do |row|
-              next row.to_a unless @convert_comma
-              row.map { |v| v.to_s.tr('.', ',') }
+            result << @dataframe.vectors.to_a unless @headers == false
+            @dataframe.map_rows do |row|
+              next result << row.to_a unless @convert_comma
+              result << row.map { |v| v.to_s.tr('.', ',') }
             end
           end
         end
