@@ -21,8 +21,9 @@ module Daru
         #   of being a string.
         # @param skiprows [Integer] Skips the first +skiprows+ number of rows from
         #   the CSV file. Defaults to 0.
-        # @param compression [Symbol] For parsing data from a +.csv.gz+ file, set
-        #   +:compression+ as +:gzip+. Defaults to +false+.
+        # @param compression [Symbol] Defaults to +:infer+, to parse depending on file format
+        #   like +.csv.gz+. For explicitly parsing data from a +.csv.gz+ file, set
+        #   +:compression+ as +:gzip+.
         # @param clone [Boolean] Have a look at +:clone+ option, at
         #   {http://www.rubydoc.info/gems/daru/0.1.5/Daru%2FDataFrame:initialize
         #   Daru::DataFrame#initialize}
@@ -64,7 +65,7 @@ module Daru
         #   #     14    8.19567          0 -0.1539447
         #   #    ...        ...        ...        ...
         def initialize(path, headers: nil, col_sep: ',', converters: :numeric,
-          header_converters: :symbol, skiprows: 0, compression: false,
+          header_converters: :symbol, skiprows: 0, compression: :infer,
           clone: nil, index: nil, order: nil, name: nil, **options)
           require 'csv'
           require 'open-uri'
@@ -99,6 +100,12 @@ module Daru
 
         private
 
+        def compression?(algorithm, *formats)
+          return true if @compression == algorithm
+          formats.each { |f| return true if @path.end_with?(f) }
+          false
+        end
+
         def hash_with_headers
           ::CSV
             .parse(@file_string, @options)
@@ -129,7 +136,7 @@ module Daru
         end
 
         def process_compression
-          return ::Zlib::GzipReader.new(open(@path)).read if @compression == :gzip
+          return ::Zlib::GzipReader.new(open(@path)).read if compression?(:gzip, '.csv.gz')
           open(@path)
         end
       end
