@@ -11,6 +11,9 @@ module Daru
         # @param dataframe [Daru::DataFrame] A dataframe to export
         # @param path [String] Path of CSV file where the dataframe is to be saved
         # @param converters [Symbol] A type to convert the data in dataframe
+        # @param compression [Symbol] Defaults to +:infer+, which decides depending on file format
+        #   like +.csv.gz+. For explicitly writing into a +.csv.gz+ file, set
+        #   +:compression+ as +:gzip+.
         # @param headers [Boolean] When set to +false+, the headers aren't written
         #   to the CSV file
         # @param convert_comma [Boolean] When set to +true+, the commas are written
@@ -37,7 +40,7 @@ module Daru
         #   #  1   2   4
         #
         #   Daru::IO::Exporters::CSV.new(df, "filename.csv", convert_comma: true).call
-        def initialize(dataframe, path, converters: :numeric, compression: false,
+        def initialize(dataframe, path, converters: :numeric, compression: :infer,
           headers: nil, convert_comma: nil, **options)
           require 'csv'
 
@@ -52,9 +55,9 @@ module Daru
         def call
           contents = process_dataframe
 
-          if @compression == :gzip
+          if compression?(:gzip, '.csv.gz')
             ::Zlib::GzipWriter.open(@path) do |gz|
-              contents.each { |content| gz.write("#{content.join(',')}\n") }
+              contents.each { |content| gz.write(content.to_csv(@options)) }
               gz.close
             end
           else
@@ -66,16 +69,20 @@ module Daru
 
         private
 
-        def process_dataframe
-          order = [@dataframe.vectors.to_a] unless @headers == false
-          data  = @dataframe.map_rows do |row|
-            next row.to_a unless @convert_comma
-            row.map { |v| v.to_s.tr('.', ',') }
-          end
+        def compression?(algorithm, *formats)
+          return true if @compression == algorithm
+          formats.each { |f| return true if @path.end_with?(f) }
+          false
+        end
 
-          return data  if order.nil?
-          return order if data.empty?
-          order + data
+        def process_dataframe
+          [].tap do |result|
+            result << [@dataframe.vectors.to_a] unless @headers == false
+            result << @dataframe.map_rows do |row|
+              next row.to_a unless @convert_comma
+              row.map { |v| v.to_s.tr('.', ',') }
+            end
+          end
         end
       end
     end
