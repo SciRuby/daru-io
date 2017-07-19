@@ -1,62 +1,71 @@
-RSpec.shared_examples 'sql helper importer' do
-  it_behaves_like 'daru dataframe'
-  it          { expect(df.row[0]).to have_attributes(id: 1, age: 20) }
-  its(:nrows) { is_expected.to eq 2 }
-end
-
 RSpec.describe Daru::IO::Importers::SQL do
   include_context 'sqlite3 database setup'
-  let(:query) { 'select * from accounts' }
-  let(:order) { %i[age id name] }
-  let(:data)  { [[20, 30],[1,2],%w[Homer Marge]] }
+
+  subject { described_class.new(source, query).call }
+
+  let(:query)  { 'select * from accounts'         }
+  let(:source) { ActiveRecord::Base.connection    }
 
   context 'with a database handler of DBI' do
-    let(:db) { DBI.connect("DBI:SQLite3:#{db_name}") }
     subject { described_class.new(db, query).call }
 
-    it_behaves_like 'sql activerecord importer'
+    let(:db) { DBI.connect("DBI:SQLite3:#{db_name}") }
+
+    it_behaves_like 'exact daru dataframe',
+      ncols: 3,
+      nrows: 2,
+      order: %i[age id name],
+      data: [[20, 30],[1,2],%w[Homer Marge]]
   end
 
   context 'with a database connection of ActiveRecord' do
-    let(:connection) { Daru::IO::Rspec::Account.connection }
     subject { described_class.new(connection, query).call }
+
+    let(:connection) { Daru::IO::Rspec::Account.connection }
 
     before { Daru::IO::Rspec::Account.establish_connection "sqlite3:#{db_name}" }
 
-    it_behaves_like 'sql activerecord importer'
+    it_behaves_like 'exact daru dataframe',
+      ncols: 3,
+      nrows: 2,
+      order: %i[age id name],
+      data: [[20, 30],[1,2],%w[Homer Marge]]
   end
-
-  let(:source) { ActiveRecord::Base.connection }
-  subject(:df) { described_class.new(source, query).call }
 
   before { ActiveRecord::Base.establish_connection("sqlite3:#{db_name}") }
 
   context 'with DBI::DatabaseHandle' do
     let(:source) { DBI.connect("DBI:SQLite3:#{db_name}") }
-    it_behaves_like 'sql helper importer'
+
+    it_behaves_like 'exact daru dataframe',
+      ncols: 3,
+      nrows: 2,
+      order: %i[age id name],
+      data: [[20, 30],[1,2],%w[Homer Marge]]
   end
 
   context 'with ActiveRecord::Connection' do
-    it_behaves_like 'sql helper importer'
+    it_behaves_like 'exact daru dataframe',
+      ncols: 3,
+      nrows: 2,
+      order: %i[age id name],
+      data: [[20, 30],[1,2],%w[Homer Marge]]
   end
 
   context 'with path to sqlite3 file' do
     let(:source) { db_name }
-    it_behaves_like 'sql helper importer'
+
+    it_behaves_like 'exact daru dataframe',
+      ncols: 3,
+      nrows: 2,
+      order: %i[age id name],
+      data: [[20, 30],[1,2],%w[Homer Marge]]
   end
 
-  context 'with an object not a string as a query' do
-    let(:query) { Object.new }
-    it { expect { df }.to raise_error(ArgumentError) }
-  end
-
-  context 'with an object not a database connection' do
-    let(:source) { Object.new }
-    it { expect { df }.to raise_error(ArgumentError) }
-  end
-
-  context 'with path to unsupported db file' do
+  context 'raises error for invalid arguments' do # rubocop:disable RSpec/EmptyExampleGroup
+    let(:query)  { Object.new                          }
     let(:source) { 'spec/fixtures/plaintext/bank2.dat' }
-    it { expect { df }.to raise_error(ArgumentError) }
+
+    its_call { is_expected.to raise_error(ArgumentError) }
   end
 end

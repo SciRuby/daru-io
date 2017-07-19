@@ -8,7 +8,10 @@ group :optional do
   gem 'jsonpath'
   gem 'mechanize'
   gem 'mongo'
+  gem 'redis'
   gem 'roo', '~> 2.7.0'
   gem 'spreadsheet', '~> 1.1.1'
   gem 'sqlite3'
 end
+
+gem 'saharspec', git: 'https://github.com/zverok/saharspec.git'
