@@ -76,19 +76,12 @@ module Daru
 
         private
 
-        def parse_table(table)
-          headers, headers_size = scrape_tag(table,'th')
-          data, size = scrape_tag(table, 'td')
-          data = data.keep_if { |x| x.count == size }
-          order, indice = parse_hash(headers, size, headers_size) if headers_size >= size
-          return unless (indice.nil? || indice.count == data.count) && !order.nil? && order.count>0
-          {data: data.compact, index: indice, order: order}
-        end
-
-        def scrape_tag(table, tag)
-          arr  = table.search('tr').map { |row| row.search(tag).map { |val| val.text.strip } }
-          size = arr.map(&:count).max
-          [arr, size]
+        # Allows user to override the scraped order / index / data
+        def decide_values(scraped_val={}, user_val={})
+          %I[data index name order].each do |key|
+            user_val[key] ||= scraped_val[key]
+          end
+          user_val
         end
 
         # Splits headers (all th tags) into order and index. Wherein,
@@ -104,16 +97,23 @@ module Daru
           [order, indice]
         end
 
-        def search(table)
-          @match.nil? ? true : (table.to_s.include? @match)
+        def parse_table(table)
+          headers, headers_size = scrape_tag(table,'th')
+          data, size = scrape_tag(table, 'td')
+          data = data.keep_if { |x| x.count == size }
+          order, indice = parse_hash(headers, size, headers_size) if headers_size >= size
+          return unless (indice.nil? || indice.count == data.count) && !order.nil? && order.count>0
+          {data: data.compact, index: indice, order: order}
         end
 
-        # Allows user to override the scraped order / index / data
-        def decide_values(scraped_val={}, user_val={})
-          %I[data index name order].each do |key|
-            user_val[key] ||= scraped_val[key]
-          end
-          user_val
+        def scrape_tag(table, tag)
+          arr  = table.search('tr').map { |row| row.search(tag).map { |val| val.text.strip } }
+          size = arr.map(&:count).max
+          [arr, size]
+        end
+
+        def search(table)
+          @match.nil? ? true : (table.to_s.include? @match)
         end
 
         def table_to_dataframe(table)
