@@ -72,8 +72,7 @@ module Daru
 
         def compression?(algorithm, *formats)
           return true if @compression == algorithm
-          formats.each { |f| return true if @path.end_with?(f) }
-          false
+          formats.any? { |f| @path.end_with?(f) }
         end
 
         def process_dataframe
