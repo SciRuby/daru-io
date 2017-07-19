@@ -101,8 +101,7 @@ module Daru
         private
 
         def compression?(algorithm, *formats)
-          return true if @compression == algorithm
-          formats.any? { |f| @path.end_with?(f) }
+          @compression == algorithm || formats.any? { |f| @path.end_with?(f) }
         end
 
         def hash_with_headers
