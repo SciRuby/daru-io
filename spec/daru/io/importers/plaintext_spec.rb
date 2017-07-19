@@ -19,7 +19,7 @@ RSpec.describe Daru::IO::Importers::Plaintext do
     it_behaves_like 'exact daru dataframe',
       ncols: 5,
       nrows: 6,
-      'row[1].to_a' => [4, nil, 6]
+      :'row[1].to_a' => [4, nil, 6]
   end
 
   context 'understands non-numeric fields' do
@@ -28,6 +28,6 @@ RSpec.describe Daru::IO::Importers::Plaintext do
     it_behaves_like 'exact daru dataframe',
       ncols: 3,
       nrows: 2,
-      'v1.to_a' => %w[test foo]
+      :'v1.to_a' => %w[test foo]
   end
 end

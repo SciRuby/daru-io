@@ -20,10 +20,10 @@ RSpec.describe Daru::IO::Importers::CSV do
       ncols: 3,
       nrows: 99,
       order: %i[image_resolution mls true_transform],
-      'image_resolution.first' => 6.55779,
-      'true_transform.first' => '-0.2362347,0.6308649,0.7390552,0,0.6523478'\
-                                ',-0.4607318,0.6018043,0,0.7201635,0.6242881'\
-                                ',-0.3027024,4262.65,0,0,0,1'
+      :'image_resolution.first' => 6.55779,
+      :'true_transform.first'   => '-0.2362347,0.6308649,0.7390552,0,0.6523478'\
+                                   ',-0.4607318,0.6018043,0,0.7201635,0.6242881'\
+                                   ',-0.3027024,4262.65,0,0,0,1'
   end
 
   context 'works properly for repeated headers' do

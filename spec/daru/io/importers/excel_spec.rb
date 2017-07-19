@@ -15,6 +15,6 @@ RSpec.describe Daru::IO::Importers::Excel do
         ['New York', 'London', 'London', 'Paris', 'Tome', nil],
         ['a,b', 'b,c', 'a', nil, 'a,b,c', nil]
       ],
-      'age.to_a.last' => nil
+      :'age.to_a.last' => nil
   end
 end
