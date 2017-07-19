@@ -12,13 +12,6 @@ module Daru
         #   dataframe is to be imported from.
         # @param headers [Boolean] If this option is +true+, only those columns
         #   will be used to import the +Daru::DataFrame+ whose header is given.
-        # @param col_sep [String] A column separator, to be used while
-        #   importing from the CSV file. By default, it is set to ','
-        # @param converters [Symbol] If set to +:numeric+, each value in
-        #   the imported +Daru::DataFrame+ will be numeric and not string.
-        # @param header_converters [Symbol] If set to +:symbol+, the order of
-        #   the imported +Daru::DataFrame+ will be symbol (eg, +:name+) instead
-        #   of being a string.
         # @param skiprows [Integer] Skips the first +skiprows+ number of rows from
         #   the CSV file. Defaults to 0.
         # @param compression [Symbol] Defaults to +:infer+, to parse depending on file format
@@ -38,8 +31,9 @@ module Daru
         # @param name [String] Have a look at +:name+ option, at
         #   {http://www.rubydoc.info/gems/daru/0.1.5/Daru%2FDataFrame:initialize
         #   Daru::DataFrame#initialize}
-        # @param options [Hash] CSV standard library options, to tweak other
-        #   default options of CSV gem.
+        # @param options [Hash] CSV standard library options such as +:col_sep+
+        #   (defaults to +','+), +:converters+ (defaults to +:numeric+),
+        #   +:header_converters+ (defaults to +:symbol+).
         #
         # @return A +Daru::DataFrame+ imported from the given relation and fields
         #
@@ -64,8 +58,7 @@ module Daru
         #   #     13    5.40811          0 -0.2362347
         #   #     14    8.19567          0 -0.1539447
         #   #    ...        ...        ...        ...
-        def initialize(path, headers: nil, col_sep: ',', converters: :numeric,
-          header_converters: :symbol, skiprows: 0, compression: :infer,
+        def initialize(path, headers: nil, skiprows: 0, compression: :infer,
           clone: nil, index: nil, order: nil, name: nil, **options)
           require 'csv'
           require 'open-uri'
@@ -76,10 +69,12 @@ module Daru
           @skiprows     = skiprows
           @compression  = compression
           @daru_options = {clone: clone, index: index, order: order, name: name}
-          @options      = options.merge headers: @headers,
-                                        col_sep: col_sep,
-                                        converters: converters,
-                                        header_converters: header_converters
+          @options      = {
+            col_sep: ',',
+            converters: :numeric,
+            header_converters: :symbol,
+            headers: @headers
+          }.merge(options)
         end
 
         def call
@@ -110,8 +105,7 @@ module Daru
             .tap { |c| yield c if block_given? }
             .by_col
             .map do |col_name, values|
-              next [col_name, []] if values.nil?
-              [col_name, values[@skiprows..-1]]
+              [col_name, values.nil? ? [] : values[@skiprows..-1]]
             end
             .to_h
         end
@@ -127,8 +121,7 @@ module Daru
           headers
             .each_with_index
             .map do |h, i|
-              next [h, []] if csv_as_arrays[i].nil?
-              [h, csv_as_arrays[i]]
+              [h, csv_as_arrays[i] || []]
             end
             .to_h
         end

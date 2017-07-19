@@ -73,30 +73,30 @@ RSpec.describe Daru::IO::Importers::CSV do
     let(:path)  { 'spec/fixtures/csv/column_headers_only.csv' }
     let(:opts)  { {} }
 
-    it            { is_expected.to be_a(Daru::DataFrame)           }
-    its(:ncols)   { is_expected.to eq(3)                           }
-    its(:nrows)   { is_expected.to eq(0)                           }
-    its(:vectors) { is_expected.to eq(%w[col0 col1 col2].to_index) }
+    it_behaves_like 'exact daru dataframe',
+      ncols: 3,
+      nrows: 0,
+      order: %w[col0 col1 col2]
   end
 
   context 'skips rows from CSV files with headers option' do
     let(:path)  { 'spec/fixtures/csv/sales-funnel.csv' }
     let(:opts)  { {skiprows: 8, headers: true} }
 
-    it            { is_expected.to be_a(Daru::DataFrame)                                }
-    its(:ncols)   { is_expected.to eq(8)                                                }
-    its(:nrows)   { is_expected.to eq(9)                                                }
-    its(:vectors) { %w[Account Name Rep Manager Product Quantity Price Status].to_index }
+    it_behaves_like 'exact daru dataframe',
+      ncols: 8,
+      nrows: 9,
+      order: %i[account manager name price product quantity rep status]
   end
 
   context 'skips rows from CSV files without headers option' do
     let(:path)  { 'spec/fixtures/csv/sales-funnel.csv' }
     let(:opts)  { {skiprows: 8} }
 
-    it            { is_expected.to be_a(Daru::DataFrame)                                }
-    its(:ncols)   { is_expected.to eq(8)                                                }
-    its(:nrows)   { is_expected.to eq(9)                                                }
-    its(:vectors) { %w[Account Name Rep Manager Product Quantity Price Status].to_index }
+    it_behaves_like 'exact daru dataframe',
+      ncols: 8,
+      nrows: 9,
+      order: %w[Account Name Rep Manager Product Quantity Price Status]
   end
 
   context 'checks for equal parsing of csv and csv.gz files' do
@@ -109,7 +109,7 @@ RSpec.describe Daru::IO::Importers::CSV do
       let(:path)     { tempfile.path                      }
       let(:opts)     { {compression: :gzip}               }
 
-      it_behaves_like 'daru dataframe'
+      it_behaves_like 'a daru dataframe'
       it { is_expected.to eq(csv) }
     end
   end
@@ -120,7 +120,7 @@ RSpec.describe Daru::IO::Importers::CSV do
       let(:path)  { "http://dummy-remote-url/#{file}.csv" }
       let(:opts)  { {} }
 
-      it_behaves_like 'exact daru dataframe'
+      it_behaves_like 'a daru dataframe'
       it { is_expected.to eq(local) }
     end
   end
