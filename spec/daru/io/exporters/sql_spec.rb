@@ -6,16 +6,11 @@ RSpec.describe Daru::IO::Exporters::SQL do
   let(:prepared_query) { double }
 
   it 'writes to an SQL table' do
-    expect(dbh)
-      .to receive(:prepare)
+    expect(dbh).to receive(:prepare)
       .with("INSERT INTO #{table} (a,b,c,d) VALUES (?,?,?,?)")
       .and_return(prepared_query)
 
-    df.each_row do |r|
-      expect(prepared_query)
-        .to receive(:execute)
-        .with(*r.to_a).ordered
-    end
+    df.each_row { |r| allow(prepared_query).to receive(:execute).and_return(*r.to_a) }
 
     described_class.new(df, dbh, table).call
   end

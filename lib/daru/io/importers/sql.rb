@@ -55,38 +55,10 @@ module Daru
 
         private
 
-        def result_hash
-          column_names
-            .map(&:to_sym)
-            .zip(rows.transpose)
-            .to_h
-        end
-
-        def column_names
-          case @adapter
-          when :dbi
-            result.column_names
-          when :activerecord
-            result.columns
-          end
-        end
-
-        def rows
-          case @adapter
-          when :dbi
-            result.to_a.map(&:to_a)
-          when :activerecord
-            result.cast_values
-          end
-        end
-
-        def result
-          case @adapter
-          when :dbi
-            @conn.execute(@query)
-          when :activerecord
-            @conn.exec_query(@query)
-          end
+        def attempt_sqlite3_connection(db)
+          DBI.connect("DBI:SQLite3:#{db}")
+        rescue SQLite3::NotADatabaseException
+          raise ArgumentError, "Expected #{db} to point to a SQLite3 database"
         end
 
         def choose_adapter(db, query)
@@ -105,12 +77,38 @@ module Daru
           end
         end
 
-        def attempt_sqlite3_connection(db)
-          DBI.connect("DBI:SQLite3:#{db}")
-        rescue SQLite3::NotADatabaseException
-          raise ArgumentError, "Expected #{db} to point to a SQLite3 database"
-        rescue NameError
-          raise NameError, "In order to establish a connection to #{db}, please require 'dbi'"
+        def column_names
+          case @adapter
+          when :dbi
+            result.column_names
+          when :activerecord
+            result.columns
+          end
+        end
+
+        def result
+          case @adapter
+          when :dbi
+            @conn.execute(@query)
+          when :activerecord
+            @conn.exec_query(@query)
+          end
+        end
+
+        def result_hash
+          column_names
+            .map(&:to_sym)
+            .zip(rows.transpose)
+            .to_h
+        end
+
+        def rows
+          case @adapter
+          when :dbi
+            result.to_a.map(&:to_a)
+          when :activerecord
+            result.cast_values
+          end
         end
       end
     end
