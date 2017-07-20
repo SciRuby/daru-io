@@ -1,20 +1,12 @@
-require 'daru'
-
-require 'daru/io/importers/util'
-require 'json'
-require 'redis'
+require 'daru/io/importers/base'
 
 module Daru
   module IO
     module Importers
-      class Redis
-        # Imports a *Daru::DataFrame* from *Redis* connection and keys.
-        #
-        # @note In Redis, the specified key and count the number of queries that
-        #   do not always fit perfectly. This persists in this module too,
-        #   as this module is built on top of redis Ruby gem. Hence, if a query
-        #   for 100 keys doesn't return exactly 100 keys, it is not a bug in
-        #   this module. It is just how Redis works.
+      class Redis < Base
+        Daru::DataFrame.register_io_module :from_redis, self
+
+        # Imports a +Daru::DataFrame+ from Redis connection and matching keys.
         #
         # @param connection [Hash or Redis Instance] Either a Hash of *Redis* configurations,
         #   or an existing *Redis* instance. For the hash configurations, have a
@@ -24,7 +16,8 @@ module Daru
         #   should be constructed. If no keys are given, all keys in the *Redis*
         #   connection will be used.
         # @param match [String] A pattern to get matching keys.
-        # @param count [Integer] Number of matching keys to be obtained.
+        # @param count [Integer] Number of matching keys to be obtained. Defaults to
+        #   nil, to collect ALL matching keys.
         #
         # @return A *Daru::DataFrame* imported from the given Redis connection
         #   and matching keys
@@ -130,6 +123,9 @@ module Daru
         #   # key:1640 name1640  age1640
         #   #   ...        ...      ...
         def initialize(connection={}, *keys, match: nil, count: nil)
+          optional_gem 'json'
+          optional_gem 'redis'
+
           @match  = match
           @count  = count
           @client = get_client(connection)
@@ -138,7 +134,7 @@ module Daru
 
         def call
           vals = @keys.map { |key| ::JSON.parse(@client.get(key), symbolize_names: true) }
-          Util.guess_parse(@keys, vals)
+          Base.guess_parse(@keys, vals)
         end
 
         private
@@ -172,6 +168,3 @@ module Daru
     end
   end
 end
-
-require 'daru/io/link'
-Daru::DataFrame.register_io_module :from_redis, Daru::IO::Importers::Redis
