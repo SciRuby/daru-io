@@ -8,21 +8,26 @@ module Daru
 
         # Exports +Daru::DataFrame+ to an Excel Spreadsheet.
         #
-        # @note To know more about the +Spreadsheet+ parameter hashes that can be given as
-        #   +data_options+ and +header_options+ parameters, please have a look at the methods
-        #   described in
+        # @param dataframe [Daru::DataFrame] A dataframe to export
+        # @param path [String] Path of the file where the +Daru::DataFrame+
+        #   should be written.
+        # @param options [Hash<Hash>] A +Hash+ containing +:display+ and +:formatting+ keys.
+        #
+        # @option options display [Hash<Boolean>] A Hash of display options. Supported keys are
+        #   +:header+, +:data+ and +:index+. Default value of each key is set to +true+. For
+        #   example, if +:header+ is set to true, the headers are written.
+        #
+        # @option options formatting [Hash<Hash>] A Hash of formatting options. Supported keys
+        #   are +:header+, +:data+ and +:index+. For example, if +:header+ is set to a Hash
+        #   containing keys such as +:color+, the headers are written with the specified color.
+        #
+        #   To know more about the +Spreadsheet+ parameter hashes that can be given as
+        #   values to the +:header+, +:data+ or +:index+ keys, please have a look at the
+        #   methods described in
         #   {http://www.rubydoc.info/gems/ruby-spreadsheet/Spreadsheet/Font Spreadsheet::Font}
         #   and
         #   {http://www.rubydoc.info/gems/ruby-spreadsheet/Spreadsheet/Format Spreadsheet::Format}
         #   pages.
-        #
-        # @param dataframe [Daru::DataFrame] A dataframe to export
-        # @param path [String] Path of the file where the +Daru::DataFrame+
-        #   should be written.
-        # @param data_options [Hash] A set of +Spreadsheet+ options containing user-preferences
-        #   about the +Daru::DataFrame+ data being written.
-        # @param header_options [Hash] A set of +Spreadseet+ options containing user-preferences
-        #   about the +Daru::DataFrame+ headers being written.
         #
         # @example Writing to an Excel file without options
         #   df = Daru::DataFrame.new([[1,2],[3,4]], order: [:a, :b])
@@ -42,36 +47,88 @@ module Daru
         #   #  0   1   3
         #   #  1   2   4
         #
-        #   normal  = { color: :blue }
-        #   heading = { color: :red, weight: :bold }
+        #   Daru::IO::Exporters::Excel.new(df,
+        #     "dataframe_df.xls",
+        #     formatting: {
+        #       header: { color: :red, weight: :bold },
+        #       index:  { color: :green },
+        #       data:   { color: :blue }
+        #     },
+        #     display: { index: false }
+        #   ).call
+        #
+        # @example Writing a DataFrame with Multi-Index to an Excel file
+        #   df = Daru::DataFrame.new [[1,2],[3,4]], order: [:x, :y], index: [[:a, :b, :c], [:d, :e, :f]]
+        #
+        #   #=> #<Daru::DataFrame(2x2)>
+        #   #             x   y
+        #   #  a  b   c   1   3
+        #   #  d  e   f   2   4
         #
         #   Daru::IO::Exporters::Excel.new(df,
         #     "dataframe_df.xls",
-        #     data_options: normal,
-        #     header_options: heading
+        #     formatting: {
+        #       header: { color: :red, weight: :bold },
+        #       index:  { color: :green },
+        #       data:   { color: :blue }
+        #     }
         #   ).call
-        def initialize(dataframe, path, header_options: {}, data_options: {})
+        def initialize(dataframe, path, **options)
           optional_gem 'spreadsheet', '~> 1.1.1'
 
           super(dataframe)
-          @path           = path
-          @data_options   = data_options
-          @header_options = header_options
+          @path       = path
+          @display    = options[:display]    || {}
+          @formatting = options[:formatting] || {}
+
+          @display    = {header: true, data: true, index: true}.merge(@display)
         end
 
         def call
-          book  = Spreadsheet::Workbook.new
-          sheet = book.create_worksheet
+          @book       = Spreadsheet::Workbook.new
+          @sheet      = @book.create_worksheet
+          @row_offset = @display[:header] ? 1 : 0
+          @col_offset = process_col_offset
 
-          sheet.row(0).concat(@dataframe.vectors.to_a.map(&:to_s))
-          sheet.row(0).default_format = Spreadsheet::Format.new(@header_options)
+          write_headers if @display[:header]
 
-          @dataframe.each_row_with_index do |row, i|
-            sheet.row(i+1).concat(row.to_a)
-            sheet.row(i+1).default_format = Spreadsheet::Format.new(@data_options)
+          if @display[:index] || @display[:data]
+            @dataframe.each_row_with_index.with_index do |row_idx, i|
+              row, idx = row_idx
+
+              write_index(idx, i+@row_offset) if @display[:index]
+              write_data(row,  i+@row_offset) if @display[:data]
+            end
           end
 
-          book.write(@path)
+          @book.write(@path)
+        end
+
+        private
+
+        def process_col_offset
+          return 0 unless @display[:index]
+          return 1 unless @dataframe.index.first.is_a?(Array)
+          @dataframe.index.first.count
+        end
+
+        def write_headers
+          @sheet.row(0).default_format = Spreadsheet::Format.new(@formatting[:header] || {})
+          @sheet.row(0).concat([' '] * @col_offset + @dataframe.vectors.to_a.map(&:to_s))
+        end
+
+        def write_index(idx, i)
+          @col_offset.times do |x|
+            @sheet.row(i).set_format(x, Spreadsheet::Format.new(@formatting[:index] || {}))
+          end
+          @sheet.row(i).concat(idx.is_a?(Array) ? idx.to_a.map(&:to_s) : [idx.to_s])
+        end
+
+        def write_data(row, i)
+          (@col_offset..(@col_offset + @dataframe.vectors.to_a.size-1)).each do |x|
+            @sheet.row(i).set_format(x, Spreadsheet::Format.new(@formatting[:data] || {}))
+          end
+          @sheet.row(i).concat(row.to_a)
         end
       end
     end
