@@ -28,10 +28,16 @@ RSpec.describe Daru::IO::Exporters::JSON do
   end
 
   context 'writes DataFrame with nested jsonpath options' do
-    let(:opts) { {name: '$.person.name', age: '$.person.age', sex: '$.gender'} }
+    let(:opts) { {name: '$.person.name', age: '$.person.age', sex: '$.gender', index: '$.relation'} }
 
     it { is_expected.to be_an(Array).and all be_a(Hash) }
-    its(:first) { is_expected.to eq('gender' => 'Male', 'person' => {'age' => 18, 'name' => 'Jon Snow'}) }
+    its(:first) do
+      is_expected.to eq(
+        'gender' => 'Male',
+        'relation' => 'child',
+        'person' => {'age' => 18, 'name' => 'Jon Snow'}
+      )
+    end
   end
 
   context 'writes DataFrame with dynamic jsonpath options' do

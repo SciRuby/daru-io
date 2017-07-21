@@ -183,7 +183,9 @@ module Daru
             init_hash(@jsonpaths, @vectors, row, idx)
           end
 
-          File.open(@path, 'w') { |file| file.write(process_json_string) }
+          File.open(@path, 'w') do |file|
+            file.write(::JSON.send(@pretty ? :pretty_generate : :generate, @json_content))
+          end
         end
 
         private
