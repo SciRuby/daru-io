@@ -3,7 +3,7 @@ module Daru
     class << self
       def register_io_module(function, instance)
         if function.to_s.include? 'to'
-          define_method(function) { |*args| instance.new(self, *args).call }
+          define_method(function) { |*args, &io_block| instance.new(self, *args, &io_block).call }
         else
           define_singleton_method(function) { |*args| instance.new(*args).call }
         end

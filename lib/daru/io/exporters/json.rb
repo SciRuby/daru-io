@@ -11,12 +11,24 @@ module Daru
         # @param dataframe [Daru::DataFrame] A dataframe to export
         # @param path [String] Path of the JSON file where the +Daru::DataFrame+
         #   should be written.
+        # @param orient [Symbol] Setting to export the data in a specific structure.
+        #   Defaults to +:records+.
+        #
+        #   - +:values+ : Returns a 2D array containing the data in the DataFrame.
+        #   - +:split+  : Returns a +Hash+, containing keys +:vectors+, +:index+ and +:data+.
+        #   - +:records+ : Returns an Array of Hashes with given JsonPath content.
+        #   - +:index+   : Returns a Hash of Hashes with index values as keys,
+        #     and given JsonPath content as values.
+        #
+        #   After choosing an +:orient+ option, the JSON content can be manipulated before
+        #   writing into the JSON file, by providing a block.
+        #
         # @param pretty [Boolean] When set to true, the data is pretty-printed to the
         #   JSON file.
         # @param jsonpaths [Hash] JsonPaths to export given vectors into a compexly nested
         #   JSON structure.
         #
-        # @example Writing to a JSON file with pretty print and default orient: :index
+        # @example Writing to a JSON file with default orient: :records
         #   df = Daru::DataFrame.new(
         #     [
         #       {name: 'Jon Snow', age: 18, sex: 'Male'},
@@ -33,7 +45,45 @@ module Daru
         #   # dad   Rhaegar Ta         54       Male
         #   # mom   Lyanna Sta         36     Female
         #
-        #   Daru::IO::Exporters::JSON.new(df, 'filename.json', pretty: true)
+        #   Daru::IO::Exporters::JSON.new(df, 'filename.json', orient: :records, pretty: true).call
+        #
+        #   #=>
+        #   # [
+        #   #   {
+        #   #     "sex": "Male",
+        #   #     "age": 18,
+        #   #     "name": "Jon Snow"
+        #   #   },
+        #   #   {
+        #   #     "sex": "Male",
+        #   #     "age": 54,
+        #   #     "name": "Rhaegar Targaryen"
+        #   #   },
+        #   #   {
+        #   #     "sex": "Female",
+        #   #     "age": 36,
+        #   #     "name": "Lyanna Stark"
+        #   #   }
+        #   # ]
+        #
+        # @example Writing to a JSON file with orient: :index
+        #   df = Daru::DataFrame.new(
+        #     [
+        #       {name: 'Jon Snow', age: 18, sex: 'Male'},
+        #       {name: 'Rhaegar Targaryen', age: 54, sex: 'Male'},
+        #       {name: 'Lyanna Stark', age: 36, sex: 'Female'}
+        #     ],
+        #     order: %i[name age sex],
+        #     index: %i[child dad mom]
+        #   )
+        #
+        #   #=> #<Daru::DataFrame(3x3)>
+        #   #            name          age       sex
+        #   # child   Jon Snow         18       Male
+        #   # dad   Rhaegar Ta         54       Male
+        #   # mom   Lyanna Sta         36     Female
+        #
+        #   Daru::IO::Exporters::JSON.new(df, 'filename.json', pretty: true).call
         #
         #   #=>
         #   # [
@@ -60,6 +110,94 @@ module Daru
         #   #   }
         #   # ]
         #
+        # @example Writing to a JSON file with orient: :values
+        #   df = Daru::DataFrame.new(
+        #     [
+        #       {name: 'Jon Snow', age: 18, sex: 'Male'},
+        #       {name: 'Rhaegar Targaryen', age: 54, sex: 'Male'},
+        #       {name: 'Lyanna Stark', age: 36, sex: 'Female'}
+        #     ],
+        #     order: %i[name age sex],
+        #     index: %i[child dad mom]
+        #   )
+        #
+        #   #=> #<Daru::DataFrame(3x3)>
+        #   #            name          age       sex
+        #   # child   Jon Snow         18       Male
+        #   # dad   Rhaegar Ta         54       Male
+        #   # mom   Lyanna Sta         36     Female
+        #
+        #   Daru::IO::Exporters::JSON.new(df, 'filename.json', orient: :values, pretty: true).call
+        #
+        #   #=>
+        #   # [
+        #   #   [
+        #   #     "Jon Snow",
+        #   #     "Rhaegar Targaryen",
+        #   #     "Lyanna Stark"
+        #   #   ],
+        #   #   [
+        #   #     18,
+        #   #     54,
+        #   #     36
+        #   #   ],
+        #   #   [
+        #   #     "Male",
+        #   #     "Male",
+        #   #     "Female"
+        #   #   ]
+        #   # ]
+        #
+        # @example Writing to a JSON file with orient: :split
+        #   df = Daru::DataFrame.new(
+        #     [
+        #       {name: 'Jon Snow', age: 18, sex: 'Male'},
+        #       {name: 'Rhaegar Targaryen', age: 54, sex: 'Male'},
+        #       {name: 'Lyanna Stark', age: 36, sex: 'Female'}
+        #     ],
+        #     order: %i[name age sex],
+        #     index: %i[child dad mom]
+        #   )
+        #
+        #   #=> #<Daru::DataFrame(3x3)>
+        #   #            name          age       sex
+        #   # child   Jon Snow         18       Male
+        #   # dad   Rhaegar Ta         54       Male
+        #   # mom   Lyanna Sta         36     Female
+        #
+        #   Daru::IO::Exporters::JSON.new(df, 'filename.json', orient: :split, pretty: true).call
+        #
+        #   #=>
+        #   # {
+        #   #   "vectors": [
+        #   #     "name",
+        #   #     "age",
+        #   #     "sex"
+        #   #   ],
+        #   #   "index": [
+        #   #     "child",
+        #   #     "dad",
+        #   #     "mom"
+        #   #   ],
+        #   #   "data": [
+        #   #     [
+        #   #       "Jon Snow",
+        #   #       "Rhaegar Targaryen",
+        #   #       "Lyanna Stark"
+        #   #     ],
+        #   #     [
+        #   #       18,
+        #   #       54,
+        #   #       36
+        #   #     ],
+        #   #     [
+        #   #       "Male",
+        #   #       "Male",
+        #   #       "Female"
+        #   #     ]
+        #   #   ]
+        #   # }
+        #
         # @example Writing to a JSON file with static nested JsonPaths
         #   df = Daru::DataFrame.new(
         #     [
@@ -85,7 +223,7 @@ module Daru
         #     name: '$.specific.name',
         #     age: '$.common.age',
         #     sex: '$.common.gender'
-        #   )
+        #   ).call
         #
         #   #=>
         #   # [
@@ -142,7 +280,7 @@ module Daru
         #     pretty: true,
         #     age: '$.{name}.age',
         #     sex: '$.{name}.gender'
-        #   )
+        #   ).call
         #
         #   #=>
         #   # [
@@ -165,23 +303,66 @@ module Daru
         #   #     }
         #   #   }
         #   # ]
-        def initialize(dataframe, path, pretty: false, **jsonpaths)
+        #
+        # @example Writing to a JSON file with orient: :index and block
+        #   df = Daru::DataFrame.new(
+        #     [
+        #       {name: 'Jon Snow', age: 18, sex: 'Male'},
+        #       {name: 'Rhaegar Targaryen', age: 54, sex: 'Male'},
+        #       {name: 'Lyanna Stark', age: 36, sex: 'Female'}
+        #     ],
+        #     order: %i[name age sex],
+        #     index: %i[child dad mom]
+        #   )
+        #
+        #   #=> #<Daru::DataFrame(3x3)>
+        #   #            name          age       sex
+        #   # child   Jon Snow         18       Male
+        #   # dad   Rhaegar Ta         54       Male
+        #   # mom   Lyanna Sta         36     Female
+        #
+        #   Daru::IO::Exporters::JSON.new(df, 'filename.json', orient: :index, pretty: true) do |json|
+        #     json.map { |j| [j.keys.first, j.values.first] }.to_h
+        #   end.call
+        #
+        #   #=>
+        #   # {
+        #   #   "child": {
+        #   #     "sex": "Male",
+        #   #     "age": 18,
+        #   #     "name": "Jon Snow"
+        #   #   },
+        #   #   "dad": {
+        #   #     "sex": "Male",
+        #   #     "age": 54,
+        #   #     "name": "Rhaegar Targaryen"
+        #   #   },
+        #   #   "mom": {
+        #   #     "sex": "Female",
+        #   #     "age": 36,
+        #   #     "name": "Lyanna Stark"
+        #   #   }
+        #   # }
+        def initialize(dataframe, path, orient: :records, pretty: false, **jsonpaths, &block)
           require 'json'
           optional_gem 'jsonpath'
 
           super(dataframe)
           @path          = path
+          @block         = block
+          @orient        = orient
           @pretty        = pretty
           @jsonpath_hash = jsonpaths.empty? ? nil : jsonpaths
+
+          validate_params
         end
 
         def call
           @jsonpath_hash ||= @dataframe.vectors.to_a.map { |v| {v => "$.#{v}"} }.reduce(:merge)
           @vectors         = @jsonpath_hash.keys
           @jsonpaths       = process_jsonpath
-          @json_content    = @dataframe.map_rows_with_index do |row, idx|
-            init_hash(@jsonpaths, @vectors, row, idx)
-          end
+          @json_content    = process_json_content
+          @json_content    = @block.call(@json_content) if @block
 
           File.open(@path, 'w') do |file|
             file.write(::JSON.send(@pretty ? :pretty_generate : :generate, @json_content))
@@ -189,21 +370,6 @@ module Daru
         end
 
         private
-
-        def process_json_string
-          return ::JSON.pretty_generate(@json_content) if @pretty
-          ::JSON.generate(@json_content)
-        end
-
-        def process_jsonpath
-          @jsonpath_hash.values.map do |x|
-            (JsonPath.new(x).path - %w[$ ${ . .. ..{]).map do |y|
-              v = y.delete("'.[]{")
-              next v.to_i if v.to_i.to_s == v
-              v.to_sym
-            end
-          end
-        end
 
         def both_are?(class_name, obj1, obj2)
           obj1.is_a?(class_name) && obj2.is_a?(class_name)
@@ -248,6 +414,38 @@ module Daru
           end
           rest.each { |r| first = deep_merge(first, r) }
           first
+        end
+
+        def process_json_content
+          return @dataframe.map_vectors(&:to_a) if @orient == :values
+
+          if @orient == :split
+            return {
+              vectors: @dataframe.vectors.to_a,
+              index: @dataframe.index.to_a,
+              data: @dataframe.map_vectors(&:to_a)
+            }
+          end
+
+          @dataframe.map_rows_with_index do |row, idx|
+            next init_hash(@jsonpaths, @vectors, row, idx) if @orient == :records
+            {idx => init_hash(@jsonpaths, @vectors, row, idx)}
+          end
+        end
+
+        def process_jsonpath
+          @jsonpath_hash.values.map do |x|
+            (JsonPath.new(x).path - %w[$ ${ . .. ..{]).map do |y|
+              v = y.delete("'.[]{")
+              next v.to_i if v.to_i.to_s == v
+              v.to_sym
+            end
+          end
+        end
+
+        def validate_params
+          return if %i[index records split values].include?(@orient)
+          raise ArgumentError, "Invalid orient option '#{@orient}' given."
         end
       end
     end
