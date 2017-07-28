@@ -1,6 +1,6 @@
 RSpec.describe Daru::IO::Importers::CSV do
   before do
-    %w[matrix_test repeated_fields scientific_notation sales-funnel].each do |file|
+    %w[matrix_test repeated_fields scientific_notation sales-funnel column_headers_only].each do |file|
       WebMock
         .stub_request(:get,"http://dummy-remote-url/#{file}.csv")
         .to_return(status: 200, body: File.read("spec/fixtures/csv/#{file}.csv"))
@@ -69,13 +69,58 @@ RSpec.describe Daru::IO::Importers::CSV do
       order: %w[Account Name Rep Manager Product Quantity Price Status]
   end
 
+  context 'parses empty dataframe from CSV with only headers' do
+    let(:path)  { 'spec/fixtures/csv/column_headers_only.csv' }
+    let(:opts)  { {} }
+
+    it_behaves_like 'exact daru dataframe',
+      ncols: 3,
+      nrows: 0,
+      order: %w[col0 col1 col2]
+  end
+
+  context 'skips rows from CSV files with headers option' do
+    let(:path)  { 'spec/fixtures/csv/sales-funnel.csv' }
+    let(:opts)  { {skiprows: 8, headers: true} }
+
+    it_behaves_like 'exact daru dataframe',
+      ncols: 8,
+      nrows: 9,
+      order: %i[account manager name price product quantity rep status]
+  end
+
+  context 'skips rows from CSV files without headers option' do
+    let(:path)  { 'spec/fixtures/csv/sales-funnel.csv' }
+    let(:opts)  { {skiprows: 8} }
+
+    it_behaves_like 'exact daru dataframe',
+      ncols: 8,
+      nrows: 9,
+      order: %w[Account Name Rep Manager Product Quantity Price Status]
+  end
+
+  context 'checks for equal parsing of csv and csv.gz files' do
+    %w[matrix_test repeated_fields scientific_notation sales-funnel column_headers_only].each do |file|
+      before { Zlib::GzipWriter.open(path) { |gz| gz.write File.read(csv_path) } }
+
+      let(:csv_path) { "spec/fixtures/csv/#{file}.csv"    }
+      let(:tempfile) { Tempfile.new("#{file}.csv.gz")     }
+      let(:csv)      { described_class.new(csv_path).call }
+      let(:path)     { tempfile.path                      }
+      let(:opts)     { {compression: :gzip}               }
+
+      it_behaves_like 'a daru dataframe'
+      it { is_expected.to eq(csv) }
+    end
+  end
+
   context 'checks for equal parsing of local CSV files and remote CSV files' do
-    %w[matrix_test repeated_fields scientific_notation sales-funnel].each do |file|
+    %w[matrix_test repeated_fields scientific_notation sales-funnel column_headers_only].each do |file|
       let(:local) { described_class.new("spec/fixtures/csv/#{file}.csv").call }
       let(:path)  { "http://dummy-remote-url/#{file}.csv" }
       let(:opts)  { {} }
 
-      it_behaves_like 'exact daru dataframe'
+      it_behaves_like 'a daru dataframe'
       it { is_expected.to eq(local) }
     end
   end
