@@ -3,9 +3,9 @@ RSpec.describe Daru::IO::Exporters::Excel do
 
   let(:filename) { 'test_write.xls' }
   let(:content)  { Spreadsheet.open tempfile.path }
-  let(:opts) { {formatting: {header: {color: :blue}, data: {color: :red}, index: {color: :green}}} }
+  let(:opts)     { {header: {color: :blue}, data: {color: :red}, index: {color: :green}} }
 
-  before { described_class.new(df, tempfile.path, opts).call }
+  before { described_class.new(df, tempfile.path, **opts).call }
 
   context 'writes to excel spreadsheet' do
     subject do
@@ -15,7 +15,7 @@ RSpec.describe Daru::IO::Exporters::Excel do
       )
     end
 
-    let(:opts) { {display: {index: false}} }
+    let(:opts) { {index: false} }
 
     it_behaves_like 'exact daru dataframe',
       ncols: 4,

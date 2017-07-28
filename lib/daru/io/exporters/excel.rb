@@ -8,26 +8,28 @@ module Daru
 
         # Exports +Daru::DataFrame+ to an Excel Spreadsheet.
         #
-        # @param dataframe [Daru::DataFrame] A dataframe to export
-        # @param path [String] Path of the file where the +Daru::DataFrame+
-        #   should be written.
-        # @param options [Hash<Hash>] A +Hash+ containing +:display+ and +:formatting+ keys.
-        #
-        # @option options display [Hash<Boolean>] A Hash of display options. Supported keys are
-        #   +:header+, +:data+ and +:index+. Default value of each key is set to +true+. For
-        #   example, if +:header+ is set to true, the headers are written.
-        #
-        # @option options formatting [Hash<Hash>] A Hash of formatting options. Supported keys
-        #   are +:header+, +:data+ and +:index+. For example, if +:header+ is set to a Hash
-        #   containing keys such as +:color+, the headers are written with the specified color.
-        #
-        #   To know more about the +Spreadsheet+ parameter hashes that can be given as
-        #   values to the +:header+, +:data+ or +:index+ keys, please have a look at the
-        #   methods described in
+        # @note For giving formatting options as hashes to the +:data+, +:index+ or +header+
+        #   keyword argument(s), please have a look at the
         #   {http://www.rubydoc.info/gems/ruby-spreadsheet/Spreadsheet/Font Spreadsheet::Font}
         #   and
         #   {http://www.rubydoc.info/gems/ruby-spreadsheet/Spreadsheet/Format Spreadsheet::Format}
         #   pages.
+        #
+        # @param dataframe [Daru::DataFrame] A dataframe to export
+        # @param path [String] Path of the file where the +Daru::DataFrame+
+        #   should be written.
+        # @param header [Hash or Boolean] Defaults to true. When set to false or nil,
+        #   headers are not written. When given a hash of formatting options,
+        #   headers are written with the specific formatting. When set to true,
+        #   headers are written without any formatting.
+        # @param data [Hash or Boolean] Defaults to true. When set to false or nil,
+        #   data values are not written. When given a hash of formatting options,
+        #   data values are written with the specific formatting. When set to true,
+        #   data values are written without any formatting.
+        # @param index [Hash or Boolean] Defaults to true. When set to false or nil,
+        #   index values are not written. When given a hash of formatting options,
+        #   index values are written with the specific formatting. When set to true,
+        #   index values are written without any formatting.
         #
         # @example Writing to an Excel file without options
         #   df = Daru::DataFrame.new([[1,2],[3,4]], order: [:a, :b])
@@ -39,7 +41,7 @@ module Daru
         #
         #   Daru::IO::Exporters::Excel.new(df, "dataframe_df.xls").call
         #
-        # @example Writing to an Excel file with options
+        # @example Writing to an Excel file with formatting options
         #   df = Daru::DataFrame.new([[1,2],[3,4]], order: [:a, :b])
         #
         #   #=> #<Daru::DataFrame(2x2)>
@@ -49,12 +51,9 @@ module Daru
         #
         #   Daru::IO::Exporters::Excel.new(df,
         #     "dataframe_df.xls",
-        #     formatting: {
-        #       header: { color: :red, weight: :bold },
-        #       index:  { color: :green },
-        #       data:   { color: :blue }
-        #     },
-        #     display: { index: false }
+        #     header: { color: :red, weight: :bold },
+        #     index:  false,
+        #     data:   { color: :blue }
         #   ).call
         #
         # @example Writing a DataFrame with Multi-Index to an Excel file
@@ -67,38 +66,30 @@ module Daru
         #
         #   Daru::IO::Exporters::Excel.new(df,
         #     "dataframe_df.xls",
-        #     formatting: {
-        #       header: { color: :red, weight: :bold },
-        #       index:  { color: :green },
-        #       data:   { color: :blue }
-        #     }
+        #     header: { color: :red, weight: :bold },
+        #     index:  { color: :green },
+        #     data:   { color: :blue }
         #   ).call
-        def initialize(dataframe, path, **options)
+        def initialize(dataframe, path, header: true, data: true, index: true)
           optional_gem 'spreadsheet', '~> 1.1.1'
 
           super(dataframe)
-          @path       = path
-          @display    = options[:display]    || {}
-          @formatting = options[:formatting] || {}
-
-          @display    = {header: true, data: true, index: true}.merge(@display)
+          @path   = path
+          @data   = data
+          @index  = index
+          @header = header
         end
 
         def call
-          @book       = Spreadsheet::Workbook.new
-          @sheet      = @book.create_worksheet
-          @row_offset = @display[:header] ? 1 : 0
-          @col_offset = process_col_offset
+          @book  = Spreadsheet::Workbook.new
+          @sheet = @book.create_worksheet
 
-          write_headers if @display[:header]
+          process_offsets
+          write_headers
 
-          if @display[:index] || @display[:data]
-            @dataframe.each_row_with_index.with_index do |row_idx, i|
-              row, idx = row_idx
-
-              write_index(idx, i+@row_offset) if @display[:index]
-              write_data(row,  i+@row_offset) if @display[:data]
-            end
+          @dataframe.each_row_with_index.with_index do |(row, idx), i|
+            write_index(idx, i+@row_offset)
+            write_data(row,  i+@row_offset)
           end
 
           @book.write(@path)
@@ -106,29 +97,39 @@ module Daru
 
         private
 
-        def process_col_offset
-          return 0 unless @display[:index]
-          return 1 unless @dataframe.index.first.is_a?(Array)
-          @dataframe.index.first.count
+        def process_offsets
+          @row_offset   = @header ? 1 : 0
+          @col_offset   = 0 unless @index
+          @col_offset ||= @dataframe.index.is_a?(Daru::MultiIndex) ? @dataframe.index.levels.size : 1
         end
 
         def write_headers
-          @sheet.row(0).default_format = Spreadsheet::Format.new(@formatting[:header] || {})
-          @sheet.row(0).concat([' '] * @col_offset + @dataframe.vectors.to_a.map(&:to_s))
+          return unless @header
+
+          @sheet.row(0).concat([' '] * @col_offset + @dataframe.vectors.map(&:to_s))
+          return unless @header.is_a?(Hash)
+
+          @sheet.row(0).default_format = Spreadsheet::Format.new(@header)
         end
 
-        def write_index(idx, i)
-          @col_offset.times do |x|
-            @sheet.row(i).set_format(x, Spreadsheet::Format.new(@formatting[:index] || {}))
-          end
-          @sheet.row(i).concat(idx.is_a?(Array) ? idx.to_a.map(&:to_s) : [idx.to_s])
+        def write_index(idx, row)
+          return unless @index
+
+          @sheet.row(row).concat(idx.is_a?(Array) ? idx.to_a.map(&:to_s) : [idx.to_s])
+          return unless @index.is_a?(Hash)
+
+          @col_offset.times { |col| @sheet.row(row).set_format(col, Spreadsheet::Format.new(@index)) }
         end
 
-        def write_data(row, i)
-          (@col_offset..(@col_offset + @dataframe.vectors.to_a.size-1)).each do |x|
-            @sheet.row(i).set_format(x, Spreadsheet::Format.new(@formatting[:data] || {}))
+        def write_data(row, idx)
+          return unless @data
+
+          @sheet.row(idx).concat(row.to_a)
+          return unless @data.is_a?(Hash)
+
+          @dataframe.ncols.times do |col|
+            @sheet.row(idx).set_format(@col_offset + col, Spreadsheet::Format.new(@data))
           end
-          @sheet.row(i).concat(row.to_a)
         end
       end
     end
