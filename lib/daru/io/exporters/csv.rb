@@ -16,8 +16,8 @@ module Daru
         #   +:compression+ as +:gzip+.
         # @param headers [Boolean] When set to +false+, the headers aren't written
         #   to the CSV file
-        # @param convert_comma [Boolean] When set to +true+, the commas are written
-        #   as full-stops
+        # @param convert_comma [Boolean] When set to +true+, the decimal delimiter
+        #   for float values is a comma (,) rather than a dot (.).
         # @param options [Hash] CSV standard library options, to tweak other
         #   default options of CSV gem.
         #
@@ -79,7 +79,7 @@ module Daru
             result << @dataframe.vectors.to_a unless @headers == false
             @dataframe.map_rows do |row|
               next result << row.to_a unless @convert_comma
-              result << row.map { |v| v.to_s.tr('.', ',') }
+              result << row.map(&:to_s).map { |v| v =~ /^\d+./ ? v.tr('.',',') : v }
             end
           end
         end

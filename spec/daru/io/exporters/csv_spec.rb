@@ -38,6 +38,15 @@ RSpec.describe Daru::IO::Exporters::CSV do
     it { is_expected.to eq(df.head(1).map { |v| (v.first || '').to_s }) }
   end
 
+  context 'writes convert_comma only on float values' do
+    subject { CSV.read(tempfile.path, col_sep: ';') }
+
+    let(:df)      { Daru::DataFrame.new('a' => [1, 4.4, nil, 'Sr. Arthur']) }
+    let(:opts)    { {convert_comma: true, col_sep: ';'} }
+
+    it { is_expected.to eq([['a'], ['1'], ['4,4'], [''], ['Sr. Arthur']]) }
+  end
+
   context 'writes into .csv.gz format' do
     subject        { Zlib::GzipReader.new(open(tempfile.path)).read.split("\n") }
 
