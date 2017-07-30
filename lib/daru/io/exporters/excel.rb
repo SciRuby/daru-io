@@ -87,9 +87,9 @@ module Daru
           process_offsets
           write_headers
 
-          @dataframe.each_row_with_index.with_index do |(row, idx), i|
-            write_index(idx, i+@row_offset)
-            write_data(row,  i+@row_offset)
+          @dataframe.each_row_with_index.with_index do |(row, idx), r|
+            write_index(idx, r+@row_offset)
+            write_data(row,  r+@row_offset)
           end
 
           @book.write(@path)
@@ -100,36 +100,48 @@ module Daru
         def process_offsets
           @row_offset   = @header ? 1 : 0
           @col_offset   = 0 unless @index
-          @col_offset ||= @dataframe.index.is_a?(Daru::MultiIndex) ? @dataframe.index.levels.size : 1
+          @col_offset ||= @dataframe.index.is_a?(Daru::MultiIndex) ? @dataframe.index.width : 1
         end
 
         def write_headers
-          return unless @header
-
-          @sheet.row(0).concat([' '] * @col_offset + @dataframe.vectors.map(&:to_s))
-          return unless @header.is_a?(Hash)
-
-          @sheet.row(0).default_format = Spreadsheet::Format.new(@header)
+          formatting(
+            0...@col_offset + @dataframe.ncols,
+            0,
+            [' '] * @col_offset + @dataframe.vectors.map(&:to_s),
+            @header
+          )
         end
 
         def write_index(idx, row)
-          return unless @index
-
-          @sheet.row(row).concat(idx.is_a?(Array) ? idx.to_a.map(&:to_s) : [idx.to_s])
-          return unless @index.is_a?(Hash)
-
-          @col_offset.times { |col| @sheet.row(row).set_format(col, Spreadsheet::Format.new(@index)) }
+          formatting(
+            0...@col_offset,
+            row,
+            idx,
+            @index
+          )
         end
 
         def write_data(row, idx)
-          return unless @data
+          formatting(
+            @col_offset...@col_offset + @dataframe.ncols,
+            idx,
+            row,
+            @data
+          )
+        end
 
-          @sheet.row(idx).concat(row.to_a)
-          return unless @data.is_a?(Hash)
+        def formatting(col_range, row, idx, format)
+          return unless format
+          @sheet.row(row).concat(
+            case idx
+            when Daru::Vector then idx.to_a
+            when Array then idx.map(&:to_s)
+            else [idx.to_s]
+            end
+          )
 
-          @dataframe.ncols.times do |col|
-            @sheet.row(idx).set_format(@col_offset + col, Spreadsheet::Format.new(@data))
-          end
+          return unless format.is_a?(Hash)
+          col_range.each { |col| @sheet.row(row).set_format(col, Spreadsheet::Format.new(format)) }
         end
       end
     end
