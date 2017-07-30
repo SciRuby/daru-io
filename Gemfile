@@ -13,4 +13,9 @@ group :optional do
   gem 'sqlite3'
 end
 
+group :iruby do
+  gem 'cztop'
+  gem 'iruby'
+end
+
 gem 'saharspec', git: 'https://github.com/zverok/saharspec.git'
