@@ -21,4 +21,10 @@ before_install:
 install:
   - gem install bundler
   - gem install rainbow -v '2.2.1'
+  - sudo apt-get update -qq
+  - sudo apt-get install -y libgsl0-dev r-base r-base-dev
+  - sudo Rscript -e "install.packages(c('Rserve','irr'),,'http://cran.us.r-project.org')"
+  - R CMD Rserve
+  - export R_HOME=/usr/lib/R
+  - gem install rsruby -- --with-R-dir=$R_HOME --with-R-include=/usr/share/R/include --with_cflags="-fPIC -g -O2 -fstack-protector --param=ssp-buffer-size=4 -Wformat -Wall -fno-strict-aliasing"
   - bundle install

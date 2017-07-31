@@ -9,6 +9,8 @@ group :optional do
   gem 'mechanize'
   gem 'mongo'
   gem 'redis'
+  gem 'rinruby'
+  gem 'rsruby'
   gem 'spreadsheet', '~> 1.1.1'
   gem 'sqlite3'
 end
