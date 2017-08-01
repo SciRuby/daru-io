@@ -12,7 +12,7 @@ RSpec.describe Daru::IO::Importers::RData do
       ncols: 30,
       nrows: 1629,
       index: (0..1628).to_a,
-      order: %w[
+      order: %i[
         Abbreviation FIPS Non.US State cnty females.divorced females.married ind-agric
         ind-arts ind-construc ind-educational ind-finance ind-information ind-manufact
         ind-other.industry ind-public.admin ind-retail ind-scientific ind-transport

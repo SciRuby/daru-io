@@ -28,7 +28,9 @@ module Daru
         end
 
         def call
-          @vals = RSRuby.instance.eval_R("readRDS('#{@path}')")
+          @vals = RSRuby
+                  .instance.eval_R("readRDS('#{@path}')")
+                  .map { |k, v| [k.to_sym, v] }.to_h
           Daru::DataFrame.new(@vals)
         end
       end
