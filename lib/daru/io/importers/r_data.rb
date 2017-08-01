@@ -34,10 +34,11 @@ module Daru
         def call
           @instance = RSRuby.instance
           @instance.eval_R("load('#{@path}')")
-          @vals = @instance
-                  .send(@variable)
-                  .map { |k, v| [k.to_sym, v] }.to_h
-          Daru::DataFrame.new(@vals)
+          Daru::DataFrame.new(
+            @instance
+              .send(@variable)
+              .map { |k, v| [k.to_sym, v] }.to_h
+          )
         end
       end
     end
