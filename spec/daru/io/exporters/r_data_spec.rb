@@ -10,7 +10,7 @@ RSpec.describe Daru::IO::Exporters::RData do
   before { described_class.new(tempfile.path, **opts).call }
 
   context 'writes DataFrame to a RData file' do
-    let(:opts)    { {'first.df': df, 'last.df': df} }
+    let(:opts)    { {:'first.df' => df, :'last.df' => df} }
 
     it_behaves_like 'exact daru dataframe',
       ncols: 4,
