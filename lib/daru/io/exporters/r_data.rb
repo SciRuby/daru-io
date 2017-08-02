@@ -1,43 +1,32 @@
-require 'daru/io/exporters/base'
+require 'daru/io/exporters/rds'
 
 module Daru
   module IO
     module Exporters
-      class RData < Base
-        # Exports +Daru::DataFrame+ to a CSV file.
+      class RData < RDS
+        # Exports single / multiple +Daru::DataFrame+s to a RData file.
         #
-        # @param dataframe [Daru::DataFrame] A dataframe to export
-        # @param path [String] Path of CSV file where the dataframe is to be saved
-        # @param converters [Symbol] A type to convert the data in dataframe
-        # @param compression [Symbol] Defaults to +:infer+, which decides depending on file format
-        #   like +.csv.gz+. For explicitly writing into a +.csv.gz+ file, set
-        #   +:compression+ as +:gzip+.
-        # @param headers [Boolean] When set to +false+, the headers aren't written
-        #   to the CSV file
-        # @param convert_comma [Boolean] When set to +true+, the decimal delimiter
-        #   for float values is a comma (,) rather than a dot (.).
-        # @param options [Hash] CSV standard library options, to tweak other
-        #   default options of CSV gem.
+        # @param path [String] Path of RData file where the dataframe(s) is/are to be saved
+        # @param options [Hash] A set of key-value pairs wherein the key depicts the name of
+        #   the R +data.frame+ variable name to be saved in the RData file, and the corresponding
+        #   value depicts the +Daru::DataFrame+ (or any Ruby variable in scope)
         #
-        # @example Writing to a CSV file without options
-        #   df = Daru::DataFrame.new([[1,2],[3,4]], order: [:a, :b])
+        # @example Writing to a RData file
+        #   df1 = Daru::DataFrame.new([[1,2],[3,4]], order: [:a, :b])
         #
         #   #=> #<Daru::DataFrame(2x2)>
         #   #      a   b
         #   #  0   1   3
         #   #  1   2   4
         #
-        #   Daru::IO::Exporters::CSV.new(df, "filename.csv").call
-        #
-        # @example Writing to a CSV file with options
-        #   df = Daru::DataFrame.new([[1,2],[3,4]], order: [:a, :b])
+        #   df2 = Daru::DataFrame.new([[5,6],[7,8]], order: [:x, :y])
         #
         #   #=> #<Daru::DataFrame(2x2)>
-        #   #      a   b
-        #   #  0   1   3
-        #   #  1   2   4
+        #   #      x   y
+        #   #  0   5   7
+        #   #  1   6   8
         #
-        #   Daru::IO::Exporters::CSV.new(df, "filename.csv", convert_comma: true).call
+        #   Daru::IO::Exporters::RData.new("daru_dataframes.RData", "first.df": df1, "second.df": df2).call
         def initialize(path, **options)
           optional_gem 'rsruby'
 
@@ -46,23 +35,12 @@ module Daru
         end
 
         def call
-          @instance   = RSRuby.instance
-          @statements = process_statements
+          @instance    = RSRuby.instance
+          @statements  = @options.map do |r_variable, dataframe|
+            process_statements(r_variable, dataframe)
+          end.flatten
+          @statements << "save(#{@options.keys.map(&:to_s).join(', ')}, file='#{@path}')"
           @statements.each { |statement| @instance.eval_R(statement) }
-        end
-
-        private
-
-        def process_statements
-          [].tap do |statement|
-            @options.each do |r_variable, dataframe|
-              dataframe.each_vector_with_index do |v,i|
-                statement << "#{i} = c(#{v.to_a.join(', ')})"
-              end
-              statement << "#{r_variable} = data.frame(#{dataframe.vectors.to_a.map(&:to_s).join(',')})"
-            end
-            statement << "save(#{@options.keys.map(&:to_s).join(', ')}, file='#{@path}')"
-          end
         end
       end
     end

@@ -9,7 +9,7 @@ module Daru
         # Imports a +Daru::DataFrame+ from a RData file and variable
         #
         # @param path [String] Path to the RData file
-        # @param variable [String or Symbol] The variable to be imported from the
+        # @param variable [String] The variable to be imported from the
         #   variables stored in the RData file
         #
         # @return A +Daru::DataFrame+ imported from the given RData file and variable name
@@ -34,11 +34,7 @@ module Daru
         def call
           @instance = RSRuby.instance
           @instance.eval_R("load('#{@path}')")
-          Daru::DataFrame.new(
-            @instance
-              .send(@variable)
-              .map { |k, v| [k.to_sym, v] }.to_h
-          )
+          process_dataframe(@instance.send(@variable.to_sym))
         end
       end
     end

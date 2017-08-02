@@ -28,11 +28,21 @@ module Daru
         end
 
         def call
-          Daru::DataFrame.new(
-            RSRuby
-              .instance.eval_R("readRDS('#{@path}')")
-              .map { |k, v| [k.to_sym, v] }.to_h
-          )
+          process_dataframe(RSRuby.instance.eval_R("readRDS('#{@path}')"))
+        end
+
+        private
+
+        def process_dataframe(data)
+          data = data.map { |key, values| [key.to_sym, values.map { |val| convert_datatype(val) }] }.to_h
+          Daru::DataFrame.new(data)
+        end
+
+        def convert_datatype(value)
+          return nil if value.is_a?(Float) && value.nan?
+          return value.to_f if value == value.to_f.to_s
+          return value.to_i if value == value.to_i.to_s
+          value
         end
       end
     end

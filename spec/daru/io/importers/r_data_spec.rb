@@ -1,7 +1,6 @@
 RSpec.describe Daru::IO::Importers::RData do
   subject { described_class.new(path, variable).call }
 
-  let(:index)    { nil }
   let(:variable) { nil }
 
   context 'reads data from a variable in RData file' do

@@ -1,8 +1,6 @@
 RSpec.describe Daru::IO::Importers::RDS do
   subject { described_class.new(path).call }
 
-  let(:index) { nil }
-
   context 'reads data from RDS file' do
     let(:path) { 'spec/fixtures/rds/bc_sites.rds' }
 
