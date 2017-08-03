@@ -39,18 +39,20 @@ module Daru
         private
 
         def process_statements(r_variable, dataframe)
-          [].tap do |statement|
-            dataframe.map_vectors_with_index do |vector, i|
-              statement << "#{i} = c(#{vector.to_a.map { |val| convert_datatype(val) }.join(', ')})"
-            end
-            statement << "#{r_variable} = data.frame(#{dataframe.vectors.to_a.map(&:to_s).join(', ')})"
-          end
+          [
+            *dataframe.map_vectors_with_index do |vector, i|
+              "#{i} = c(#{vector.to_a.map { |val| convert_datatype(val) }.join(', ')})"
+            end,
+            "#{r_variable} = data.frame(#{dataframe.vectors.to_a.map(&:to_s).join(', ')})"
+          ]
         end
 
         def convert_datatype(value)
-          return 'NA' unless value
-          return value unless value.is_a?(String)
-          "'#{value}'"
+          case value
+          when nil    then 'NA'
+          when String then "'#{value}'"
+          else value
+          end
         end
       end
     end

@@ -39,10 +39,12 @@ module Daru
         end
 
         def convert_datatype(value)
-          return nil if value.is_a?(Float) && value.nan?
-          return value.to_f if value == value.to_f.to_s
-          return value.to_i if value == value.to_i.to_s
-          value
+          case value.to_s
+          when 'NaN'           then nil
+          when value.to_f.to_s then value.to_f
+          when value.to_i.to_s then value.to_i
+          else value
+          end
         end
       end
     end
