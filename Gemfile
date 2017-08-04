@@ -10,6 +10,7 @@ group :optional do
   gem 'mongo'
   gem 'redis'
   gem 'roo', '~> 2.7.0'
+  gem 'rsruby'
   gem 'spreadsheet', '~> 1.1.1'
   gem 'sqlite3'
 end
