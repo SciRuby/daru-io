@@ -1,1 +1,3 @@
-Dir['lib/daru/io/exporters/*.rb'].each { |file| require file.gsub('lib/','') }
+%w[csv excel r_data rds sql].each do |exporter|
+  require "daru/io/exporters/#{exporter}"
+end
