@@ -1,3 +1,1 @@
-%w[csv excel r_data rds sql].each do |exporter|
-  require "daru/io/exporters/#{exporter}"
-end
+Dir["#{__dir__}/exporters/*.rb"].each { |file| require "daru/io#{file.gsub(__dir__, '')}" }
