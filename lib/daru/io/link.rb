@@ -1,7 +1,9 @@
 module Daru
   class DataFrame
     class << self
-      def register_io_module(function, instance)
+      def register_io_module(function, instance=nil, &block)
+        return define_singleton_method(function, &block) if block_given?
+
         if function.to_s.include? 'to'
           define_method(function) { |*args| instance.new(self, *args).call }
         else

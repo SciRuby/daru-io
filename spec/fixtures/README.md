@@ -6,6 +6,13 @@
 - `twitter.avro` : Downloaded from [here](https://github.com/miguno/avro-hadoop-starter/blob/master/src/test/resources/avro/twitter.avro). An AVRO schema with simple fields for Twitter users like `username`, `timestamp`, `tweet`.
 - `users.avro` : Downloaded from [here](https://github.com/apache/spark/blob/master/examples/src/main/resources/users.avro). A generic AVRO schema with fields like `name`, `favorite_color` and `favorite_numbers`.
 
+### Excelx
+
+- `LOBSTAHS_rt.windows.xlsx` : Downloaded from [here](https://github.com/vanmooylipidomics/LOBSTAHS/blob/master/inst/doc/xlsx/LOBSTAHS_rt.windows.xlsx). Contains data about Lipid and Oxylipin Biomarker Screening Through Adduct Hierarchy Sequences (LOBSTASHS). Conatins two sheets called `LOBSTAHS_rt.windows` and `Notes`.
+- `Microcode.xlsx` : Downloaded from [here](https://github.com/tkim371/CS2200/blob/master/proj2/project2/Microcode.xlsx).
+- `Stock-counts-sheet.xlsx` : Downloaded from [here](https://www.exact.com/uk/images/downloads/getting-started-excel-sheets/Stock-counts-sheet.xlsx). Contains data about stocks. Helps in ensuring that HTML tags of cell attributes are striped off, while constructing the DataFrame.
+- `pivot.xlsx` : Downloaded from [here](myy.haaga-helia.fi/~taaak/r/pivot.xlsx). Contains pivot tables, which requires `:skiprows` and `:skipcols` functionality.
+
 ### JSON
 
 - `allsets.json` : An ultra-truncated version of the huge zip file available [here](http://mtgjson.com/json/AllSets.json.zip). Contains nested hashes.
@@ -29,8 +36,9 @@
 - `chicago.rds` : Contains data about city and temperatures. Can potentially create a `<6940*8> Daru::DataFrame`. Downloaded from [here](https://github.com/DataScienceSpecialization/courses/blob/master/03_GettingData/dplyr/chicago.rds)
 - `healthexp.rds` : Contains data comparing health expectancies among various countries. Can potentially create a `<3030*6> Daru::DataFrame`. Downloaded from [here](https://github.com/jcheng5/googleCharts/blob/master/inst/examples/bubble/healthexp.Rds)
 - `heights.rds` : Contains data as individual-wise, with attributes such as income, education, height, weight, etc. Can potentially create a `<3988*10> Daru::DataFrame`. Downloaded from [here](https://github.com/hadley/r4ds/blob/master/data/heights.RDS) 
-- `maacs_env.rds` : Contains data about Marine Air Command and Control System (MAACS) Environment. Can potentially create a `<750*27> Daru::DataFrame`. Downloaded from [here](https://github.com/DataScienceSpecialization/courses/blob/master/04_ExploratoryAnalysis/PlottingLattice/maacs_env.rds) 
+- `maacs_env.rds` : Contains data about Marine Air Command and Control System (MAACS) Environment. Can potentially create a `<750*27> Daru::DataFrame`. Downloaded from [here](https://github.com/DataScienceSpecialization/courses/blob/master/04_ExploratoryAnalysis/PlottingLattice/maacs_env.rds)
 - `RPPdataConverted.rds`: Contains data about author, citations and more of such fields. A fairly large dataset, which can potentially create a `<168*138> Daru::DataFrame`. Downloaded from [here](https://github.com/CenterForOpenScience/rpp/blob/master/data_allformats/RPPdataConverted.rds)
+
 
 ### NOTE FOR FUTURE MAINTAINERS
 
