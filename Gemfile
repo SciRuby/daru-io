@@ -2,6 +2,7 @@ source 'https://rubygems.org'
 gemspec
 
 group :optional do
+  gem 'avro'
   gem 'activerecord', '~> 4.0'
   gem 'dbd-sqlite3'
   gem 'dbi'
@@ -9,6 +10,7 @@ group :optional do
   gem 'mechanize'
   gem 'mongo'
   gem 'redis'
+  gem 'snappy'
   gem 'spreadsheet', '~> 1.1.1'
   gem 'sqlite3'
 end
