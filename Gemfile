@@ -2,8 +2,8 @@ source 'https://rubygems.org'
 gemspec
 
 group :optional do
-  gem 'avro'
   gem 'activerecord', '~> 4.0'
+  gem 'avro'
   gem 'dbd-sqlite3'
   gem 'dbi'
   gem 'jsonpath'
