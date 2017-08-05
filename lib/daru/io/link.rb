@@ -5,7 +5,7 @@ module Daru
         return define_singleton_method(function, &block) if block_given?
 
         if function.to_s.include? 'to'
-          define_method(function) { |*args| instance.new(self, *args).call }
+          define_method(function) { |*args, &io_block| instance.new(self, *args, &io_block).call }
         else
           define_singleton_method(function) { |*args| instance.new(*args).call }
         end
