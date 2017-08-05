@@ -6,6 +6,8 @@ module Daru
       class JSON < Base
         Daru::DataFrame.register_io_module :to_json, self
 
+        ORIENT_TYPES = %i[index records split values].freeze
+
         # Exports +Daru::DataFrame+ to a JSON file.
         #
         # @param dataframe [Daru::DataFrame] A dataframe to export
@@ -409,11 +411,9 @@ module Daru
         end
 
         def init_hash(jsonpaths, jsonpath_keys, row, idx)
-          first, *rest = jsonpaths.map.with_index do |path, i|
+          jsonpaths.map.with_index do |path, i|
             init_hash_rec(path, Hash.new { |h,k| h[k] = Hash.new(&h.default_proc) }, jsonpath_keys[i], row, idx)
-          end
-          rest.each { |r| first = deep_merge(first, r) }
-          first
+          end.reduce { |cumulative, current| deep_merge(cumulative, current) }
         end
 
         def process_json_content
@@ -444,8 +444,7 @@ module Daru
         end
 
         def validate_params
-          return if %i[index records split values].include?(@orient)
-          raise ArgumentError, "Invalid orient option '#{@orient}' given."
+          raise ArgumentError, "Invalid orient option '#{@orient}' given." unless ORIENT_TYPES.include?(@orient)
         end
       end
     end
