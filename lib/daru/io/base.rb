@@ -9,15 +9,10 @@ module Daru
         gem dependency, version
         require requires || dependency
       rescue LoadError
-        statement =
-          if version.nil?
-            "gem install #{dependency}"
-          else
-            "gem install #{dependency} -v '#{version}'"
-          end
+        version = version.nil? ? '' : "#{version} version"
         raise LoadError,
-          "Please install the #{dependency} gem #{version} version, with "\
-          "#{statement} to use the #{callback} module."
+          "Please install the #{dependency} gem #{version}, "\
+          "or add it to the Gemfile to use the #{callback} module."
       end
     end
   end
