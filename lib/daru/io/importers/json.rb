@@ -106,7 +106,7 @@ module Daru
           unless @order.nil? || @named_columns.empty?
             raise ArgumentError,
               'Do not pass on order and named columns together, at the same '\
-              'function call. Please use only order or only named_columns.'\
+              'function call. Please use only order or only named_columns.'
           end
 
           return true if [String, Array, Hash].include?(@json_input.class)

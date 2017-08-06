@@ -1,1 +1,1 @@
-Dir['lib/daru/io/importers/*.rb'].each { |file| require file.gsub('lib/','') }
+Dir["#{__dir__}/importers/*.rb"].each { |file| require "daru/io#{file.gsub(__dir__, '')}" }
