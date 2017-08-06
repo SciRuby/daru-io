@@ -1,0 +1,40 @@
+# RSpec.describe Daru::IO::Exporters::Avro do
+#   subject { File.open(tempfile.path, &:readline).chomp.split(',', -1) }
+
+#   include_context 'exporter setup'
+
+#   let(:filename) { 'test.csv' }
+
+#   before { described_class.new(df, tempfile.path, opts).call }
+
+#   context 'writes DataFrame to a CSV file' do
+#     subject { Daru::DataFrame.rows content[1..-1].map { |x| x.map { |y| convert(y) } }, order: content[0] }
+
+#     let(:opts) { {} }
+#     let(:content) { CSV.read(tempfile.path) }
+
+#     it_behaves_like 'exact daru dataframe',
+#       ncols: 4,
+#       nrows: 5,
+#       order: %w[a b c d],
+#       data: [
+#         [1,2,3,4,5],
+#         [11,22,33,44,55],
+#         ['a', 'g', 4, 5,'addadf'],
+#         [nil, 23, 4,'a','ff']
+#       ]
+#   end
+
+#   context 'writes headers unless headers=false' do
+#     it { is_expected.to be_an(Array) }
+#     it { is_expected.to eq(df.vectors.to_a) }
+#   end
+
+#   context 'does not write headers when headers=false' do
+#     let(:headers) { false              }
+#     let(:opts)    { {headers: headers} }
+
+#     it { is_expected.to be_an(Array) }
+#     it { is_expected.to eq(df.head(1).map { |v| (v.first || '').to_s }) }
+#   end
+# end
