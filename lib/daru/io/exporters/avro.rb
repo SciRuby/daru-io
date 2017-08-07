@@ -10,8 +10,8 @@ module Daru
         #
         # @param dataframe [Daru::DataFrame] A dataframe to export
         # @param path [String] Path of Avro file where the dataframe is to be saved
-        # @param schema [Hash] A schema hash containing keys such as +:type+, +:name+
-        #   and +:fields+
+        # @param schema [Avro::Schema or Hash] The schema should contain details such as +:type+,
+        #   +:name+ and +:fields+
         #
         # @example Writing to an Avro file
         #   schema = {
@@ -45,11 +45,11 @@ module Daru
 
           super(dataframe)
           @path   = path
-          @schema = process_schema(schema)
+          @schema = schema
         end
 
         def call
-          @schema_obj = ::Avro::Schema.parse(@schema)
+          @schema_obj = process_schema
           @writer     = ::Avro::IO::DatumWriter.new(@schema_obj)
           @buffer     = StringIO.new
           @writer     = ::Avro::DataFile::Writer.new(@buffer, @writer, @schema_obj)
@@ -61,10 +61,11 @@ module Daru
 
         private
 
-        def process_schema(schema)
-          case schema
-          when String then schema
-          when Hash   then schema.to_json
+        def process_schema
+          case @schema
+          when ::Avro::Schema then @schema
+          when String         then ::Avro::Schema.parse(@schema)
+          when Hash           then ::Avro::Schema.parse(@schema.to_json)
           else raise ArgumentError, 'Invalid Avro Schema provided.'
           end
         end

@@ -12,6 +12,9 @@ module Daru
         #
         # @return A +Daru::DataFrame+ imported from the given relation and fields
         #
+        # @note The 'snappy' gem handles compressions and is used within Avro gem. Yet, it isn't
+        #   specified as a dependency in Avro gem. Hence, it has been added separately.
+        #
         # @example Importing from an Avro file
         #   df = Daru::IO::Importers::Avro.new("azorahai.avro").call
         #
