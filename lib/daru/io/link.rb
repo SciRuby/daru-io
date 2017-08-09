@@ -29,6 +29,12 @@ module Daru
       # - Stand-alone RData Exporter : {Daru::IO::Exporters::RData#initialize}
       # - *Daru::DataFrame.to_rds* : {Daru::IO::Exporters::RDS#initialize}
       # - *Daru::DataFrame.to_sql* : {Daru::IO::Exporters::SQL#initialize}
+      #
+      # @param function [Symbol] Functon name to be monkey-patched into +Daru::DataFrame+
+      # @param instance [Class] The Daru-IO class to be linked to monkey-patched function
+      #
+      # @return A +Daru::DataFrame+ class method in case of Importer, and instance
+      #   variable method in case of Exporter.
       def register_io_module(function, instance=nil, &block)
         return define_singleton_method(function, &block) if block_given?
 
