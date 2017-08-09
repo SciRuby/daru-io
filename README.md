@@ -8,9 +8,9 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
 A Ruby plugin-gem to [daru gem](https://github.com/SciRuby/daru), that extends support for many Import and
-Export methods of `Daru::DataFrame`. This gem is intended to help not only Data analyzing Rubyists,
-but also serves as a general purpose conversion library that takes input in one format (say, JSON) and
-converts it another format (say, Avro).
+Export methods of `Daru::DataFrame`. This gem is intended to help Data analyzing and Web Developer Rubyists,
+by serving as a general purpose conversion library that takes input in one format (say, JSON) and
+converts it another format (say, Avro) while making it incredibly easy to analyze the data.
 
 # Table of contents
 
