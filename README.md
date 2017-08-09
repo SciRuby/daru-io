@@ -15,10 +15,8 @@ converts it another format (say, Avro).
 # Table of contents
 
 - [Installation](#installation)
-- *Importers: [ActiveRecord](#activerecord-importer), [Avro](#avro-importer), [CSV](#csv-importer), [Excel](#excel-importer), [Excelx](#excelx-importer), [HTML](#html-importer), [JSON](#json-importer), [Mongo](#mongo-importer), [Plaintext](#plaintext-importer), [RData](#rdata-importer), [RDS](#rds-importer), [Redis](#redis-importer), [SQL](#sql-importer)*
-
-- *Exporters: [Avro](#avro-exporter), [CSV](#csv-exporter), [Excel](#excel-exporter), [JSON](#json-exporter), [RData](#rdata-exporter), [RDS](#rds-exporter), [SQL](#sql-exporter)*
-
+- *[Importers](#importers): [ActiveRecord](#activerecord-importer), [Avro](#avro-importer), [CSV](#csv-importer), [Excel](#excel-importer), [Excelx](#excelx-importer), [HTML](#html-importer), [JSON](#json-importer), [Mongo](#mongo-importer), [Plaintext](#plaintext-importer), [RData](#rdata-importer), [RDS](#rds-importer), [Redis](#redis-importer), [SQL](#sql-importer)*
+- *[Exporters](#exporters): [Avro](#avro-exporter), [CSV](#csv-exporter), [Excel](#excel-exporter), [JSON](#json-exporter), [RData](#rdata-exporter), [RDS](#rds-exporter), [SQL](#sql-exporter)*
 - [Contributing](#contributing)
 - [License](#license)
 
@@ -46,11 +44,11 @@ converts it another format (say, Avro).
   gem install daru-io
   ```
 
-- Require `daru-io` gem in your application (not required for Rails):
+- Require `daru-io` gem in your application:
 
 ```ruby
 require 'daru/io' #! Requires all Importers & Exporters
-require 'daru/io/importers' #! Requires only all Importers
+require 'daru/io/importers' #! Requires all Importers and not Exporters
 require 'daru/io/importers/json' #! Requires only JSON Importer
 ```
 
