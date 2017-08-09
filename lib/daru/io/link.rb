@@ -1,6 +1,34 @@
 module Daru
   class DataFrame
     class << self
+      # Links +Daru::DataFrame+ Import / Export methods to corresponding
+      # +Daru::IO+ Importer / Exporter classes. Here is the list of linkages:
+      #
+      # === Importers
+      #
+      # - *Daru::DataFrame.from_activerecord* : {Daru::IO::Importers::ActiveRecord#initialize}
+      # - *Daru::DataFrame.from_avro* : {Daru::IO::Importers::Avro#initialize}
+      # - *Daru::DataFrame.from_csv* : {Daru::IO::Importers::CSV#initialize}
+      # - *Daru::DataFrame.from_excel* : {Daru::IO::Importers::Excel#initialize},
+      #   {Daru::IO::Importers::Excelx#initialize}
+      # - *Daru::DataFrame.from_html* : {Daru::IO::Importers::HTML#initialize}
+      # - *Daru::DataFrame.from_json* : {Daru::IO::Importers::JSON#initialize}
+      # - *Daru::DataFrame.from_mongo* : {Daru::IO::Importers::Mongo#initialize}
+      # - *Daru::DataFrame.from_plaintext* : {Daru::IO::Importers::Plaintext#initialize}
+      # - *Daru::DataFrame.from_rdata* : {Daru::IO::Importers::RData#initialize}
+      # - *Daru::DataFrame.from_rds* : {Daru::IO::Importers::RDS#initialize}
+      # - *Daru::DataFrame.from_redis* : {Daru::IO::Importers::Redis#initialize}
+      # - *Daru::DataFrame.from_sql* : {Daru::IO::Importers::SQL#initialize}
+      #
+      # === Exporters
+      #
+      # - *Daru::DataFrame.to_avro* : {Daru::IO::Exporters::Avro#initialize}
+      # - *Daru::DataFrame.to_csv* : {Daru::IO::Exporters::CSV#initialize}
+      # - *Daru::DataFrame.to_excel* : {Daru::IO::Exporters::Excel#initialize}
+      # - *Daru::DataFrame.to_json* : {Daru::IO::Exporters::JSON#initialize}
+      # - Stand-alone RData Exporter : {Daru::IO::Exporters::RData#initialize}
+      # - *Daru::DataFrame.to_rds* : {Daru::IO::Exporters::RDS#initialize}
+      # - *Daru::DataFrame.to_sql* : {Daru::IO::Exporters::SQL#initialize}
       def register_io_module(function, instance=nil, &block)
         return define_singleton_method(function, &block) if block_given?
 
@@ -8,20 +36,6 @@ module Daru
           define_method(function) { |*args, &io_block| instance.new(self, *args, &io_block).call }
         else
           define_singleton_method(function) { |*args| instance.new(*args).call }
-        end
-      end
-
-      # @note This method currently isn't used. But if we're planning on make
-      #   the linkages part from the user's end, this will turn out to be a
-      #   very useful inclusion.
-      def register_all_io_modules
-        [Daru::IO::Importers, Daru::IO::Exporters].each do |mod|
-          klasses = mod.constants.select { |c| mod.const_get(c).is_a? Class }
-          klasses.each do |klass|
-            prefix = mod.name.include?('Importers') ? 'from_' : 'to_'
-            method = (prefix + klass.downcase).to_sym
-            register_io_module method, Object.const_get("#{mod.name}::#{klass}")
-          end
         end
       end
     end
