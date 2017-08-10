@@ -3,6 +3,8 @@ require 'daru/io/link'
 
 module Daru
   module IO
+    # Base IO Class that contains generic helper methods, to be
+    # used by other Importers::Base and Exporters::Base via inheritence
     class Base
       # Specifies and requires a gem, if the gem is present in the application
       # environment. Else, raises +LoadError+ with meaningful message of which

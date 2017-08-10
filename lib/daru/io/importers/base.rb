@@ -3,6 +3,8 @@ require 'daru/io/base'
 module Daru
   module IO
     module Importers
+      # Base Importer Class that contains generic helper methods, to be
+      # used by other Importers via inheritence
       class Base < Daru::IO::Base
         # Guesses the +Daru::DataFrame+ from the parsed set of key-value pairs.
         #

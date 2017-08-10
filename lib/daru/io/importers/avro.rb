@@ -3,6 +3,7 @@ require 'daru/io/importers/base'
 module Daru
   module IO
     module Importers
+      # Avro Importer Class, that extends +from_avro+ method to +Daru::DataFrame+
       class Avro < Base
         Daru::DataFrame.register_io_module :from_avro, self
 

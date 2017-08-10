@@ -3,6 +3,7 @@ require 'daru/io/importers/base'
 module Daru
   module IO
     module Importers
+      # SQL Importer Class, that extends +from_sql+ method to +Daru::DataFrame+
       class SQL < Base
         Daru::DataFrame.register_io_module :from_sql, self
 

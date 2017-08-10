@@ -3,6 +3,8 @@ require 'daru/io/base'
 module Daru
   module IO
     module Exporters
+      # Base Exporter Class that contains generic helper methods, to be
+      # used by other Exporters via inheritence
       class Base < Daru::IO::Base
         # Checks whether the first argument given to any +Daru::IO::Exporter+ module
         # is a +Daru::DataFrame+. Raises an error when it's not a +Daru::DataFrame+.

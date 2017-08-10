@@ -3,6 +3,7 @@ require 'daru/io/importers/base'
 module Daru
   module IO
     module Importers
+      # Redis Importer Class, that extends +from_redis+ method to +Daru::DataFrame+
       class Redis < Base
         Daru::DataFrame.register_io_module :from_redis, self
 

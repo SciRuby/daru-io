@@ -3,6 +3,8 @@ require 'daru/io/exporters/rds'
 module Daru
   module IO
     module Exporters
+      # RData Exporter Class, that extends +to_rdata+ method to +Daru::DataFrame+
+      # instance variables
       class RData < RDS
         # Exports single / multiple +Daru::DataFrame+s to a RData file.
         #

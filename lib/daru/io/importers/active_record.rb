@@ -3,6 +3,8 @@ require 'daru/io/importers/base'
 module Daru
   module IO
     module Importers
+      # ActiveRecord Importer Class, that extends +from_activerecord+ method to
+      # +Daru::DataFrame+
       class ActiveRecord < Base
         Daru::DataFrame.register_io_module :from_activerecord, self
 

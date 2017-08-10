@@ -3,6 +3,8 @@ require 'daru/io/exporters/base'
 module Daru
   module IO
     module Exporters
+      # RDS Exporter Class, that extends +to_rds+ method to +Daru::DataFrame+
+      # instance variables
       class RDS < Base
         Daru::DataFrame.register_io_module :to_rds, self
 

@@ -3,6 +3,7 @@ require 'daru/io/importers/base'
 module Daru
   module IO
     module Importers
+      # JSON Importer Class, that extends +from_json+ method to +Daru::DataFrame+
       class JSON < Base
         Daru::DataFrame.register_io_module :from_json, self
 

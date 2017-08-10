@@ -3,6 +3,7 @@ require 'daru/io/importers/base'
 module Daru
   module IO
     module Importers
+      # Excel Importer Class, that extends +from_excel+ method to +Daru::DataFrame+
       class Excel < Base
         Daru::DataFrame.register_io_module :from_excel do |*args|
           if args.first.end_with? '.xlsx'

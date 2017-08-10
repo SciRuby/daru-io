@@ -3,6 +3,8 @@ require 'daru/io/exporters/base'
 module Daru
   module IO
     module Exporters
+      # JSON Exporter Class, that extends +to_json+ method to +Daru::DataFrame+
+      # instance variables
       class JSON < Base
         Daru::DataFrame.register_io_module :to_json, self
 

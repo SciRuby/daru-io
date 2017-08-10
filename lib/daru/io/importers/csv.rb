@@ -3,6 +3,7 @@ require 'daru/io/importers/base'
 module Daru
   module IO
     module Importers
+      # CSV Importer Class, that extends +from_csv+ method to +Daru::DataFrame+
       class CSV < Base
         Daru::DataFrame.register_io_module :from_csv, self
 

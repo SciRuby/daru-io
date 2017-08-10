@@ -3,6 +3,8 @@ require 'daru/io/exporters/base'
 module Daru
   module IO
     module Exporters
+      # Avro Exporter Class, that extends +to_avro+ method to +Daru::DataFrame+
+      # instance variables
       class Avro < Base
         Daru::DataFrame.register_io_module :to_avro, self
 

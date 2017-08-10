@@ -3,6 +3,7 @@ require 'daru/io/importers/base'
 module Daru
   module IO
     module Importers
+      # HTML Importer Class, that extends +from_html+ method to +Daru::DataFrame+
       class HTML < Base
         Daru::DataFrame.register_io_module :from_html, self
 

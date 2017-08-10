@@ -3,6 +3,7 @@ require 'daru/io/importers/base'
 module Daru
   module IO
     module Importers
+      # Excelx Importer Class, that handles .xlsx files in the Excel Importer
       class Excelx < Base
         # Imports a +Daru::DataFrame+ from a given XLSX file and sheet.
         #

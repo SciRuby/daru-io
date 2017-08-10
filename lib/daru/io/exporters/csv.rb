@@ -3,6 +3,8 @@ require 'daru/io/exporters/base'
 module Daru
   module IO
     module Exporters
+      # CSV Exporter Class, that extends +to_csv+ method to +Daru::DataFrame+
+      # instance variables
       class CSV < Base
         Daru::DataFrame.register_io_module :to_csv, self
 

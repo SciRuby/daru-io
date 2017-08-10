@@ -3,6 +3,7 @@ require 'daru/io/importers/json'
 module Daru
   module IO
     module Importers
+      # Mongo Importer Class, that extends +from_mongo+ method to +Daru::DataFrame+
       class Mongo < JSON
         Daru::DataFrame.register_io_module :from_mongo, self
 

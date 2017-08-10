@@ -3,6 +3,7 @@ require 'daru/io/importers/base'
 module Daru
   module IO
     module Importers
+      # RDS Importer Class, that extends +from_rds+ method to +Daru::DataFrame+
       class RDS < Base
         Daru::DataFrame.register_io_module :from_rds, self
 

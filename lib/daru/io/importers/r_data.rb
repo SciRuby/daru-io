@@ -3,6 +3,7 @@ require 'daru/io/importers/rds'
 module Daru
   module IO
     module Importers
+      # RData Importer Class, that extends +from_rdata+ method to +Daru::DataFrame+
       class RData < RDS
         Daru::DataFrame.register_io_module :from_rdata, self
 
