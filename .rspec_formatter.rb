@@ -4,24 +4,11 @@ class SimpleFormatter < RSpec::Core::Formatters::BaseTextFormatter
   RSpec::Core::Formatters.register self,
     :example_passed, :example_pending, :example_failed, :dump_pending, :dump_failures, :dump_summary
 
-  def example_passed(message)
-    # Do nothing
-  end
-
-  def example_pending(message)
-    # Do nothing
-  end
-
-  def example_failed(message)
-    # Do nothing
-  end
-
-  def dump_pending(message)
-    # Do nothing
-  end
-
-  def dump_failures(message)
-  end
+  def example_passed(message); end
+  def example_pending(message); end
+  def example_failed(message); end
+  def dump_pending(message); end
+  def dump_failures(message); end
 
   def dump_summary(message)
     colorizer = ::RSpec::Core::Formatters::ConsoleCodes

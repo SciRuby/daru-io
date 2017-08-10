@@ -11,17 +11,23 @@ AllCops:
   TargetRubyVersion: 2.1
 
 # Preferred codebase style ---------------------------------------------
+
+### Layouts ------------------------------------------------------------
+
+Layout/AlignParameters:
+  EnforcedStyle: with_fixed_indentation
+
 Layout/ExtraSpacing:
   AllowForAlignment: true
 
-Style/FormatString:
-  EnforcedStyle: percent
-
-Style/AndOr:
-  EnforcedStyle: conditionals
+Layout/SpaceAfterComma:
+  Enabled: false
 
 Layout/SpaceAroundEqualsInParameterDefault:
   EnforcedStyle: no_space
+
+Layout/SpaceAroundOperators:
+  Enabled: false
 
 Layout/SpaceInsideBlockBraces:
   EnforcedStyle: space
@@ -29,32 +35,30 @@ Layout/SpaceInsideBlockBraces:
 Layout/SpaceInsideHashLiteralBraces:
   EnforcedStyle: no_space
 
-Layout/AlignParameters:
-  EnforcedStyle: with_fixed_indentation
+### Styles -------------------------------------------------------------
+
+Style/AndOr:
+  EnforcedStyle: conditionals
+
+Style/DoubleNegation:
+  Enabled: false
+
+Style/EmptyCaseCondition:
+  Enabled: false
 
 Style/EmptyElse:
   EnforcedStyle: empty
 
-Metrics/BlockLength:
-  Exclude:
-    - 'spec/**/*'
+Style/EmptyMethod:
+  EnforcedStyle: compact
 
-Metrics/LineLength:
-  Max: 120
-
-Metrics/ModuleLength:
-  Max: 200
-
-Metrics/ClassLength:
-  Max: 200
-
-Metrics/ParameterLists:
-  Max: 10
-
-Style/ParallelAssignment:
+Style/FileName:
   Enabled: false
 
-Style/DoubleNegation:
+Style/FormatString:
+  EnforcedStyle: percent
+
+Style/ParallelAssignment:
   Enabled: false
 
 Style/SingleLineBlockParams:
@@ -63,39 +67,43 @@ Style/SingleLineBlockParams:
 Style/PerlBackrefs:
   Enabled: false
 
-Layout/SpaceAfterComma:
-  Enabled: false
+Style/Documentation:
+  Enabled: false # TODO
 
-Layout/SpaceAroundOperators:
-  Enabled: false
+### Metrics ------------------------------------------------------------
 
-Style/EmptyCaseCondition:
-  Enabled: false
+Metrics/AbcSize:
+  Max: 20
 
-Style/FileName:
-  Enabled: false
+Metrics/BlockLength:
+  Exclude:
+    - 'spec/**/*'
+
+Metrics/ClassLength:
+  Max: 200
+
+Metrics/CyclomaticComplexity:
+  Max: 7
+
+Metrics/LineLength:
+  Max: 120
+
+Metrics/MethodLength:
+  Max: 15
+
+Metrics/ModuleLength:
+  Max: 200
 
 Style/MultilineBlockChain:
   Enabled: false
+
+Metrics/ParameterLists:
+  Max: 10
+
+### RSpec --------------------------------------------------------------
 
 RSpec/MessageSpies:
   EnforcedStyle: receive
 
 RSpec/NestedGroups:
   Max: 5
-
-# Current preferred metrics --------------------------------------------
-# Better values are encouraged, but not required.
-Metrics/AbcSize:
-  Max: 20
-
-Metrics/MethodLength:
-  Max: 15
-
-Metrics/CyclomaticComplexity:
-  Max: 7
-
-# TODO -----------------------------------------------------------------
-
-Style/Documentation:
-  Enabled: false
