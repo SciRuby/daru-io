@@ -10,7 +10,7 @@ Daru::IO::DESCRIPTION = <<MSG.freeze
   While supporting various IO modules, daru-io also provides an easier way of adding more Importers / Exporters by means of monkey-patching.
 MSG
 
-Gem::Specification.new do |spec|
+Gem::Specification.new do |spec| # rubocop:disable Metrics/BlockLength
   spec.name          = 'daru-io'
   spec.version       = Daru::IO::VERSION
   spec.authors       = ['Athitya Kumar']
@@ -30,6 +30,7 @@ Gem::Specification.new do |spec|
 
   spec.add_development_dependency 'bundler', '~> 1.15'
   spec.add_development_dependency 'rake', '~> 10.0'
+  spec.add_development_dependency 'redcarpet'
   spec.add_development_dependency 'rspec', '~> 3.0'
   spec.add_development_dependency 'rspec-its'
   spec.add_development_dependency 'rubocop', '>= 0.40.0'

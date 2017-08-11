@@ -5,14 +5,14 @@ module Daru
     module Importers
       # Excelx Importer Class, that handles .xlsx files in the Excel Importer
       class Excelx < Base
-        # Imports a +Daru::DataFrame+ from a given XLSX file and sheet.
+        # Imports a **Daru::DataFrame** from a given XLSX file and sheet.
         #
         # @param path [String] Local / Remote path to XLSX file
         # @param sheet [String] Sheet name in the given XLSX file. Defaults to 0,
         #   to parse the dataframe from the first sheet.
-        # @param skiprows [Integer] Skips the first +:skiprows+ number of rows from the
+        # @param skiprows [Integer] Skips the first `:skiprows` number of rows from the
         #   sheet being parsed.
-        # @param skipcols [Integer] Skips the first +:skipcols+ number of columns from the
+        # @param skipcols [Integer] Skips the first `:skipcols` number of columns from the
         #   sheet being parsed.
         # @param order [Boolean] Defaults to true. When set to true, first row of the
         #   given sheet is used as the order of the Daru::DataFrame and data of
@@ -24,7 +24,7 @@ module Daru
         #   When set to false, a default order (0 to n-1) is chosen for the DataFrame,
         #   and the data of the DataFrame consists of all rows in the sheet.
         #
-        # @return A +Daru::DataFrame+ imported from the given XLSX file and sheet
+        # @return A **Daru::DataFrame** imported from the given XLSX file and sheet
         #
         # @example Importing from a local file
         #   path  = 'spec/fixtures/excelx/Stock-counts-sheet.xlsx'

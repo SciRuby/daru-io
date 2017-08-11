@@ -3,28 +3,28 @@ require 'daru/io/exporters/base'
 module Daru
   module IO
     module Exporters
-      # JSON Exporter Class, that extends +to_json+ method to +Daru::DataFrame+
+      # JSON Exporter Class, that extends **to_json** method to **Daru::DataFrame**
       # instance variables
       class JSON < Base
         Daru::DataFrame.register_io_module :to_json, self
 
         ORIENT_TYPES = %i[index records split values].freeze
 
-        # Exports +Daru::DataFrame+ to a JSON file.
+        # Exports **Daru::DataFrame** to a JSON file.
         #
         # @param dataframe [Daru::DataFrame] A dataframe to export
-        # @param path [String] Path of the JSON file where the +Daru::DataFrame+
+        # @param path [String] Path of the JSON file where the **Daru::DataFrame**
         #   should be written.
         # @param orient [Symbol] Setting to export the data in a specific structure.
-        #   Defaults to +:records+.
+        #   Defaults to `:records`.
         #
-        #   - +:values+ : Returns a 2D array containing the data in the DataFrame.
-        #   - +:split+  : Returns a +Hash+, containing keys +:vectors+, +:index+ and +:data+.
-        #   - +:records+ : Returns an Array of Hashes with given JsonPath content.
-        #   - +:index+   : Returns a Hash of Hashes with index values as keys,
+        #   - `:values` : Returns a 2D array containing the data in the DataFrame.
+        #   - `:split`  : Returns a `Hash`, containing keys `:vectors`, `:index` and `:data`.
+        #   - `:records` : Returns an Array of Hashes with given JsonPath content.
+        #   - `:index`   : Returns a Hash of Hashes with index values as keys,
         #     and given JsonPath content as values.
         #
-        #   After choosing an +:orient+ option, the JSON content can be manipulated before
+        #   After choosing an `:orient` option, the JSON content can be manipulated before
         #   writing into the JSON file, by providing a block.
         #
         # @param pretty [Boolean] When set to true, the data is pretty-printed to the

@@ -3,15 +3,15 @@ require 'daru/io/importers/base'
 module Daru
   module IO
     module Importers
-      # Avro Importer Class, that extends +from_avro+ method to +Daru::DataFrame+
+      # Avro Importer Class, that extends **from_avro** method to **Daru::DataFrame**
       class Avro < Base
         Daru::DataFrame.register_io_module :from_avro, self
 
-        # Imports a +Daru::DataFrame+ from an Avro file.
+        # Imports a **Daru::DataFrame** from an Avro file.
         #
         # @param path [String] Path to Avro file, where the dataframe is to be imported from.
         #
-        # @return A +Daru::DataFrame+ imported from the given relation and fields
+        # @return A **Daru::DataFrame** imported from the given relation and fields
         #
         # @note The 'snappy' gem handles compressions and is used within Avro gem. Yet, it isn't
         #   specified as a dependency in Avro gem. Hence, it has been added separately.

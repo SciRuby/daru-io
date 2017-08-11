@@ -6,8 +6,8 @@ module Daru
       # Base Exporter Class that contains generic helper methods, to be
       # used by other Exporters via inheritence
       class Base < Daru::IO::Base
-        # Checks whether the first argument given to any +Daru::IO::Exporter+ module
-        # is a +Daru::DataFrame+. Raises an error when it's not a +Daru::DataFrame+.
+        # Checks whether the first argument given to any `Daru::IO::<Exporter>` module
+        # is a **Daru::DataFrame**. Raises an error when it's not a **Daru::DataFrame**.
         #
         # @param dataframe [Daru::DataFrame] A DataFrame to initialize
         #

@@ -3,40 +3,36 @@ require 'daru/io/importers/base'
 module Daru
   module IO
     module Importers
-      # CSV Importer Class, that extends +from_csv+ method to +Daru::DataFrame+
+      # CSV Importer Class, that extends **from_csv** method to **Daru::DataFrame**
       class CSV < Base
         Daru::DataFrame.register_io_module :from_csv, self
 
-        # Imports a +Daru::DataFrame+ from a CSV file.
+        # Imports a **Daru::DataFrame** from a .csv / .csv.gz file.
         #
         # @param path [String] Local / Remote path of CSV file, where the
         #   dataframe is to be imported from.
-        # @param headers [Boolean] If this option is +true+, only those columns
-        #   will be used to import the +Daru::DataFrame+ whose header is given.
-        # @param skiprows [Integer] Skips the first +skiprows+ number of rows from
+        # @param headers [Boolean] If this option is `true`, only those columns
+        #   will be used to import the **Daru::DataFrame** whose header is given.
+        # @param skiprows [Integer] Skips the first `:skiprows` number of rows from
         #   the CSV file. Defaults to 0.
-        # @param compression [Symbol] Defaults to +:infer+, to parse depending on file format
-        #   like +.csv.gz+. For explicitly parsing data from a +.csv.gz+ file, set
-        #   +:compression+ as +:gzip+.
-        # @param clone [Boolean] Have a look at +:clone+ option, at
-        #   {http://www.rubydoc.info/gems/daru/0.1.5/Daru%2FDataFrame:initialize
-        #   Daru::DataFrame#initialize}
+        # @param compression [Symbol] Defaults to `:infer`, to parse depending on file format
+        #   like `.csv.gz`. For explicitly parsing data from a `.csv.gz` file, set
+        #   `:compression` as `:gzip`.
+        # @param clone [Boolean] Have a look at `:clone` option
+        #   [here](http://www.rubydoc.info/gems/daru/0.1.5/Daru%2FDataFrame:initialize)
         # @param index [Array or Daru::Index or Daru::MultiIndex] Have a look at
-        #   +:index+ option, at
-        #   {http://www.rubydoc.info/gems/daru/0.1.5/Daru%2FDataFrame:initialize
-        #   Daru::DataFrame#initialize}
+        #   `:index` option
+        #   [here](http://www.rubydoc.info/gems/daru/0.1.5/Daru%2FDataFrame:initialize)
         # @param order [Array or Daru::Index or Daru::MultiIndex] Have a look at
-        #   +:order+ option, at
-        #   {http://www.rubydoc.info/gems/daru/0.1.5/Daru%2FDataFrame:initialize
-        #   Daru::DataFrame#initialize}
-        # @param name [String] Have a look at +:name+ option, at
-        #   {http://www.rubydoc.info/gems/daru/0.1.5/Daru%2FDataFrame:initialize
-        #   Daru::DataFrame#initialize}
-        # @param options [Hash] CSV standard library options such as +:col_sep+
-        #   (defaults to +','+), +:converters+ (defaults to +:numeric+),
-        #   +:header_converters+ (defaults to +:symbol+).
+        #   `:order` option
+        #   [here](http://www.rubydoc.info/gems/daru/0.1.5/Daru%2FDataFrame:initialize)
+        # @param name [String] Have a look at `:name` option
+        #   [here](http://www.rubydoc.info/gems/daru/0.1.5/Daru%2FDataFrame:initialize)
+        # @param options [Hash] CSV standard library options such as `:col_sep`
+        #   (defaults to `','`), `:converters` (defaults to `:numeric`),
+        #   `:header_converters` (defaults to `:symbol`).
         #
-        # @return A +Daru::DataFrame+ imported from the given relation and fields
+        # @return A **Daru::DataFrame** imported from the given relation and fields
         #
         # @example Reading from a CSV file from columns whose header is given
         #   df = Daru::DataFrame.from_csv("matrix_test.csv", col_sep: ' ', headers: true)

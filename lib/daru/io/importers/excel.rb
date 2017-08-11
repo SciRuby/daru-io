@@ -3,7 +3,7 @@ require 'daru/io/importers/base'
 module Daru
   module IO
     module Importers
-      # Excel Importer Class, that extends +from_excel+ method to +Daru::DataFrame+
+      # Excel Importer Class, that extends **from_excel** method to **Daru::DataFrame**
       class Excel < Base
         Daru::DataFrame.register_io_module :from_excel do |*args|
           if args.first.end_with? '.xlsx'
@@ -14,21 +14,21 @@ module Daru
           end
         end
 
-        # Imports a +Daru::DataFrame+ from an Excel file (.xls, or .xlsx formats)
+        # Imports a **Daru::DataFrame** from an Excel file (.xls, or .xlsx formats)
         #
         # @param path [String] Path of Excel file, where the DataFrame is to be imported from.
         # @param worksheet_id [Integer] The index of the worksheet in the excel file,
-        #   from where the +Daru::DataFrame+ will be imported. By default, the first
-        #   worksheet has +:worksheet_id+ as 0. In general, the n-th worksheet has
+        #   from where the **Daru::DataFrame** will be imported. By default, the first
+        #   worksheet has `:worksheet_id` as 0. In general, the n-th worksheet has
         #   its worksheet_id as n-1.
         #
         #   If worksheet_id option is not given, it is taken as 0 by default and the
-        #   +Daru::DataFrame+ will be imported from the first worksheet in the excel file.
+        #   **Daru::DataFrame** will be imported from the first worksheet in the excel file.
         # @param headers [Boolean] Defaults to true. When set to true, first row of the
         #   given worksheet_id is used as the order of the Daru::DataFrame and data of
         #   the Dataframe consists of the remaining rows.
         #
-        # @return A +Daru::DataFrame+ imported from the given excel worksheet
+        # @return A **Daru::DataFrame** imported from the given excel worksheet
         #
         # @example Reading from a default workworksheet_id of an Excel file
         #   df = Daru::IO::Importers::Excel.new("test_xls.xls").call
