@@ -9,7 +9,7 @@ require 'bundler/setup'
 require 'rspec'
 require 'rspec/its'
 require 'webmock/rspec'
-require 'saharspec/its_call'
+require 'saharspec/its/call'
 
 require 'tempfile'
 require 'open-uri'
