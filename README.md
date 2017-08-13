@@ -13,15 +13,14 @@ Development, by serving as a general purpose conversion library that takes input
 converts it another format (say, Avro) while also making it incredibly easy to getting started on
 analyzing data with daru.
 
-While supporting various IO modules, daru-io also provides an easier way of adding more Importers / Exporters
-by means of monkey-patching. **It's strongly recommended to have a look at [this section](#tweaking-io-modules), if you're interested in tweaking and creating custom Importers / Exporters.**
+While supporting various IO modules, daru-io also provides an easier way of adding more Importers / Exporters. **It's strongly recommended to have a look at ['Creating your own IO modules' section](#creating-your-own-io-modules), if you're interested in creating new Importers / Exporters.**
 
 # Table of contents
 
 - [Installation](#installation)
 - *[Importers](#importers): [ActiveRecord](#activerecord-importer), [Avro](#avro-importer), [CSV](#csv-importer), [Excel](#excel-importer), [Excelx](#excelx-importer), [HTML](#html-importer), [JSON](#json-importer), [Mongo](#mongo-importer), [Plaintext](#plaintext-importer), [RData](#rdata-importer), [RDS](#rds-importer), [Redis](#redis-importer), [SQL](#sql-importer)*
 - *[Exporters](#exporters): [Avro](#avro-exporter), [CSV](#csv-exporter), [Excel](#excel-exporter), [JSON](#json-exporter), [RData](#rdata-exporter), [RDS](#rds-exporter), [SQL](#sql-exporter)*
-- [Tweaking](#tweaking-io-modules)
+- [Creating your own IO modules](#creating-your-own-io-modules)
 - [Contributing](#contributing)
 - [License](#license)
 
@@ -85,17 +84,17 @@ Imports a **Daru::DataFrame** from an **ActiveRecord** connection.
 
 - **Docs**: [rubydoc.info](http://www.rubydoc.info/github/athityakumar/daru-io/master/Daru/IO/Importers/ActiveRecord)
 - **Gem Dependencies**: `activerecord` gem
-- **Other Dependencies**: None
+- **Other Dependencies**: Database(s) such as SQL / Postgresql / etc.
 - **Usage**:
     ```ruby
     #! Partially require just ActiveRecord Importer
     require 'daru/io/importers/active_record'
 
     #! Usage from Daru::IO
-    Daru::IO::Importers::ActiveRecord.new(args).call
+    Daru::IO::Importers::ActiveRecord.new(activerecord_relation, :field_1, :field_2).call
 
     #! Usage from Daru::DataFrame
-    Daru::DataFrame.from_activerecord(args)
+    Daru::DataFrame.from_activerecord(activerecord_relation, :field_1, :field_2)
     ```
 
 ### Avro Importer
@@ -106,17 +105,16 @@ Imports a **Daru::DataFrame** from an **.avro** file.
 
 - **Docs**: [rubydoc.info](http://www.rubydoc.info/github/athityakumar/daru-io/master/Daru/IO/Importers/Avro)
 - **Gem Dependencies**: `avro` and `snappy` gems
-- **Other Dependencies**: None
 - **Usage**:
     ```ruby
     #! Partially require just Avro Importer
     require 'daru/io/importers/avro'
 
     #! Usage from Daru::IO
-    Daru::IO::Importers::Avro.new(args).call
+    Daru::IO::Importers::Avro.new('path/to/avro/file').call
 
     #! Usage from Daru::DataFrame
-    Daru::DataFrame.from_avro(args)
+    Daru::DataFrame.from_avro('path/to/avro/file')
     ```
 
 ### CSV Importer
@@ -126,18 +124,16 @@ Imports a **Daru::DataFrame** from an **.avro** file.
 Imports a **Daru::DataFrame** from a **.csv** or **.csv.gz** file.
 
 - **Docs**: [rubydoc.info](http://www.rubydoc.info/github/athityakumar/daru-io/master/Daru/IO/Importers/CSV)
-- **Gem Dependencies**: Standard library `csv`, `open-uri` and `zlib` gems
-- **Other Dependencies**: None
 - **Usage**:
     ```ruby
     #! Partially require just CSV Importer
     require 'daru/io/importers/csv'
 
     #! Usage from Daru::IO
-    Daru::IO::Importers::CSV.new(args).call
+    Daru::IO::Importers::CSV.new('path/to/csv.gz/file', skiprows: 10, compression: :gzip).call
 
     #! Usage from Daru::DataFrame
-    Daru::DataFrame.from_csv(args)
+    Daru::DataFrame.from_csv('path/to/csv.gz/file', skiprows: 10, compression: :gzip)
     ```
 
 ### Excel Importer
@@ -148,17 +144,16 @@ Imports a **Daru::DataFrame** from a **.xls** file.
 
 - **Docs**: [rubydoc.info](http://www.rubydoc.info/github/athityakumar/daru-io/master/Daru/IO/Importers/Excel)
 - **Gem Dependencies**: `spreadsheet` gem
-- **Other Dependencies**: None
 - **Usage**:
     ```ruby
     #! Partially require just Excel Importer
     require 'daru/io/importers/excel'
 
     #! Usage from Daru::IO
-    Daru::IO::Importers::Excel.new(args).call
+    Daru::IO::Importers::Excel.new('path/to/xls/file', worksheet_id: 1).call
 
     #! Usage from Daru::DataFrame
-    Daru::DataFrame.from_excel(args)
+    Daru::DataFrame.from_excel('path/to/xls/file', worksheet_id: 1)
     ```
 
 ### Excelx Importer
@@ -169,18 +164,17 @@ Imports a **Daru::DataFrame** from a **.xlsx** file.
 
 - **Docs**: [rubydoc.info](http://www.rubydoc.info/github/athityakumar/daru-io/master/Daru/IO/Importers/Excelx)
 - **Gem Dependencies**: `roo` gem
-- **Other Dependencies**: None
 - **Usage**:
     ```ruby
     #! Partially require just Excel Importer
     require 'daru/io/importers/excelx'
 
     #! Usage from Daru::IO
-    Daru::IO::Importers::Excelx.new(args).call
+    Daru::IO::Importers::Excelx.new('path/to/xlsx/file', sheet: 2, skiprows: 10, skipcols: 2).call
 
     #! Usage from Daru::DataFrame
     require 'daru/io/importers/excel'
-    Daru::DataFrame.from_excel(args) #! Filename ends with '.xlsx'
+    Daru::DataFrame.from_excel('path/to/xlsx/file', sheet: 2, skiprows: 10, skipcols: 2)
     ```
 
 ### HTML Importer
@@ -191,17 +185,16 @@ Imports an **Array** of **Daru::DataFrame**s from a **.html** file or website.
 
 - **Docs**: [rubydoc.info](http://www.rubydoc.info/github/athityakumar/daru-io/master/Daru/IO/Importers/HTML)
 - **Gem Dependencies**: `mechanize` gem
-- **Other Dependencies**: None
 - **Usage**:
     ```ruby
     #! Partially require just HTML Importer
     require 'daru/io/importers/html'
 
     #! Usage from Daru::IO
-    Daru::IO::Importers::HTML.new(args).call
+    Daru::IO::Importers::HTML.new('website/domain/url', match: 'market', name: 'Shares analysis').call
 
     #! Usage from Daru::DataFrame
-    Daru::DataFrame.from_html(args)
+    Daru::DataFrame.from_html('website/domain/url', match: 'market', name: 'Shares analysis')
     ```
 
 ### JSON Importer
@@ -211,18 +204,17 @@ Imports an **Array** of **Daru::DataFrame**s from a **.html** file or website.
 Imports a **Daru::DataFrame** from a **.json** file / response.
 
 - **Docs**: [rubydoc.info](http://www.rubydoc.info/github/athityakumar/daru-io/master/Daru/IO/Importers/JSON)
-- **Gem Dependencies**: Standard library `json` gem and `jsonpath` gem
-- **Other Dependencies**: None
+- **Gem Dependencies**: `jsonpath` gem
 - **Usage**:
     ```ruby
     #! Partially require just JSON Importer
     require 'daru/io/importers/json'
 
     #! Usage from Daru::IO
-    Daru::IO::Importers::JSON.new(args).call
+    Daru::IO::Importers::JSON.new('path/to/json/response', index: '$..time', col1: '$..name', col2: '$..age').call
 
     #! Usage from Daru::DataFrame
-    Daru::DataFrame.from_json(args)
+    Daru::DataFrame.from_json('path/to/json/response', index: '$..time', col1: '$..name', col2: '$..age')
     ```
 
 ### Mongo Importer
@@ -234,7 +226,7 @@ Imports a **Daru::DataFrame** from a **.json** file / response.
 Imports a **Daru::DataFrame** from a Mongo collection.
 
 - **Docs**: [rubydoc.info](http://www.rubydoc.info/github/athityakumar/daru-io/master/Daru/IO/Importers/Mongo)
-- **Gem Dependencies**: Standard library `json` gem, `jsonpath` and `mongo` gems
+- **Gem Dependencies**: `jsonpath` and `mongo` gems
 - **Other Dependencies**: Mongo
 - **Usage**:
     ```ruby
@@ -242,10 +234,10 @@ Imports a **Daru::DataFrame** from a Mongo collection.
     require 'daru/io/importers/mongo'
 
     #! Usage from Daru::IO
-    Daru::IO::Importers::Mongo.new(args).call
+    Daru::IO::Importers::Mongo.new('mongodb://127.0.0.1:27017/test', 'cars').call
 
     #! Usage from Daru::DataFrame
-    Daru::DataFrame.from_mongo(args)
+    Daru::DataFrame.from_mongo('mongodb://127.0.0.1:27017/test', 'cars')
     ```
 
 ### Plaintext Importer
@@ -255,18 +247,16 @@ Imports a **Daru::DataFrame** from a Mongo collection.
 Imports a **Daru::DataFrame** from a **.dat** plaintext file.
 
 - **Docs**: [rubydoc.info](http://www.rubydoc.info/github/athityakumar/daru-io/master/Daru/IO/Importers/Plaintext)
-- **Gem Dependencies**: None
-- **Other Dependencies**: None
 - **Usage**:
     ```ruby
     #! Partially require just Plaintext Importer
     require 'daru/io/importers/plaintext'
 
     #! Usage from Daru::IO
-    Daru::IO::Importers::Plaintext.new(args).call
+    Daru::IO::Importers::Plaintext.new('path/to/dat/file', [:col1, :col2, :col3]).call
 
     #! Usage from Daru::DataFrame
-    Daru::DataFrame.from_plaintext(args)
+    Daru::DataFrame.from_plaintext('path/to/dat/file', [:col1, :col2, :col3])
     ```
 
 ### RData Importer
@@ -284,10 +274,10 @@ Imports a **Daru::DataFrame** from a variable in **.rdata** file.
     require 'daru/io/importers/r_data'
 
     #! Usage from Daru::IO
-    Daru::IO::Importers::RData.new(args).call
+    Daru::IO::Importers::RData.new('path/to/RData/file', 'ACS3').call
 
     #! Usage from Daru::DataFrame
-    Daru::DataFrame.from_rdata(args)
+    Daru::DataFrame.from_rdata('path/to/RData/file', 'ACS3')
     ```
 
 ### RDS Importer
@@ -305,10 +295,10 @@ Imports a **Daru::DataFrame** from a **.rds** file.
     require 'daru/io/importers/rds'
 
     #! Usage from Daru::IO
-    Daru::IO::Importers::RDS.new(args).call
+    Daru::IO::Importers::RDS.new('path/to/RDS/file').call
 
     #! Usage from Daru::DataFrame
-    Daru::DataFrame.from_rds(args)
+    Daru::DataFrame.from_rds('path/to/RDS/file')
     ```
 
 ### Redis Importer
@@ -318,7 +308,7 @@ Imports a **Daru::DataFrame** from a **.rds** file.
 Imports a **Daru::DataFrame** from **Redis** key(s).
 
 - **Docs**: [rubydoc.info](http://www.rubydoc.info/github/athityakumar/daru-io/master/Daru/IO/Importers/Redis)
-- **Gem Dependencies**: Standard library `json` gem, and `redis` gem
+- **Gem Dependencies**: `redis` gem
 - **Other Dependencies**: Redis, and a running instance of `redis-server`
 - **Usage**:
     ```ruby
@@ -326,10 +316,10 @@ Imports a **Daru::DataFrame** from **Redis** key(s).
     require 'daru/io/importers/redis'
 
     #! Usage from Daru::IO
-    Daru::IO::Importers::Redis.new(args).call
+    Daru::IO::Importers::Redis.new({url: 'redis://:password@host:port/db'}, match: 'time:1*', count: 1000).call
 
     #! Usage from Daru::DataFrame
-    Daru::DataFrame.from_redis(args)
+    Daru::DataFrame.from_redis({url: 'redis://:password@host:port/db'}, match: 'time:1*', count: 1000)
     ```
 
 ### SQL Importer
@@ -340,17 +330,16 @@ Imports a **Daru::DataFrame** from a **sqlite.db** file / **DBI** connection.
 
 - **Docs**: [rubydoc.info](http://www.rubydoc.info/github/athityakumar/daru-io/master/Daru/IO/Importers/SQL)
 - **Gem Dependencies**: `dbd-sqlite3`, `activerecord`, `dbi` and `sqlite3` gems
-- **Other Dependencies**: SQL
 - **Usage**:
     ```ruby
     #! Partially require just SQL Importer
     require 'daru/io/importers/sql'
 
     #! Usage from Daru::IO
-    Daru::IO::Importers::SQL.new(args).call
+    Daru::IO::Importers::SQL.new('path/to/sqlite.db/file', 'SELECT * FROM test').call
 
     #! Usage from Daru::DataFrame
-    Daru::DataFrame.from_sql(args)
+    Daru::DataFrame.from_sql('path/to/sqlite.db/file', 'SELECT * FROM test')
     ```
 
 # Exporters
@@ -379,17 +368,26 @@ Exports a **Daru::DataFrame** into a **.avro** file.
 
 - **Docs**: [rubydoc.info](http://www.rubydoc.info/github/athityakumar/daru-io/master/Daru/IO/Exporters/Avro)
 - **Gem Dependencies**: `avro` gem
-- **Other Dependencies**: None
 - **Usage**:
     ```ruby
     #! Partially require just Avro Exporter
     require 'daru/io/exporters/avro'
 
+    avro_schema = {
+      'type' => 'record',
+      'name' => 'Example',
+      'fields' => [
+        {'name' => 'col_1', 'type' => 'string'},
+        {'name' => 'col_2', 'type' => 'int'},
+        {'name' => 'col_3', 'type'=> 'boolean'}
+      ]
+    }
+
     #! Usage from Daru::IO
-    Daru::IO::Exporters::Avro.new(df, args).call
+    Daru::IO::Exporters::Avro.new(df, 'path/to/avro/file', avro_schema).call
 
     #! Usage from Daru::DataFrame
-    df.to_avro(args)
+    df.to_avro('path/to/avro/file', avro_schema)
     ```
 
 ### CSV Exporter
@@ -399,18 +397,16 @@ Exports a **Daru::DataFrame** into a **.avro** file.
 Exports a **Daru::DataFrame** into a **.csv** or **.csv.gz** file.
 
 - **Docs**: [rubydoc.info](http://www.rubydoc.info/github/athityakumar/daru-io/master/Daru/IO/Exporters/CSV)
-- **Gem Dependencies**: Standard library `csv` and `zlib` gems
-- **Other Dependencies**: None
 - **Usage**:
     ```ruby
     #! Partially require just CSV Exporter
     require 'daru/io/exporters/csv'
 
     #! Usage from Daru::IO
-    Daru::IO::Exporters::CSV.new(df, args).call
+    Daru::IO::Exporters::CSV.new(df, 'path/to/csv.gz/file', converters: :numeric, compression: :gzip, convert_comma: true).call
 
     #! Usage from Daru::DataFrame
-    df.to_csv(args)
+    df.to_csv('path/to/csv.gz/file', converters: :numeric, compression: :gzip, convert_comma: true)
     ```
 
 ### Excel Exporter
@@ -421,17 +417,16 @@ Exports a **Daru::DataFrame** into a **.xls** file.
 
 - **Docs**: [rubydoc.info](http://www.rubydoc.info/github/athityakumar/daru-io/master/Daru/IO/Exporters/Excel)
 - **Gem Dependencies**: `spreadsheet` gem
-- **Other Dependencies**: None
 - **Usage**:
     ```ruby
     #! Partially require just Excel Exporter
     require 'daru/io/exporters/excel'
 
     #! Usage from Daru::IO
-    Daru::IO::Exporters::Excel.new(df, args).call
+    Daru::IO::Exporters::Excel.new(df, 'path/to/xls/file', header: {color: :red, weight: :bold}, data: {color: :blue }, index: false).call
 
     #! Usage from Daru::DataFrame
-    df.to_excel(args)
+    df.to_excel('path/to/xls/file', header: {color: :red, weight: :bold}, data: {color: :blue }, index: false)
     ```
 
 ### JSON Exporter
@@ -441,18 +436,17 @@ Exports a **Daru::DataFrame** into a **.xls** file.
 Exports a **Daru::DataFrame** into a **.json** file.
 
 - **Docs**: [rubydoc.info](http://www.rubydoc.info/github/athityakumar/daru-io/master/Daru/IO/Exporters/JSON)
-- **Gem Dependencies**: Standard library `json` gem and `jsonpath` gem
-- **Other Dependencies**: None
+- **Gem Dependencies**: `jsonpath` gem
 - **Usage**:
     ```ruby
     #! Partially require just JSON Exporter
     require 'daru/io/exporters/json'
 
     #! Usage from Daru::IO
-    Daru::IO::Exporters::JSON.new(df, args).call
+    Daru::IO::Exporters::JSON.new(df, 'path/to/json/file', orient: :records, pretty: true, name: '$.person.name', age: '$.person.age').call
 
     #! Usage from Daru::DataFrame
-    df.to_json(args)
+    df.to_json('path/to/json/file', orient: :records, pretty: true, name: '$.person.name', age: '$.person.age')
     ```
 
 ### RData Exporter
@@ -470,7 +464,7 @@ Exports multiple **Daru::DataFrame**s into a **.rdata** file.
     require 'daru/io/exporters/r_data'
 
     #! Usage from Daru::IO
-    Daru::IO::Exporters::RData.new(args).call
+    Daru::IO::Exporters::RData.new('path/to/rdata/file', 'first.df': df1, 'second.df': df2).call
     ```
 
 ### RDS Exporter
@@ -488,10 +482,10 @@ Exports a **Daru::DataFrame** into a **.rds** file.
     require 'daru/io/exporters/rds'
 
     #! Usage from Daru::IO
-    Daru::IO::Exporters::RDS.new(df, args).call
+    Daru::IO::Exporters::RDS.new(df, 'path/to/rds/file', 'sample.dataframe').call
 
     #! Usage from Daru::DataFrame
-    df.to_rds(args)
+    df.to_rds('path/to/rds/file', 'sample.dataframe')
     ```
 
 ### SQL Exporter
@@ -509,13 +503,13 @@ Exports a **Daru::DataFrame** into an SQL table.
     require 'daru/io/exporters/sql'
 
     #! Usage from Daru::IO
-    Daru::IO::Exporters::SQL.new(df, args).call
+    Daru::IO::Exporters::SQL.new(df, DBI.connect('DBI:Mysql:database:localhost', 'user', 'password'), 'cars_table').call
 
     #! Usage from Daru::DataFrame
-    df.to_sql(args)
+    df.to_sql(DBI.connect('DBI:Mysql:database:localhost', 'user', 'password'), 'cars_table')
     ```
 
-# Tweaking IO modules
+# Creating your own IO modules
 
 **Daru-IO** currently supports various Import / Export methods, as it can be seen from the above list. But the
 list is NEVER complete - there may always be specific use-case format(s) that you need very badly, but
@@ -523,7 +517,7 @@ might not fit the needs of majority of the community. In such a case, don't worr
 (aka monkey-patch) daru-io in your application. The architecture of `daru-io` provides a neater way of
 monkey-patching into **Daru::DataFrame** to support your unique use-case.
 
- - **Adding new IO modules**
+ - **Adding new IO modules to Daru-IO**
 
     Say, your unique use-case is of YAML IO Modules. Here's how you can proceed with tweaking -
 
@@ -576,13 +570,21 @@ monkey-patching into **Daru::DataFrame** to support your unique use-case.
     Daru::IO::Exporters::YAML.new(df, 'dataframe.yml')
     ```
 
-- **Modify existing IO modules**
+- **Adding new IO modules to custom modules**
 
-    Behaviour of existing IO modules can also be changed according to your needs, similar to the above example.
-    For example, if the CSV Importer has to be tweaked with a faster processing gem, simply replace the above
-    (psuedo)code with `class Daru::IO::Importers::CSV`.
+    Behaviour of existing IO modules can also be reused according to your needs, similar to the above example.
+    For example, if the CSV Importer has to be tweaked with a faster processing gem, simply follow an approach
+    similar to this -
 
-**Note: The tweaked module can also be made to inherit from another module (like `Importers::JSON`) rather than `Importers::Base`, depending on use-case (say, parse a complexly nested API response with JsonPaths).**
+    ```ruby
+    class CustomNamespace::Importers::CSV < Daru::IO::Importers::CSV
+      Daru::DataFrame.register_io_module :custom_csv, self
+
+      #! Your CSV Importer code here
+    end
+    ```
+
+**Note: The new module can be made to inherit from another module (like `Importers::JSON`) rather than `Importers::Base`, depending on use-case (say, parse a complexly nested API response with JsonPaths).**
 
 # Contributing
 

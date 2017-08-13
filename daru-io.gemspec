@@ -7,7 +7,7 @@ require 'daru/io/version'
 Daru::IO::DESCRIPTION = <<MSG.freeze
   Daru-IO is a plugin-gem to Daru gem, which stands for Data Analysis in RUby. Daru-IO extends support for many Import and Export methods of Daru::DataFrame. This gem is intended to help Rubyists who are into Data Analysis or Web Development, by serving as a general purpose conversion library that takes input in one format (say, JSON) and converts it another format (say, Avro) while also making it incredibly easy to getting started on analyzing data with daru.
 
-  While supporting various IO modules, daru-io also provides an easier way of adding more Importers / Exporters by means of monkey-patching.
+  While supporting various IO modules, daru-io also provides an easier way of adding new Importers / Exporters.
 MSG
 
 Gem::Specification.new do |spec| # rubocop:disable Metrics/BlockLength
