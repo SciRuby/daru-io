@@ -181,6 +181,8 @@ Imports a **Daru::DataFrame** from a **.xlsx** file.
 
 [(Go to Table of Contents)](#table-of-contents)
 
+**Note: This module works only for static tables on a HTML page, and won't work in cases where the table is being loaded into the HTML table by inline Javascript. This is how the Mechanize gem works, and the HTML Importer also follows suit.**
+
 Imports an **Array** of **Daru::DataFrame**s from a **.html** file or website.
 
 - **Docs**: [rubydoc.info](http://www.rubydoc.info/github/athityakumar/daru-io/master/Daru/IO/Importers/HTML)
