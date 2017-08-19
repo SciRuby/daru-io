@@ -3,11 +3,11 @@ require 'daru/io/importers/base'
 module Daru
   module IO
     module Importers
-      # HTML Importer Class, that extends **from_html** method to **Daru::DataFrame**
+      # HTML Importer Class, that extends `from_html` method to `Daru::DataFrame`
       class HTML < Base
         Daru::DataFrame.register_io_module :from_html, self
 
-        # Imports a list of **Daru::DataFrame** s from a HTML file or website.
+        # Imports a list of `Daru::DataFrame` s from a HTML file or website.
         #
         # @param path [String] Website URL / path to HTML file, where the
         #   DataFrame is to be imported from.
@@ -20,14 +20,14 @@ module Daru
         # @param order [Array or Daru::Index or Daru::MultiIndex] If given, it
         #   overrides the parsed order. Have a look at `:order` option
         #   [here](http://www.rubydoc.info/gems/daru/0.1.5/Daru%2FDataFrame:initialize)
-        # @param name [String] As `name` of the imported **Daru::DataFrame** isn't
+        # @param name [String] As `name` of the imported `Daru::DataFrame` isn't
         #   parsed automatically by the module, users can set the name attribute to
-        #   their **Daru::DataFrame** manually, through this option.
+        #   their `Daru::DataFrame` manually, through this option.
         #
         #   See `:name` option
         #   [here](http://www.rubydoc.info/gems/daru/0.1.5/Daru%2FDataFrame:initialize)
         #
-        # @return A **Daru::DataFrame** imported from the given HTML page
+        # @return A `Daru::DataFrame` imported from the given HTML page
         #
         # @example Reading from a website whose tables are static
         #   url = 'http://www.moneycontrol.com/'

@@ -3,23 +3,23 @@ require 'daru/io/importers/json'
 module Daru
   module IO
     module Importers
-      # Mongo Importer Class, that extends **from_mongo** method to **Daru::DataFrame**
+      # Mongo Importer Class, that extends `from_mongo` method to `Daru::DataFrame`
       class Mongo < JSON
         Daru::DataFrame.register_io_module :from_mongo, self
 
-        # Imports a **Daru::DataFrame** from a Mongo collection.
+        # Imports a `Daru::DataFrame` from a Mongo collection.
         #
         # @param connection [String or Hash or Mongo::Client] Contains details
         #   about a Mongo database / hosts to connect.
         # @param collection [String or Symbol] A specific collection in the
-        #   Mongo database, to import as **Daru::DataFrame**.
+        #   Mongo database, to import as `Daru::DataFrame`.
         # @param columns [Array] JSON-path slectors to select specific fields
         #   from the JSON input.
         # @param order [String or Array] Either a JSON-path selector string, or
-        #   an array containing the order of the **Daru::DataFrame**. DO NOT
+        #   an array containing the order of the `Daru::DataFrame`. DO NOT
         #   provide both `order` and `named_columns` at the same time.
         # @param index [String or Array] Either a JSON-path selector string, or
-        #   an array containing the order of the **Daru::DataFrame**.
+        #   an array containing the order of the `Daru::DataFrame`.
         # @param filter [Hash] Filters and chooses Mongo documents that match
         #   the given `filter` from the collection.
         # @param limit [Interger] Limits the number of Mongo documents to be
@@ -40,7 +40,7 @@ module Daru
         #     been fixed in Ruby 2.4.1 onwards. Hence, please avoid using this
         #     Mongo Importer in Ruby version 2.4.0.
         #
-        # @return A **Daru::DataFrame** imported from the given Mongo connection,
+        # @return A `Daru::DataFrame` imported from the given Mongo connection,
         #   collection and JSON-path selectors.
         #
         # @example Reading from a connection string without JSON-path selectors

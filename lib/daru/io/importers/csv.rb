@@ -3,16 +3,16 @@ require 'daru/io/importers/base'
 module Daru
   module IO
     module Importers
-      # CSV Importer Class, that extends **from_csv** method to **Daru::DataFrame**
+      # CSV Importer Class, that extends `from_csv` method to `Daru::DataFrame`
       class CSV < Base
         Daru::DataFrame.register_io_module :from_csv, self
 
-        # Imports a **Daru::DataFrame** from a .csv / .csv.gz file.
+        # Imports a `Daru::DataFrame` from a .csv / .csv.gz file.
         #
         # @param path [String] Local / Remote path of CSV file, where the
         #   dataframe is to be imported from.
         # @param headers [Boolean] If this option is `true`, only those columns
-        #   will be used to import the **Daru::DataFrame** whose header is given.
+        #   will be used to import the `Daru::DataFrame` whose header is given.
         # @param skiprows [Integer] Skips the first `:skiprows` number of rows from
         #   the CSV file. Defaults to 0.
         # @param compression [Symbol] Defaults to `:infer`, to parse depending on file format
@@ -32,7 +32,7 @@ module Daru
         #   (defaults to `','`), `:converters` (defaults to `:numeric`),
         #   `:header_converters` (defaults to `:symbol`).
         #
-        # @return A **Daru::DataFrame** imported from the given relation and fields
+        # @return A `Daru::DataFrame` imported from the given relation and fields
         #
         # @example Reading from a CSV file from columns whose header is given
         #   df = Daru::DataFrame.from_csv("matrix_test.csv", col_sep: ' ', headers: true)

@@ -3,12 +3,12 @@ require 'daru/io/exporters/base'
 module Daru
   module IO
     module Exporters
-      # RDS Exporter Class, that extends **to_rds** method to **Daru::DataFrame**
+      # RDS Exporter Class, that extends `to_rds` method to `Daru::DataFrame`
       # instance variables
       class RDS < Base
         Daru::DataFrame.register_io_module :to_rds, self
 
-        # Exports a **Daru::DataFrame** to a RDS file.
+        # Exports a `Daru::DataFrame` to a RDS file.
         #
         # @param dataframe [Daru::DataFrame] A dataframe to export
         # @param path [String] Path of RDS file where the dataframe(s) is/are to be saved

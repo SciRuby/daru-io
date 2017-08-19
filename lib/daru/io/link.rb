@@ -1,12 +1,12 @@
 module Daru
   class DataFrame
     class << self
-      # Links **Daru::DataFrame** Import / Export methods to corresponding
-      # **Daru::IO** Importer / Exporter classes. Here is the list of linkages:
+      # Links `Daru::DataFrame` Import / Export methods to corresponding
+      # `Daru::IO` Importer / Exporter classes. Here is the list of linkages:
       #
       # #### Importers
       #
-      # | **Daru::DataFrame** method          | **Daru::IO::Importers** class                  |
+      # | `Daru::DataFrame` method          | `Daru::IO::Importers` class                  |
       # | ----------------------------------- | -----------------------------------------------|
       # | `Daru::DataFrame.from_activerecord` | {Daru::IO::Importers::ActiveRecord#initialize} |
       # | `Daru::DataFrame.from_avro`         | {Daru::IO::Importers::Avro#initialize}         |
@@ -24,7 +24,7 @@ module Daru
       #
       # #### Exporters
       #
-      # | **Daru::DataFrame** instance method | **Daru::IO::Exporters** class            |
+      # | `Daru::DataFrame` instance method | `Daru::IO::Exporters` class            |
       # | ----------------------------------- | -----------------------------------------|
       # | `Daru::DataFrame.to_avro`           | {Daru::IO::Exporters::Avro#initialize}   |
       # | `Daru::DataFrame.to_csv`            | {Daru::IO::Exporters::CSV#initialize}    |

@@ -3,11 +3,11 @@ require 'daru/io/importers/base'
 module Daru
   module IO
     module Importers
-      # JSON Importer Class, that extends **from_json** method to **Daru::DataFrame**
+      # JSON Importer Class, that extends `from_json` method to `Daru::DataFrame`
       class JSON < Base
         Daru::DataFrame.register_io_module :from_json, self
 
-        # Imports a **Daru::DataFrame** from a JSON file or response.
+        # Imports a `Daru::DataFrame` from a JSON file or response.
         #
         # @param json_input [String or JSON response] Either the path to local /
         #   remote JSON file, or JSON response (which can be a
@@ -16,9 +16,9 @@ module Daru
         # @param columns [Array] JSON-path slectors to select specific fields
         #   from the JSON input.
         # @param order [String or Array] Either a JSON-path selector string, or
-        #   an array containing the order of the **Daru::DataFrame**.
+        #   an array containing the order of the `Daru::DataFrame`.
         # @param index [String or Array] Either a JSON-path selector string, or
-        #   an array containing the order of the **Daru::DataFrame**.
+        #   an array containing the order of the `Daru::DataFrame`.
         # @param named_columns [Hash] JSON-path slectors to select specific fields
         #   from the JSON input.
         #
@@ -26,7 +26,7 @@ module Daru
         #   the explanations {http://www.rubydoc.info/gems/jsonpath/0.5.8 here}
         #   and {http://goessner.net/articles/JsonPath/ here}.
         #
-        # @return A **Daru::DataFrame** imported from the given JSON input
+        # @return A `Daru::DataFrame` imported from the given JSON input
         #   and x-path selected fields.
         #
         # @example Importing from remote JSON file without json-path selectors

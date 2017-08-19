@@ -3,12 +3,12 @@ require 'daru/io/exporters/base'
 module Daru
   module IO
     module Exporters
-      # CSV Exporter Class, that extends **to_csv** method to **Daru::DataFrame**
+      # CSV Exporter Class, that extends `to_csv` method to `Daru::DataFrame`
       # instance variables
       class CSV < Base
         Daru::DataFrame.register_io_module :to_csv, self
 
-        # Exports **Daru::DataFrame** to a .csv / .csv.gz file.
+        # Exports `Daru::DataFrame` to a .csv / .csv.gz file.
         #
         # @param dataframe [Daru::DataFrame] A dataframe to export
         # @param path [String] Path of CSV file where the dataframe is to be saved

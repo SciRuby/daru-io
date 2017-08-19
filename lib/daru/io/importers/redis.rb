@@ -3,17 +3,17 @@ require 'daru/io/importers/base'
 module Daru
   module IO
     module Importers
-      # Redis Importer Class, that extends **from_redis** method to **Daru::DataFrame**
+      # Redis Importer Class, that extends `from_redis` method to `Daru::DataFrame`
       class Redis < Base
         Daru::DataFrame.register_io_module :from_redis, self
 
-        # Imports a **Daru::DataFrame** from Redis connection and matching keys.
+        # Imports a `Daru::DataFrame` from Redis connection and matching keys.
         #
         # @param connection [Hash or Redis Instance] Either a Hash of *Redis* configurations,
         #   or an existing *Redis* instance. For the hash configurations, have a
         #   look at
         #   [Redis#initialize](http://www.rubydoc.info/github/redis/redis-rb/Redis:initialize).
-        # @param keys [Array] Redis key(s) from whom, the **Daru::DataFrame**
+        # @param keys [Array] Redis key(s) from whom, the `Daru::DataFrame`
         #   should be constructed. If no keys are given, all keys in the *Redis*
         #   connection will be used.
         # @param match [String] A pattern to get matching keys.

@@ -3,17 +3,17 @@ require 'daru/io/exporters/base'
 module Daru
   module IO
     module Exporters
-      # JSON Exporter Class, that extends **to_json** method to **Daru::DataFrame**
+      # JSON Exporter Class, that extends `to_json` method to `Daru::DataFrame`
       # instance variables
       class JSON < Base
         Daru::DataFrame.register_io_module :to_json, self
 
         ORIENT_TYPES = %i[index records split values].freeze
 
-        # Exports **Daru::DataFrame** to a JSON file.
+        # Exports `Daru::DataFrame` to a JSON file.
         #
         # @param dataframe [Daru::DataFrame] A dataframe to export
-        # @param path [String] Path of the JSON file where the **Daru::DataFrame**
+        # @param path [String] Path of the JSON file where the `Daru::DataFrame`
         #   should be written.
         # @param orient [Symbol] Setting to export the data in a specific structure.
         #   Defaults to `:records`.
