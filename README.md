@@ -252,8 +252,7 @@ Imports a **Daru::DataFrame** from a Mongo collection.
 
 [(Go to Table of Contents)](#table-of-contents)
 
-Imports a **Daru::DataFrame** from a **.dat** plaintext file. For a sample format of the plaintext
-file, have a look at the example [bank2.dat](https://github.com/athityakumar/daru-io/blob/master/spec/fixtures/plaintext/bank2.dat) file.
+Imports a **Daru::DataFrame** from a **.dat** plaintext file (space separated table of simple strings and numbers). For a sample format of the plaintext file, have a look at the example [bank2.dat](https://github.com/athityakumar/daru-io/blob/master/spec/fixtures/plaintext/bank2.dat) file.
 
 - **Docs**: [rubydoc.info](http://www.rubydoc.info/github/athityakumar/daru-io/master/Daru/IO/Importers/Plaintext)
 - **Usage**:
