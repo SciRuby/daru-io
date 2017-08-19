@@ -276,7 +276,7 @@ Imports a **Daru::DataFrame** from a variable in **.rdata** file.
 
 - **Docs**: [rubydoc.info](http://www.rubydoc.info/github/athityakumar/daru-io/master/Daru/IO/Importers/RData)
 - **Gem Dependencies**: `rsruby` gem
-- **Other Dependencies**: Install R and set `R_HOME` variable as given in the Contribution Guidelines
+- **Other Dependencies**: Install R and set `R_HOME` variable as given in the [Contribution Guidelines](CONTRIBUTING.md)
 - **Usage**:
     ```ruby
     #! Partially require just RData Importer
@@ -297,7 +297,7 @@ Imports a **Daru::DataFrame** from a **.rds** file.
 
 - **Docs**: [rubydoc.info](http://www.rubydoc.info/github/athityakumar/daru-io/master/Daru/IO/Importers/RDS)
 - **Gem Dependencies**: `rsruby` gem
-- **Other Dependencies**: Install R and set `R_HOME` variable as given in the Contribution Guidelines
+- **Other Dependencies**: Install R and set `R_HOME` variable as given in the [Contribution Guidelines](CONTRIBUTING.md)
 - **Usage**:
     ```ruby
     #! Partially require just RDS Importer
@@ -469,7 +469,7 @@ Exports multiple **Daru::DataFrame**s into a **.rdata** file.
 
 - **Docs**: [rubydoc.info](http://www.rubydoc.info/github/athityakumar/daru-io/master/Daru/IO/Exporters/RData)
 - **Gem Dependencies**: `rsruby` gem
-- **Other Dependencies**: Install R and set `R_HOME` variable as given in the Contribution Guidelines
+- **Other Dependencies**: Install R and set `R_HOME` variable as given in the [Contribution Guidelines](CONTRIBUTING.md)
 - **Usage**:
     ```ruby
     #! Partially require just RData Exporter
