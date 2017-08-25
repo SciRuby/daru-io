@@ -108,7 +108,7 @@ module Daru
           filter: nil, limit: nil, skip: nil, **named_columns)
           optional_gem 'mongo'
 
-          super([], *columns, order: order, index: index, **named_columns)
+          super(*columns, order: order, index: index, **named_columns)
           @skip       = skip
           @limit      = limit
           @filter     = filter
