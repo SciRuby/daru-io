@@ -106,11 +106,11 @@ module Daru
         end
 
         def validate_params
-          unless @order.nil? || @named_columns.empty?
-            raise ArgumentError,
-              'Do not pass on order and named columns together, at the same '\
-              'function call. Please use only order or only named_columns.'
-          end
+          return if @order.nil? || @named_columns.empty?
+
+          raise ArgumentError,
+            'Do not pass on order and named columns together, at the same '\
+            'function call. Please use only order or only named_columns.'
         end
       end
     end
