@@ -73,9 +73,9 @@ RSpec.describe Daru::IO::Exporters::JSON do
 
   context 'writes DataFrame with block manipulation' do
     before do
-      described_class.new(df, tempfile.path, orient: orient, pretty: pretty) do |json|
+      described_class.new(df, orient: orient, pretty: pretty) do |json|
         json.map { |j| [j.keys.first, j.values.first] }.to_h
-      end.call
+      end.write(tempfile.path)
     end
 
     let(:orient) { :index }

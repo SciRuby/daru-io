@@ -116,7 +116,7 @@ RSpec.describe Daru::IO::Importers::CSV do
 
   context 'checks for equal parsing of local CSV files and remote CSV files' do
     %w[matrix_test repeated_fields scientific_notation sales-funnel column_headers_only].each do |file|
-      let(:local) { described_class.new("spec/fixtures/csv/#{file}.csv").call }
+      let(:local) { described_class.new.read("spec/fixtures/csv/#{file}.csv") }
       let(:path)  { "http://dummy-remote-url/#{file}.csv" }
       let(:opts)  { {} }
 
