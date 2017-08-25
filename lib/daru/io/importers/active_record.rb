@@ -31,16 +31,15 @@ module Daru
         #   #=>        id  name
         #   #=>   0     1 Homer
         #   #=>   1     2 Marge
-        def initialize(relation, *fields)
+        def initialize(*fields)
           optional_gem 'activerecord', '~> 4.0', requires: 'active_record'
 
-          @relation = relation
-          @fields   = fields
+          @fields = fields
         end
 
-        def call
+        def from(relation)
           if @fields.empty?
-            records = @relation.map { |record| record.attributes.symbolize_keys }
+            records = relation.map { |record| record.attributes.symbolize_keys }
             return Daru::DataFrame.new(records)
           else
             @fields.map!(&:to_sym)
@@ -49,7 +48,7 @@ module Daru
           vectors = @fields.map { |name| [name, Daru::Vector.new([], name: name)] }.to_h
 
           Daru::DataFrame.new(vectors, order: @fields).tap do |df|
-            @relation.pluck(*@fields).each do |record|
+            relation.pluck(*@fields).each do |record|
               df.add_row(Array(record))
             end
             df.update

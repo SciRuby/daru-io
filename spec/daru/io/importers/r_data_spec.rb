@@ -1,5 +1,5 @@
 RSpec.describe Daru::IO::Importers::RData do
-  subject { described_class.new(path, variable).call }
+  subject { described_class.new(variable).read(path) }
 
   let(:variable) { nil }
 

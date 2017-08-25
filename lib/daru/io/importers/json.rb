@@ -4,6 +4,7 @@ module Daru
   module IO
     module Importers
       class JSON < Base
+        Daru::DataFrame.register_io_module :read_json, self
         Daru::DataFrame.register_io_module :from_json, self
 
         # Imports a +Daru::DataFrame+ from a JSON file or response.
@@ -61,13 +62,11 @@ module Daru
         #   #   11 The Kingsr          1          2         60
         #   #   12  Lord Snow          1          3         60
         #   #  ...        ...        ...        ...        ...
-        def initialize(json_input, *columns, order: nil, index: nil,
-          **named_columns)
+        def initialize(*columns, order: nil, index: nil, **named_columns)
           require 'open-uri'
           optional_gem 'json'
           optional_gem 'jsonpath'
 
-          @json_input    = json_input
           @columns       = columns
           @order         = order
           @index         = index
@@ -76,14 +75,18 @@ module Daru
           validate_params
         end
 
-        def call
-          @json    = read_json
+        def from(instance)
+          @json    = instance.is_a?(String) ? ::JSON.parse(instance) : instance
           @data    = fetch_data
           @index   = at_jsonpath(@index)
           @order   = at_jsonpath(@order)
           @order ||= Array.new(@columns.count) { |x| x } + @named_columns.keys
 
           Daru::DataFrame.new(@data, order: @order, index: @index)
+        end
+
+        def read(path)
+          from(::JSON.parse(open(path).read))
         end
 
         private
@@ -108,18 +111,6 @@ module Daru
               'Do not pass on order and named columns together, at the same '\
               'function call. Please use only order or only named_columns.'
           end
-
-          return true if [String, Array, Hash].include?(@json_input.class)
-
-          raise ArgumentError,
-            'Expected the first argument to be a String, Array or Hash.'\
-            "Received #{@json_input.class} instead."
-        end
-
-        def read_json
-          return @json_input unless @json_input.is_a?(String)
-          return ::JSON.parse(@json_input) unless @json_input.start_with?('http') || @json_input.end_with?('.json')
-          ::JSON.parse(open(@json_input).read)
         end
       end
     end

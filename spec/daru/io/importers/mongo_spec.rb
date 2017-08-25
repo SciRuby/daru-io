@@ -11,7 +11,6 @@ unless RUBY_VERSION == '2.4.0'
   RSpec.describe Daru::IO::Importers::Mongo do
     subject do
       described_class.new(
-        connection,
         collection,
         *columns,
         order: order,
@@ -20,7 +19,7 @@ unless RUBY_VERSION == '2.4.0'
         skip: skip,
         limit: limit,
         **named_columns
-      ).call
+      ).from(connection)
     end
 
     let(:connection)    { ::Mongo::Client.new('mongodb://127.0.0.1:27017/test') }

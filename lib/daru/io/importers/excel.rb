@@ -4,12 +4,12 @@ module Daru
   module IO
     module Importers
       class Excel < Base
-        Daru::DataFrame.register_io_module :from_excel do |*args|
-          if args.first.end_with? '.xlsx'
+        Daru::DataFrame.register_io_module :read_excel do |*args, &io_block|
+          if args.first.end_with?('.xlsx')
             require 'daru/io/importers/excelx'
-            Daru::IO::Importers::Excelx.new(*args).call
+            Daru::IO::Importers::Excelx.new(*args[1..-1], &io_block).read(*args[0])
           else
-            Daru::IO::Importers::Excel.new(*args).call
+            Daru::IO::Importers::Excel.new(*args[1..-1], &io_block).read(*args[0])
           end
         end
 
@@ -54,16 +54,15 @@ module Daru
         #   #    3        4    Franz      nil    Paris      nil
         #   #    4        5   George      5.5     Tome    a,b,c
         #   #    5        6  Fernand      nil      nil      nil
-        def initialize(path, worksheet_id: 0, headers: true)
+        def initialize(worksheet_id: 0, headers: true)
           optional_gem 'spreadsheet', '~> 1.1.1'
 
-          @path         = path
           @headers      = headers
           @worksheet_id = worksheet_id
         end
 
-        def call
-          worksheet = Spreadsheet.open(@path).worksheet(@worksheet_id)
+        def read(path)
+          worksheet = Spreadsheet.open(path).worksheet(@worksheet_id)
           headers   = if @headers
                         ArrayHelper.recode_repeated(worksheet.row(0)).map(&:to_sym)
                       else

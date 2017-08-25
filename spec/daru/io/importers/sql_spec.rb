@@ -1,13 +1,13 @@
 RSpec.describe Daru::IO::Importers::SQL do
   include_context 'sqlite3 database setup'
 
-  subject { described_class.new(source, query).call }
+  subject { described_class.new(query).from(source) }
 
   let(:query)  { 'select * from accounts'         }
   let(:source) { ActiveRecord::Base.connection    }
 
   context 'with a database handler of DBI' do
-    subject { described_class.new(db, query).call }
+    subject { described_class.new(query).from(db) }
 
     let(:db) { DBI.connect("DBI:SQLite3:#{db_name}") }
 
@@ -19,7 +19,7 @@ RSpec.describe Daru::IO::Importers::SQL do
   end
 
   context 'with a database connection of ActiveRecord' do
-    subject { described_class.new(connection, query).call }
+    subject { described_class.new(query).from(connection) }
 
     let(:connection) { Daru::IO::Rspec::Account.connection }
 

@@ -8,7 +8,7 @@ RSpec.describe Daru::IO::Importers::CSV do
     end
   end
 
-  subject    { described_class.new(path, opts).call }
+  subject    { described_class.new(opts).read(path) }
 
   let(:path) { 'spec/fixtures/csv/matrix_test.csv' }
   let(:opts) { {col_sep: ' ', headers: true}       }
@@ -105,7 +105,7 @@ RSpec.describe Daru::IO::Importers::CSV do
 
       let(:csv_path) { "spec/fixtures/csv/#{file}.csv"    }
       let(:tempfile) { Tempfile.new("#{file}.csv.gz")     }
-      let(:csv)      { described_class.new(csv_path).call }
+      let(:csv)      { described_class.new.read(csv_path) }
       let(:path)     { tempfile.path                      }
       let(:opts)     { {compression: :gzip}               }
 

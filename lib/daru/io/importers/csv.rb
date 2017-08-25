@@ -4,7 +4,7 @@ module Daru
   module IO
     module Importers
       class CSV < Base
-        Daru::DataFrame.register_io_module :from_csv, self
+        Daru::DataFrame.register_io_module :read_csv, self
 
         # Imports a +Daru::DataFrame+ from a CSV file.
         #
@@ -58,13 +58,12 @@ module Daru
         #   #     13    5.40811          0 -0.2362347
         #   #     14    8.19567          0 -0.1539447
         #   #    ...        ...        ...        ...
-        def initialize(path, headers: nil, skiprows: 0, compression: :infer,
+        def initialize(headers: nil, skiprows: 0, compression: :infer,
           clone: nil, index: nil, order: nil, name: nil, **options)
           require 'csv'
           require 'open-uri'
           require 'zlib'
 
-          @path         = path
           @headers      = headers
           @skiprows     = skiprows
           @compression  = compression
@@ -77,7 +76,9 @@ module Daru
           }.merge(options)
         end
 
-        def call
+        def read(path)
+          @path = path
+
           # Preprocess headers for detecting and correcting repetition in
           # case the :headers option is not specified.
 

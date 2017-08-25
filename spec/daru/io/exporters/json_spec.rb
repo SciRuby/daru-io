@@ -19,7 +19,7 @@ RSpec.describe Daru::IO::Exporters::JSON do
   let(:pretty)   { true        }
   let(:filename) { 'test.json' }
 
-  before { described_class.new(df, tempfile.path, pretty: pretty, orient: orient, **opts).call }
+  before { described_class.new(df, pretty: pretty, orient: orient, **opts).write(tempfile.path) }
 
   context 'writes DataFrame with default jsonpath options' do
     it                { is_expected.to be_an(Array).and all be_a(Hash) }

@@ -36,7 +36,7 @@ module Daru
           @table     = table
         end
 
-        def call
+        def to
           query = "INSERT INTO #{@table} (#{@dataframe.vectors.to_a.join(',')}"\
                   ") VALUES (#{(['?']*@dataframe.vectors.size).join(',')})"
           sth   = @dbh.prepare(query)

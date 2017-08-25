@@ -6,7 +6,7 @@ RSpec.describe Daru::IO::Exporters::RDS do
   let(:variable) { 'test.dataframe' }
   let(:filename) { 'test.rds'       }
 
-  before { described_class.new(df, tempfile.path, variable).call }
+  before { described_class.new(df, variable).write(tempfile.path) }
 
   context 'writes DataFrame to a RDS file' do
     it_behaves_like 'exact daru dataframe',

@@ -122,17 +122,19 @@ module Daru
         #   # key:1703 name1703  age1703
         #   # key:1640 name1640  age1640
         #   #   ...        ...      ...
-        def initialize(connection={}, *keys, match: nil, count: nil)
+        def initialize(*keys, match: nil, count: nil)
           optional_gem 'json'
           optional_gem 'redis'
 
           @match  = match
           @count  = count
-          @client = get_client(connection)
-          @keys   = choose_keys(*keys).map(&:to_sym)
+          @keys   = keys
         end
 
-        def call
+        def from(connection={})
+          @client = get_client(connection)
+          @keys   = choose_keys(*@keys).map(&:to_sym)
+
           vals = @keys.map { |key| ::JSON.parse(@client.get(key), symbolize_names: true) }
           Base.guess_parse(@keys, vals)
         end

@@ -19,7 +19,7 @@ RSpec.shared_context 'sqlite3 database setup' do
     Daru::IO::Rspec::Account.establish_connection "sqlite3:#{db_name}"
   end
 
-  subject { Daru::IO::Importers::ActiveRecord.new(relation, *fields).call }
+  subject { Daru::IO::Importers::ActiveRecord.new(*fields).from(relation) }
 
   let(:db_name)  { 'daru_test' }
   let(:relation) { Daru::IO::Rspec::Account.all }

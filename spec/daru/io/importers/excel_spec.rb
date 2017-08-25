@@ -1,6 +1,6 @@
 RSpec.describe Daru::IO::Importers::Excel do
   context 'loads from excel spreadsheet' do
-    subject    { described_class.new(path).call     }
+    subject    { described_class.new.read(path)     }
 
     let(:path) { 'spec/fixtures/excel/test_xls.xls' }
 

@@ -5,7 +5,7 @@ RSpec.describe Daru::IO::Exporters::CSV do
 
   let(:filename) { 'test.csv' }
 
-  before { described_class.new(df, tempfile.path, opts).call }
+  before { described_class.new(df, opts).write(tempfile.path) }
 
   context 'writes DataFrame to a CSV file' do
     subject { Daru::DataFrame.rows content[1..-1].map { |x| x.map { |y| convert(y) } }, order: content[0] }

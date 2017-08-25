@@ -4,7 +4,8 @@ module Daru
   module IO
     module Exporters
       class RDS < Base
-        Daru::DataFrame.register_io_module :to_rds, self
+        Daru::DataFrame.register_io_module :to_rds_string, self
+        Daru::DataFrame.register_io_module :write_rds, self
 
         # Exports a +Daru::DataFrame+ to a RDS file.
         #
@@ -21,18 +22,17 @@ module Daru
         #   #  1   2   4
         #
         #   Daru::IO::Exporters::RDS.new(df, "daru_dataframe.rds", "sample.dataframe").call
-        def initialize(dataframe, path, r_variable)
+        def initialize(dataframe, r_variable)
           optional_gem 'rsruby'
 
           super(dataframe)
-          @path       = path
           @r_variable = r_variable
         end
 
-        def call
+        def write(path)
           @instance    = RSRuby.instance
           @statements  = process_statements(@r_variable, @dataframe)
-          @statements << "saveRDS(#{@r_variable}, file='#{@path}')"
+          @statements << "saveRDS(#{@r_variable}, file='#{path}')"
           @statements.each { |statement| @instance.eval_R(statement) }
         end
 

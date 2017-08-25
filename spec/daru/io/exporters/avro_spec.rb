@@ -12,7 +12,7 @@ RSpec.describe Daru::IO::Exporters::Avro do
 
   let(:filename) { 'test.avro' }
 
-  before { described_class.new(df, tempfile.path, schema).call }
+  before { described_class.new(df, schema).write(tempfile.path) }
 
   context 'writes DataFrame to an Avro file' do
     context 'when schema is Hash' do

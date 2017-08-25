@@ -12,6 +12,6 @@ RSpec.describe Daru::IO::Exporters::SQL do
 
     df.each_row { |r| allow(prepared_query).to receive(:execute).and_return(*r.to_a) }
 
-    described_class.new(df, dbh, table).call
+    described_class.new(df, dbh, table).to
   end
 end

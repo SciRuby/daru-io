@@ -4,7 +4,8 @@ module Daru
   module IO
     module Exporters
       class JSON < Base
-        Daru::DataFrame.register_io_module :to_json, self
+        Daru::DataFrame.register_io_module :to_json_string, self
+        Daru::DataFrame.register_io_module :write_json, self
 
         ORIENT_TYPES = %i[index records split values].freeze
 
@@ -345,12 +346,11 @@ module Daru
         #   #     "name": "Lyanna Stark"
         #   #   }
         #   # }
-        def initialize(dataframe, path, orient: :records, pretty: false, **jsonpaths, &block)
+        def initialize(dataframe, orient: :records, pretty: false, **jsonpaths, &block)
           require 'json'
           optional_gem 'jsonpath'
 
           super(dataframe)
-          @path          = path
           @block         = block
           @orient        = orient
           @pretty        = pretty
@@ -359,14 +359,14 @@ module Daru
           validate_params
         end
 
-        def call
+        def write(path)
           @jsonpath_hash ||= @dataframe.vectors.to_a.map { |v| {v => "$.#{v}"} }.reduce(:merge)
           @vectors         = @jsonpath_hash.keys
           @jsonpaths       = process_jsonpath
           @json_content    = process_json_content
           @json_content    = @block.call(@json_content) if @block
 
-          File.open(@path, 'w') do |file|
+          File.open(path, 'w') do |file|
             file.write(::JSON.send(@pretty ? :pretty_generate : :generate, @json_content))
           end
         end

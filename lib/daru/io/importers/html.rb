@@ -4,7 +4,7 @@ module Daru
   module IO
     module Importers
       class HTML < Base
-        Daru::DataFrame.register_io_module :from_html, self
+        Daru::DataFrame.register_io_module :read_html, self
 
         # Imports a list of +Daru::DataFrame+ s from a HTML file or website.
         #
@@ -56,16 +56,15 @@ module Daru
         #   Please note that this module works only for static table elements on a
         #   HTML page, and won't work in cases where the data is being loaded into
         #   the HTML table by inline Javascript.
-        def initialize(path, match: nil, order: nil, index: nil, name: nil)
+        def initialize(match: nil, order: nil, index: nil, name: nil)
           optional_gem 'mechanize'
 
-          @path  = path
           @match = match
           @options = {name: name, order: order, index: index}
         end
 
-        def call
-          page = Mechanize.new.get(@path)
+        def read(path)
+          page = Mechanize.new.get(path)
           page
             .search('table').map { |table| parse_table table }
             .keep_if { |table| search table }

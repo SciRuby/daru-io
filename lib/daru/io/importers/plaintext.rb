@@ -4,7 +4,7 @@ module Daru
   module IO
     module Importers
       class Plaintext < Base
-        Daru::DataFrame.register_io_module :from_plaintext, self
+        Daru::DataFrame.register_io_module :read_plaintext, self
 
         # Imports a +Daru::DataFrame+ from a plaintext file.
         #
@@ -36,14 +36,13 @@ module Daru
         #   # 13 214.7 129.7 129.7   7.7  10.9 141.7
         #   # 14 215.1 129.9 129.7   7.7  10.8 141.8
         #   #...   ...   ...   ...   ...   ...   ...
-        def initialize(path, fields)
-          @path   = path
+        def initialize(fields)
           @fields = fields
         end
 
-        def call
+        def read(path)
           ds = Daru::DataFrame.new({}, order: @fields)
-          File.open(@path,'r').each_line do |line|
+          File.open(path,'r').each_line do |line|
             row = process_row(line.strip.split(/\s+/),[''])
             next if row == ["\x1A"]
             ds.add_row(row)

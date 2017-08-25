@@ -27,19 +27,18 @@ module Daru
         #   #  1   6   8
         #
         #   Daru::IO::Exporters::RData.new("daru_dataframes.RData", "first.df": df1, "second.df": df2).call
-        def initialize(path, **options)
+        def initialize(**options)
           optional_gem 'rsruby'
 
-          @path    = path
           @options = options
         end
 
-        def call
+        def write(path)
           @instance    = RSRuby.instance
           @statements  = @options.map do |r_variable, dataframe|
             process_statements(r_variable, dataframe)
           end.flatten
-          @statements << "save(#{@options.keys.map(&:to_s).join(', ')}, file='#{@path}')"
+          @statements << "save(#{@options.keys.map(&:to_s).join(', ')}, file='#{path}')"
           @statements.each { |statement| @instance.eval_R(statement) }
         end
       end

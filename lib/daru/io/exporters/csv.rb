@@ -4,7 +4,8 @@ module Daru
   module IO
     module Exporters
       class CSV < Base
-        Daru::DataFrame.register_io_module :to_csv, self
+        Daru::DataFrame.register_io_module :to_csv_string, self
+        Daru::DataFrame.register_io_module :write_csv, self
 
         # Exports +Daru::DataFrame+ to a CSV file.
         #
@@ -40,19 +41,19 @@ module Daru
         #   #  1   2   4
         #
         #   Daru::IO::Exporters::CSV.new(df, "filename.csv", convert_comma: true).call
-        def initialize(dataframe, path, converters: :numeric, compression: :infer,
+        def initialize(dataframe, converters: :numeric, compression: :infer,
           headers: nil, convert_comma: nil, **options)
           require 'csv'
 
           super(dataframe)
-          @path          = path
           @headers       = headers
           @compression   = compression
           @convert_comma = convert_comma
           @options       = options.merge converters: converters
         end
 
-        def call
+        def write(path)
+          @path    = path
           contents = process_dataframe
 
           if compression?(:gzip, '.csv.gz')

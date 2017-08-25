@@ -4,7 +4,7 @@ module Daru
   module IO
     module Importers
       class RDS < Base
-        Daru::DataFrame.register_io_module :from_rds, self
+        Daru::DataFrame.register_io_module :read_rds, self
 
         # Imports a +Daru::DataFrame+ from a RDS file
         #
@@ -21,14 +21,12 @@ module Daru
         #   #  0      016  GSPTN             NaN        4.1       49.5    THOR IS 2MS22016 T ...
         #   #  1      012  CSPT              NaN        4.1    50.6167    MITC BY 2MN26012 M ...
         #   # ...     ...  ...               ...        ...       ...       ...       ...    ...
-        def initialize(path)
+        def initialize
           optional_gem 'rsruby'
-
-          @path = path
         end
 
-        def call
-          process_dataframe(RSRuby.instance.eval_R("readRDS('#{@path}')"))
+        def read(path)
+          process_dataframe(RSRuby.instance.eval_R("readRDS('#{path}')"))
         end
 
         private

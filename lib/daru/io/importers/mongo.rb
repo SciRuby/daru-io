@@ -104,7 +104,7 @@ module Daru
         #   # 0 5948d40b50       Audi    52642.0        9.8        8.6
         #   # 1 5948d42850   Mercedes    57127.0        9.3        8.9
         #   # 2 5948d44350      Volvo    29000.0        7.8        9.9
-        def initialize(connection, collection, *columns, order: nil, index: nil,
+        def initialize(collection, *columns, order: nil, index: nil,
           filter: nil, limit: nil, skip: nil, **named_columns)
           optional_gem 'mongo'
 
@@ -112,15 +112,17 @@ module Daru
           @skip       = skip
           @limit      = limit
           @filter     = filter
-          @client     = get_client(connection)
           @collection = collection.to_sym
         end
 
-        def call
-          @json_input = @client[@collection]
-                        .find(@filter, skip: @skip, limit: @limit)
-                        .to_json
-          super
+        def from(connection)
+          @client = get_client(connection)
+
+          super(
+            @client[@collection]
+              .find(@filter, skip: @skip, limit: @limit)
+              .to_json
+          )
         end
 
         private

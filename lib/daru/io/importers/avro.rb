@@ -4,7 +4,7 @@ module Daru
   module IO
     module Importers
       class Avro < Base
-        Daru::DataFrame.register_io_module :from_avro, self
+        Daru::DataFrame.register_io_module :read_avro, self
 
         # Imports a +Daru::DataFrame+ from an Avro file.
         #
@@ -23,15 +23,13 @@ module Daru
         #   #    0   Dany    100   true
         #   #    1    Jon    100   true
         #   #    2 Tyrion    100   true
-        def initialize(path)
+        def initialize
           optional_gem 'avro'
           optional_gem 'snappy'
-
-          @path = path
         end
 
-        def call
-          @buffer = StringIO.new(File.read(@path))
+        def read(path)
+          @buffer = StringIO.new(File.read(path))
           @data   = ::Avro::DataFile::Reader.new(@buffer, ::Avro::IO::DatumReader.new).to_a
 
           Daru::DataFrame.new(@data)

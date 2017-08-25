@@ -7,7 +7,7 @@ RSpec.describe Daru::IO::Exporters::RData do
   let(:filename)  { 'test.RData'                                }
   let(:variables) { instance.eval_R("load('#{tempfile.path}')") }
 
-  before { described_class.new(tempfile.path, **opts).call }
+  before { described_class.new(**opts).write(tempfile.path) }
 
   context 'writes DataFrame to a RData file' do
     let(:opts)    { {:'first.df' => df, :'last.df' => df} }

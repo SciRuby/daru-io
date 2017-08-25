@@ -12,6 +12,14 @@ module Daru
           end
           @dataframe = dataframe
         end
+
+        def to_s
+          tempfile = Tempfile.new('tempfile')
+          path     = tempfile.path
+          write(path)
+
+          File.read(path)
+        end
       end
     end
   end

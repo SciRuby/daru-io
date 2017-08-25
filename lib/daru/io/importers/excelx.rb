@@ -67,10 +67,9 @@ module Daru
         #        2        nil          1   IND43201          5 New stock  2014-08-01      51035
         #        3        nil          1   OUT30045          3 New stock  2014-08-01      51035
         #       ...       ...        ...     ...           ...     ...       ...           ...
-        def initialize(path, sheet: 0, order: true, index: false, skiprows: 0, skipcols: 0)
+        def initialize(sheet: 0, order: true, index: false, skiprows: 0, skipcols: 0)
           optional_gem 'roo', '~> 2.7.0'
 
-          @path     = path
           @sheet    = sheet
           @order    = order
           @index    = index
@@ -78,8 +77,8 @@ module Daru
           @skipcols = skipcols
         end
 
-        def call
-          book      = Roo::Excelx.new(@path)
+        def read(path)
+          book      = Roo::Excelx.new(path)
           worksheet = book.sheet(@sheet)
 
           @data     = strip_html_tags(skip_data(worksheet.to_a, @skiprows, @skipcols))

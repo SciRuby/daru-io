@@ -4,7 +4,7 @@ module Daru
   module IO
     module Importers
       class RData < RDS
-        Daru::DataFrame.register_io_module :from_rdata, self
+        Daru::DataFrame.register_io_module :read_rdata, self
 
         # Imports a +Daru::DataFrame+ from a RData file and variable
         #
@@ -28,14 +28,14 @@ module Daru
         #   #         3         AL       1009       18.0    alabama     blount       13.7  ...
         #   #         4         AL       1015       18.6    alabama    calhoun       12.9  ...
         #   #       ...        ...        ...        ...        ...        ...        ...  ...
-        def initialize(path, variable)
-          super(path)
+        def initialize(variable)
+          super()
           @variable = variable.to_s
         end
 
-        def call
+        def read(path)
           @instance = RSRuby.instance
-          @instance.eval_R("load('#{@path}')")
+          @instance.eval_R("load('#{path}')")
 
           validate_params
 

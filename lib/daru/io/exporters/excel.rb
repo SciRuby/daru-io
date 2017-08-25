@@ -4,7 +4,8 @@ module Daru
   module IO
     module Exporters
       class Excel < Base
-        Daru::DataFrame.register_io_module :to_excel, self
+        Daru::DataFrame.register_io_module :to_excel_string, self
+        Daru::DataFrame.register_io_module :write_excel, self
 
         # Exports +Daru::DataFrame+ to an Excel Spreadsheet.
         #
@@ -70,17 +71,16 @@ module Daru
         #     index:  { color: :green },
         #     data:   { color: :blue }
         #   ).call
-        def initialize(dataframe, path, header: true, data: true, index: true)
+        def initialize(dataframe, header: true, data: true, index: true)
           optional_gem 'spreadsheet', '~> 1.1.1'
 
           super(dataframe)
-          @path   = path
           @data   = data
           @index  = index
           @header = header
         end
 
-        def call
+        def write(path)
           @book  = Spreadsheet::Workbook.new
           @sheet = @book.create_worksheet
 
@@ -92,7 +92,7 @@ module Daru
             write_data(row,  r+@row_offset)
           end
 
-          @book.write(@path)
+          @book.write(path)
         end
 
         private
