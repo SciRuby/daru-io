@@ -3,18 +3,19 @@ require 'daru/io/importers/rds'
 module Daru
   module IO
     module Importers
+      # RData Importer Class, that extends `from_rdata` method to `Daru::DataFrame`
       class RData < RDS
         Daru::DataFrame.register_io_module :read_rdata, self
 
-        # Imports a +Daru::DataFrame+ from a RData file and variable
+        # Imports a `Daru::DataFrame` from a RData file and variable
         #
         # @param path [String] Path to the RData file
         # @param variable [String] The variable to be imported from the
         #   variables stored in the RData file. Please note that the R
         #   variable to be imported from the RData file should be a
-        #   +data.frame+
+        #   `data.frame`
         #
-        # @return A +Daru::DataFrame+ imported from the given RData file and variable name
+        # @return A `Daru::DataFrame` imported from the given RData file and variable name
         #
         # @example Importing from an RData file
         #   df = Daru::IO::Importers::RData.new('ACScounty.RData', :ACS3).call

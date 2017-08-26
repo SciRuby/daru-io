@@ -3,13 +3,15 @@ require 'daru/io/exporters/rds'
 module Daru
   module IO
     module Exporters
+      # RData Exporter Class, that can be used to export multiple `Daru::DataFrame`s
+      # to an RData file
       class RData < RDS
-        # Exports single / multiple +Daru::DataFrame+s to a RData file.
+        # Exports single / multiple `Daru::DataFrame`s to a RData file.
         #
         # @param path [String] Path of RData file where the dataframe(s) is/are to be saved
         # @param options [Hash] A set of key-value pairs wherein the key depicts the name of
-        #   the R +data.frame+ variable name to be saved in the RData file, and the corresponding
-        #   value depicts the +Daru::DataFrame+ (or any Ruby variable in scope)
+        #   the R `data.frame` variable name to be saved in the RData file, and the corresponding
+        #   value depicts the `Daru::DataFrame` (or any Ruby variable in scope)
         #
         # @example Writing to a RData file
         #   df1 = Daru::DataFrame.new([[1,2],[3,4]], order: [:a, :b])

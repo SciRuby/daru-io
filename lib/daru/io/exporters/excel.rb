@@ -3,13 +3,15 @@ require 'daru/io/exporters/base'
 module Daru
   module IO
     module Exporters
+      # Excel Exporter Class, that extends `to_excel` method to `Daru::DataFrame`
+      # instance variables
       class Excel < Base
         Daru::DataFrame.register_io_module :to_excel_string, self
         Daru::DataFrame.register_io_module :write_excel, self
 
-        # Exports +Daru::DataFrame+ to an Excel Spreadsheet.
+        # Exports `Daru::DataFrame` to an Excel Spreadsheet.
         #
-        # @note For giving formatting options as hashes to the +:data+, +:index+ or +header+
+        # @note For giving formatting options as hashes to the `:data`, `:index` or `header`
         #   keyword argument(s), please have a look at the
         #   {http://www.rubydoc.info/gems/ruby-spreadsheet/Spreadsheet/Font Spreadsheet::Font}
         #   and
@@ -17,7 +19,7 @@ module Daru
         #   pages.
         #
         # @param dataframe [Daru::DataFrame] A dataframe to export
-        # @param path [String] Path of the file where the +Daru::DataFrame+
+        # @param path [String] Path of the file where the `Daru::DataFrame`
         #   should be written.
         # @param header [Hash or Boolean] Defaults to true. When set to false or nil,
         #   headers are not written. When given a hash of formatting options,
