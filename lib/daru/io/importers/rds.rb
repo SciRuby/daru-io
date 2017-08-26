@@ -3,14 +3,15 @@ require 'daru/io/importers/base'
 module Daru
   module IO
     module Importers
+      # RDS Importer Class, that extends `from_rds` method to `Daru::DataFrame`
       class RDS < Base
         Daru::DataFrame.register_io_module :from_rds, self
 
-        # Imports a +Daru::DataFrame+ from a RDS file
+        # Imports a `Daru::DataFrame` from a RDS file
         #
         # @param path [String] Path to RDS file
         #
-        # @return A +Daru::DataFrame+ imported from the given RDS file
+        # @return A `Daru::DataFrame` imported from the given RDS file
         #
         # @example Importing from a RDS file
         #   df = Daru::IO::Importers::RDS.new('bc_sites.rds').call

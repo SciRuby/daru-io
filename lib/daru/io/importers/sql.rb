@@ -3,16 +3,17 @@ require 'daru/io/importers/base'
 module Daru
   module IO
     module Importers
+      # SQL Importer Class, that extends `from_sql` method to `Daru::DataFrame`
       class SQL < Base
         Daru::DataFrame.register_io_module :from_sql, self
 
-        # Imports a +Daru::DataFrame+ from a SQL query.
+        # Imports a `Daru::DataFrame` from a SQL query.
         #
         # @param dbh [DBI::DatabaseHandle or String] A DBI connection OR Path to a
         #   SQlite3 database.
         # @param query [String] The query to be executed
         #
-        # @return A +Daru::DataFrame+ imported from the given query
+        # @return A `Daru::DataFrame` imported from the given query
         #
         # @example Reading from database with a DBI connection
         #   dbh = DBI.connect("DBI:Mysql:database:localhost", "user", "password")

@@ -3,15 +3,17 @@ require 'daru/io/exporters/base'
 module Daru
   module IO
     module Exporters
+      # Avro Exporter Class, that extends `to_avro` method to `Daru::DataFrame`
+      # instance variables
       class Avro < Base
         Daru::DataFrame.register_io_module :to_avro, self
 
-        # Exports +Daru::DataFrame+ to an Avro file.
+        # Exports `Daru::DataFrame` to an Avro file.
         #
         # @param dataframe [Daru::DataFrame] A dataframe to export
         # @param path [String] Path of Avro file where the dataframe is to be saved
-        # @param schema [Avro::Schema or Hash] The schema should contain details such as +:type+,
-        #   +:name+ and +:fields+
+        # @param schema [Avro::Schema or Hash] The schema should contain details such as `:type`,
+        #   `:name` and `:fields`
         #
         # @example Writing to an Avro file
         #   schema = {

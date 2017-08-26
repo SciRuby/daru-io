@@ -3,10 +3,12 @@ require 'daru/io/exporters/base'
 module Daru
   module IO
     module Exporters
+      # SQL Exporter Class, that extends `to_sql` method to `Daru::DataFrame`
+      # instance variables
       class SQL < Base
         Daru::DataFrame.register_io_module :to_sql, self
 
-        # Exports +Daru::DataFrame+ to an SQL table.
+        # Exports `Daru::DataFrame` to an SQL table.
         #
         # @param dataframe [Daru::DataFrame] A dataframe to export.
         # @param dbh [DBI] A DBI database connection object.

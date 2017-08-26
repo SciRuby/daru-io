@@ -3,20 +3,22 @@ require 'daru/io/exporters/base'
 module Daru
   module IO
     module Exporters
+      # CSV Exporter Class, that extends `to_csv` method to `Daru::DataFrame`
+      # instance variables
       class CSV < Base
         Daru::DataFrame.register_io_module :to_csv, self
 
-        # Exports +Daru::DataFrame+ to a CSV file.
+        # Exports `Daru::DataFrame` to a .csv / .csv.gz file.
         #
         # @param dataframe [Daru::DataFrame] A dataframe to export
         # @param path [String] Path of CSV file where the dataframe is to be saved
         # @param converters [Symbol] A type to convert the data in dataframe
-        # @param compression [Symbol] Defaults to +:infer+, which decides depending on file format
-        #   like +.csv.gz+. For explicitly writing into a +.csv.gz+ file, set
-        #   +:compression+ as +:gzip+.
-        # @param headers [Boolean] When set to +false+, the headers aren't written
+        # @param compression [Symbol] Defaults to `:infer`, which decides depending on file format
+        #   like `.csv.gz`. For explicitly writing into a `.csv.gz` file, set
+        #   `:compression` as `:gzip`.
+        # @param headers [Boolean] When set to `false`, the headers aren't written
         #   to the CSV file
-        # @param convert_comma [Boolean] When set to +true+, the decimal delimiter
+        # @param convert_comma [Boolean] When set to `true`, the decimal delimiter
         #   for float values is a comma (,) rather than a dot (.).
         # @param options [Hash] CSV standard library options, to tweak other
         #   default options of CSV gem.
