@@ -8,13 +8,13 @@ module Daru
       class SQL < Base
         Daru::DataFrame.register_io_module :to_sql, self
 
-        # Exports `Daru::DataFrame` to an SQL table.
+        # Initializes a SQL Exporter instance.
         #
         # @param dataframe [Daru::DataFrame] A dataframe to export.
         # @param dbh [DBI] A DBI database connection object.
         # @param table [String] The SQL table to export to.
         #
-        # @example Writing to an SQL Table with database credentials
+        # @example Initializing with database credentials
         #   df = Daru::DataFrame.new([[1,2],[3,4]], order: [:a, :b])
         #
         #   #=> #<Daru::DataFrame(2x2)>
@@ -27,7 +27,7 @@ module Daru
         #   dbh = DBI.connect("DBI:Mysql:database:localhost", "user", "password")
         #   # Enter the actual SQL database credentials in the above line
         #
-        #   Daru::IO::Exporters::SQL.new(df, dbh, table).call
+        #   instance = Daru::IO::Exporters::SQL.new(df, dbh, table)
         def initialize(dataframe, dbh, table)
           optional_gem 'dbd-sqlite3', requires: 'dbd/SQLite3'
           optional_gem 'dbi'
@@ -38,6 +38,10 @@ module Daru
           @table     = table
         end
 
+        # Exports a SQL Exporter instance to an SQL table.
+        #
+        # @example Exports SQL Exporter instance into given SQL table
+        #   instance.to
         def to
           query = "INSERT INTO #{@table} (#{@dataframe.vectors.to_a.join(',')}"\
                   ") VALUES (#{(['?']*@dataframe.vectors.size).join(',')})"

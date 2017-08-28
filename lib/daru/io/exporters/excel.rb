@@ -3,13 +3,13 @@ require 'daru/io/exporters/base'
 module Daru
   module IO
     module Exporters
-      # Excel Exporter Class, that extends `to_excel` method to `Daru::DataFrame`
-      # instance variables
+      # Excel Exporter Class, that extends `to_excel_string` and `write_excel` methods to
+      # `Daru::DataFrame` instance variables
       class Excel < Base
         Daru::DataFrame.register_io_module :to_excel_string, self
         Daru::DataFrame.register_io_module :write_excel, self
 
-        # Exports `Daru::DataFrame` to an Excel Spreadsheet.
+        # Initializes an Excel Exporter instance.
         #
         # @note For giving formatting options as hashes to the `:data`, `:index` or `header`
         #   keyword argument(s), please have a look at the
@@ -18,9 +18,8 @@ module Daru
         #   {http://www.rubydoc.info/gems/ruby-spreadsheet/Spreadsheet/Format Spreadsheet::Format}
         #   pages.
         #
-        # @param dataframe [Daru::DataFrame] A dataframe to export
-        # @param path [String] Path of the file where the `Daru::DataFrame`
-        #   should be written.
+        # @param dataframe [Daru::DataFrame] A dataframe to export. Supports even dataframes
+        #   with multi-index.
         # @param header [Hash or Boolean] Defaults to true. When set to false or nil,
         #   headers are not written. When given a hash of formatting options,
         #   headers are written with the specific formatting. When set to true,
@@ -34,7 +33,7 @@ module Daru
         #   index values are written with the specific formatting. When set to true,
         #   index values are written without any formatting.
         #
-        # @example Writing to an Excel file without options
+        # @example Initializing an Excel Exporter instance
         #   df = Daru::DataFrame.new([[1,2],[3,4]], order: [:a, :b])
         #
         #   #=> #<Daru::DataFrame(2x2)>
@@ -42,37 +41,13 @@ module Daru
         #   #  0   1   3
         #   #  1   2   4
         #
-        #   Daru::IO::Exporters::Excel.new(df, "dataframe_df.xls").call
-        #
-        # @example Writing to an Excel file with formatting options
-        #   df = Daru::DataFrame.new([[1,2],[3,4]], order: [:a, :b])
-        #
-        #   #=> #<Daru::DataFrame(2x2)>
-        #   #      a   b
-        #   #  0   1   3
-        #   #  1   2   4
-        #
-        #   Daru::IO::Exporters::Excel.new(df,
-        #     "dataframe_df.xls",
+        #   simple_instance = Daru::IO::Exporters::Excel.new(df)
+        #   formatted_instance = Daru::IO::Exporters::Excel.new(
+        #     df,
         #     header: { color: :red, weight: :bold },
-        #     index:  false,
-        #     data:   { color: :blue }
-        #   ).call
-        #
-        # @example Writing a DataFrame with Multi-Index to an Excel file
-        #   df = Daru::DataFrame.new [[1,2],[3,4]], order: [:x, :y], index: [[:a, :b, :c], [:d, :e, :f]]
-        #
-        #   #=> #<Daru::DataFrame(2x2)>
-        #   #             x   y
-        #   #  a  b   c   1   3
-        #   #  d  e   f   2   4
-        #
-        #   Daru::IO::Exporters::Excel.new(df,
-        #     "dataframe_df.xls",
-        #     header: { color: :red, weight: :bold },
-        #     index:  { color: :green },
-        #     data:   { color: :blue }
-        #   ).call
+        #     index: false,
+        #     data: { color: :blue }
+        #   )
         def initialize(dataframe, header: true, data: true, index: true)
           optional_gem 'spreadsheet', '~> 1.1.1'
 
@@ -82,6 +57,28 @@ module Daru
           @header = header
         end
 
+        # Exports an Excel Exporter instance to a file-writable String.
+        #
+        # @return [String] A file-writable string
+        #
+        # @example Getting a file-writable string from Excel Exporter instance
+        #   simple_instance.to_s #! same as df.to_avro_string(schema)
+        #
+        #   #=> "\xD0\xCF\u0011\u0871\u001A\xE1\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000..."
+        #
+        #   formatted_instance.to_s
+        #
+        #   #=> "\xD0\xCF\u0011\u0871\u001A\xE1\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000..."
+        def to_s
+          super
+        end
+
+        # Exports an Excel Exporter instance to an xls file.
+        #
+        # @param path [String] Path of excel file where the dataframe is to be saved
+        #
+        # @example Writing an Excel Exporter instance to an xls file
+        #   instance.write('filename.xls')
         def write(path)
           @book  = Spreadsheet::Workbook.new
           @sheet = @book.create_worksheet

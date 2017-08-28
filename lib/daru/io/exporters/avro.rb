@@ -3,20 +3,21 @@ require 'daru/io/exporters/base'
 module Daru
   module IO
     module Exporters
-      # Avro Exporter Class, that extends `to_avro` method to `Daru::DataFrame`
-      # instance variables
+      # Avro Exporter Class, that extends `to_avro_string` and `write_avro` methods to
+      # `Daru::DataFrame` instance variables
       class Avro < Base
         Daru::DataFrame.register_io_module :to_avro_string, self
         Daru::DataFrame.register_io_module :write_avro, self
 
-        # Exports `Daru::DataFrame` to an Avro file.
+        # Initializes an Avro Exporter instance.
         #
         # @param dataframe [Daru::DataFrame] A dataframe to export
-        # @param path [String] Path of Avro file where the dataframe is to be saved
         # @param schema [Avro::Schema or Hash] The schema should contain details such as `:type`,
         #   `:name` and `:fields`
         #
-        # @example Writing to an Avro file
+        # @return A `Daru::IO::Exporter::Avro` instance
+        #
+        # @example Initializing an Avro Exporter
         #   schema = {
         #     "type" => "record",
         #     "name" => "User",
@@ -41,7 +42,7 @@ module Daru
         #   #    1    Jon    100   true
         #   #    2 Tyrion    100   true
         #
-        #   Daru::IO::Exporters::Avro.new(df, schema).write("azorahai.avro")
+        #   instance = Daru::IO::Exporters::Avro.new(df, schema)
         def initialize(dataframe, schema=nil)
           optional_gem 'avro'
           require 'json'
@@ -50,6 +51,24 @@ module Daru
           @schema = schema
         end
 
+        # Exports an Avro Exporter instance to a file-writable String.
+        #
+        # @return [String] A file-writable string
+        #
+        # @example Getting a file-writable string from Avro Exporter instance
+        #   instance.to_s
+        #
+        #   #=> "Obj\u0001\u0004\u0014avro.codec\bnull\u0016avro.schema\xBC\u0002{\"type\":\"record\"..."
+        def to_s
+          super
+        end
+
+        # Exports an Avro Exporter instance to an avro file.
+        #
+        # @param path [String] Path of Avro file where the dataframe is to be saved
+        #
+        # @example Writing an Avro Exporter instance to an Avro file
+        #   instance.write('azor_ahai.avro')
         def write(path)
           @schema_obj = process_schema
           @writer     = ::Avro::IO::DatumWriter.new(@schema_obj)
