@@ -614,7 +614,7 @@ Exports a **Daru::DataFrame** into a database (SQL) table through DBI connection
     df = Daru::DataFrame.new(x: [1,2], y: [3,4])
 
     df.to_yaml(rows: 10..19) #! or, Daru::IO::Exporters::YAML.new(df, rows: 10..19).to
-    df.to_yaml_string(rows: 0..9) #! or, Daru::IO::Exporters::YAML.new(df, rows: 10..19).to_s
+    df.to_yaml_string(rows: 10..19) #! or, Daru::IO::Exporters::YAML.new(df, rows: 10..19).to_s
     df.write_yaml('dataframe.yml', rows: 10..19) #! or, Daru::IO::Exporters::YAML.new(df, rows: 10..19).write('dataframe.yml')
     ```
 
