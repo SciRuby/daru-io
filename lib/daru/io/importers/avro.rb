@@ -3,32 +3,36 @@ require 'daru/io/importers/base'
 module Daru
   module IO
     module Importers
-      # Avro Importer Class, that extends `from_avro` method to `Daru::DataFrame`
+      # Avro Importer Class, that extends `read_avro` method to `Daru::DataFrame`
       class Avro < Base
         Daru::DataFrame.register_io_module :read_avro, self
 
-        # Imports a `Daru::DataFrame` from an Avro file.
-        #
-        # @param path [String] Path to Avro file, where the dataframe is to be imported from.
-        #
-        # @return A `Daru::DataFrame` imported from the given relation and fields
+        # Initializes an Avro Importer instance
         #
         # @note The 'snappy' gem handles compressions and is used within Avro gem. Yet, it isn't
         #   specified as a dependency in Avro gem. Hence, it has been added separately.
         #
+        # @example Initializing without options
+        #   instance = Daru::IO::Importers::Avro.new
+        def initialize
+          optional_gem 'avro'
+          optional_gem 'snappy'
+        end
+
+        # Imports a `Daru::DataFrame` from an Avro Importer instance and avro file
+        #
+        # @param path [String] Path to Avro file, where the dataframe is to be imported from.
+        #
+        # @return [Daru::DataFrame]
+        #
         # @example Importing from an Avro file
-        #   df = Daru::IO::Importers::Avro.new("azorahai.avro").call
+        #   df = instance.read("azorahai.avro")
         #
         #   #=> #<Daru::DataFrame(3x3)>
         #   #        name points winner
         #   #    0   Dany    100   true
         #   #    1    Jon    100   true
         #   #    2 Tyrion    100   true
-        def initialize
-          optional_gem 'avro'
-          optional_gem 'snappy'
-        end
-
         def read(path)
           @buffer = StringIO.new(File.read(path))
           @data   = ::Avro::DataFile::Reader.new(@buffer, ::Avro::IO::DatumReader.new).to_a

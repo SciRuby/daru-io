@@ -5,11 +5,8 @@ module Daru
     module Importers
       # Excelx Importer Class, that handles .xlsx files in the Excel Importer
       class Excelx < Base
-        # Imports a `Daru::DataFrame` from a given XLSX file and sheet.
+        # Initializes an Excelx Importer instance
         #
-        # @param path [String] Local / Remote path to XLSX file
-        # @param sheet [String] Sheet name in the given XLSX file. Defaults to 0,
-        #   to parse the dataframe from the first sheet.
         # @param skiprows [Integer] Skips the first `:skiprows` number of rows from the
         #   sheet being parsed.
         # @param skipcols [Integer] Skips the first `:skipcols` number of columns from the
@@ -24,50 +21,9 @@ module Daru
         #   When set to false, a default order (0 to n-1) is chosen for the DataFrame,
         #   and the data of the DataFrame consists of all rows in the sheet.
         #
-        # @return A `Daru::DataFrame` imported from the given XLSX file and sheet
-        #
-        # @example Importing from a local file
-        #   path  = 'spec/fixtures/excelx/Stock-counts-sheet.xlsx'
-        #   sheet = 'Example Stock Counts'
-        #   df    = Daru::IO::Importers::XLSX.new(path, sheet: sheet).call
-        #   df
-        #
-        #   #=> <Daru::DataFrame(15x7)>
-        #              Status Stock coun  Item code        New Descriptio Stock coun Offset G/L
-        #        0          H          1        nil        nil New stock  2014-08-01        nil
-        #        1        nil          1  IND300654          2 New stock  2014-08-01      51035
-        #        2        nil          1   IND43201          5 New stock  2014-08-01      51035
-        #        3        nil          1   OUT30045          3 New stock  2014-08-01      51035
-        #       ...       ...        ...     ...           ...     ...       ...           ...
-        #
-        # @example Importing from a local file without headers
-        #   path  = 'spec/fixtures/excelx/Stock-counts-sheet.xlsx'
-        #   sheet = 'Example Stock Counts'
-        #   df    = Daru::IO::Importers::XLSX.new(path, sheet: sheet, headers: false).call
-        #   df
-        #
-        #   #=> <Daru::DataFrame(16x7)>
-        #                   0           1          2          3          4          5        6
-        #        0      Status Stock coun  Item code        New Descriptio Stock coun Offset G/L
-        #        1          H          1        nil        nil New stock  2014-08-01        nil
-        #        2        nil          1  IND300654          2 New stock  2014-08-01      51035
-        #        3        nil          1   IND43201          5 New stock  2014-08-01      51035
-        #        4        nil          1   OUT30045          3 New stock  2014-08-01      51035
-        #       ...       ...        ...     ...           ...     ...       ...           ...
-        #
-        # @example Importing from a remote URL
-        #   path = 'https://www.exact.com/uk/images/downloads/getting-started-excel-sheets/Stock-counts-sheet.xlsx'
-        #   sheet = 'Example Stock Counts'
-        #   df    = Daru::IO::Importers::XLSX.new(path, sheet: sheet).call
-        #   df
-        #
-        #   #=> <Daru::DataFrame(15x7)>
-        #              Status Stock coun  Item code        New Descriptio Stock coun Offset G/L
-        #        0          H          1        nil        nil New stock  2014-08-01        nil
-        #        1        nil          1  IND300654          2 New stock  2014-08-01      51035
-        #        2        nil          1   IND43201          5 New stock  2014-08-01      51035
-        #        3        nil          1   OUT30045          3 New stock  2014-08-01      51035
-        #       ...       ...        ...     ...           ...     ...       ...           ...
+        # @example Initializing with options
+        #   normal_instance = Daru::IO::Importers::Excelx.new(sheet: 'Example Stock Counts')
+        #   headers_instance = Daru::IO::Importers::Excelx.new(sheet: 'Example Stock Counts', headers: false)
         def initialize(sheet: 0, order: true, index: false, skiprows: 0, skipcols: 0)
           optional_gem 'roo', '~> 2.7.0'
 
@@ -78,6 +34,45 @@ module Daru
           @skipcols = skipcols
         end
 
+        # Imports a `Daru::DataFrame` from an Excelx Importer instance and xlsx file
+        #
+        # @param path [String] Local / remote path to xlsx file
+        #
+        # @return [Daru::DataFrame]
+        #
+        # @example Importing from a local file
+        #   df = normal_instance.read("spec/fixtures/excelx/Stock-counts-sheet.xlsx")
+        #
+        #   #=> <Daru::DataFrame(15x7)>
+        #   #           Status Stock coun  Item code        New Descriptio Stock coun Offset G/L
+        #   #     0          H          1        nil        nil New stock  2014-08-01        nil
+        #   #     1        nil          1  IND300654          2 New stock  2014-08-01      51035
+        #   #     2        nil          1   IND43201          5 New stock  2014-08-01      51035
+        #   #     3        nil          1   OUT30045          3 New stock  2014-08-01      51035
+        #   #    ...       ...        ...     ...           ...     ...       ...           ...
+        #
+        # @example Importing from a remote URL
+        #   df = normal_instance.read('https://www.exact.com/uk/images/downloads/getting-started-excel-sheets/Stock-counts-sheet.xlsx')
+        #
+        #   #=> <Daru::DataFrame(15x7)>
+        #   #           Status Stock coun  Item code        New Descriptio Stock coun Offset G/L
+        #   #     0          H          1        nil        nil New stock  2014-08-01        nil
+        #   #     1        nil          1  IND300654          2 New stock  2014-08-01      51035
+        #   #     2        nil          1   IND43201          5 New stock  2014-08-01      51035
+        #   #     3        nil          1   OUT30045          3 New stock  2014-08-01      51035
+        #   #    ...       ...        ...     ...           ...     ...       ...           ...
+        #
+        # @example Importing without headers
+        #   df = headers_instance.read('spec/fixtures/excelx/Stock-counts-sheet.xlsx')
+        #
+        #   #=> <Daru::DataFrame(16x7)>
+        #   #                0           1          2          3          4          5        6
+        #   #     0      Status Stock coun  Item code        New Descriptio Stock coun Offset G/L
+        #   #     1          H          1        nil        nil New stock  2014-08-01        nil
+        #   #     2        nil          1  IND300654          2 New stock  2014-08-01      51035
+        #   #     3        nil          1   IND43201          5 New stock  2014-08-01      51035
+        #   #     4        nil          1   OUT30045          3 New stock  2014-08-01      51035
+        #   #    ...       ...        ...     ...           ...     ...       ...           ...
         def read(path)
           book      = Roo::Excelx.new(path)
           worksheet = book.sheet(@sheet)

@@ -3,14 +3,12 @@ require 'daru/io/importers/base'
 module Daru
   module IO
     module Importers
-      # HTML Importer Class, that extends `from_html` method to `Daru::DataFrame`
+      # HTML Importer Class, that extends `read_html` method to `Daru::DataFrame`
       class HTML < Base
         Daru::DataFrame.register_io_module :read_html, self
 
-        # Imports a list of `Daru::DataFrame` s from a HTML file or website.
+        # Initializes a HTML Importer instance
         #
-        # @param path [String] Website URL / path to HTML file, where the
-        #   DataFrame is to be imported from.
         # @param match [String] A `String` to match and choose a particular table(s)
         #   from multiple tables of a HTML page.
         # @param index [Array or Daru::Index or Daru::MultiIndex] If given, it
@@ -27,16 +25,33 @@ module Daru
         #   See `:name` option
         #   [here](http://www.rubydoc.info/gems/daru/0.1.5/Daru%2FDataFrame:initialize)
         #
-        # @return A `Daru::DataFrame` imported from the given HTML page
+        # @example Initializing with given options
+        #   instance = Daru::IO::Importers::HTML.new(match: 'Sun Pharma')
+        #
+        # @note
+        #   Please note that this module works only for static table elements on a
+        #   HTML page, and won't work in cases where the data is being loaded into
+        #   the HTML table by inline Javascript.
+        def initialize(match: nil, order: nil, index: nil, name: nil)
+          optional_gem 'mechanize'
+
+          @match = match
+          @options = {name: name, order: order, index: index}
+        end
+
+        # Imports a `Daru::DataFrame` from a HTML Importer instance and html file
+        #
+        # @param path [String] Website URL / path to HTML file, where the
+        #   DataFrame is to be imported from.
+        #
+        # @return [Array<Daru::DataFrame>]
         #
         # @example Reading from a website whose tables are static
-        #   url = 'http://www.moneycontrol.com/'
-        #   list_of_df = Daru::IO::Importers::HTML.new(url, match: 'Sun Pharma').call
-        #   list_of_df.count
+        #   list_of_dfs = instance.read('http://www.moneycontrol.com/')
+        #   list_of_dfs.count
         #   #=> 4
         #
-        #   df = list_of_df.first
-        #   df
+        #   df = list_of_dfs.first
         #
         #   # As the website keeps changing everyday, the output might not be exactly
         #   # the same as the one obtained below. Nevertheless, a Daru::DataFrame
@@ -49,19 +64,6 @@ module Daru
         #   #   2 Tech Mahin     379.45     -49.70     650.22
         #   #   3        ITC     315.85       6.75     621.12
         #   #   4       HDFC    1598.85      50.95     553.91
-        #
-        # @note
-        #
-        #   Please note that this module works only for static table elements on a
-        #   HTML page, and won't work in cases where the data is being loaded into
-        #   the HTML table by inline Javascript.
-        def initialize(match: nil, order: nil, index: nil, name: nil)
-          optional_gem 'mechanize'
-
-          @match = match
-          @options = {name: name, order: order, index: index}
-        end
-
         def read(path)
           page = Mechanize.new.get(path)
           page

@@ -7,12 +7,8 @@ module Daru
       class Redis < Base
         Daru::DataFrame.register_io_module :from_redis, self
 
-        # Imports a `Daru::DataFrame` from Redis connection and matching keys.
+        # Initializes a Redis Importer instance
         #
-        # @param connection [Hash or Redis Instance] Either a Hash of *Redis* configurations,
-        #   or an existing *Redis* instance. For the hash configurations, have a
-        #   look at
-        #   [Redis#initialize](http://www.rubydoc.info/github/redis/redis-rb/Redis:initialize).
         # @param keys [Array] Redis key(s) from whom, the `Daru::DataFrame`
         #   should be constructed. If no keys are given, all keys in the *Redis*
         #   connection will be used.
@@ -20,20 +16,40 @@ module Daru
         # @param count [Integer] Number of matching keys to be obtained. Defaults to
         #   nil, to collect ALL matching keys.
         #
-        # @return A *Daru::DataFrame* imported from the given Redis connection
-        #   and matching keys
+        # @example Initializing without options
+        #   default_instance = Daru::IO::Importers::Redis.new
         #
-        # @example Importing with Redis configuration without specifying keys
+        # @example Initializing with options
+        #   keys_instance = Daru::IO::Importers::Redis.new("10001", "10002")
+        #
+        # @example Initializing with matching keys and count
+        #   match_instance = Daru::IO::Importers::Redis.new(match: "key:1*", count: 200)
+        def initialize(*keys, match: nil, count: nil)
+          require 'json'
+          optional_gem 'redis'
+
+          @match  = match
+          @count  = count
+          @keys   = keys
+        end
+
+        # Imports a `Daru::DataFrame` from a Redis Importer instance
+        #
+        # @param connection [Hash or Redis Instance] Either a Hash of *Redis* configurations,
+        #   or an existing *Redis* instance. For the hash configurations, have a
+        #   look at
+        #   [Redis#initialize](http://www.rubydoc.info/github/redis/redis-rb/Redis:initialize).
+        #
+        # @return [Daru::DataFrame]
+        #
+        # @example Importing from Redis connection hash
         #   # Say, the Redis connection has this setup
         #   # Key "10001" => { "name" => "Tyrion", "age" => 32 }.to_json
         #   # Key "10002" => { "name" => "Jamie", "age" => 37 }.to_json
         #   # Key "10003" => { "name" => "Cersei", "age" => 37 }.to_json
         #   # Key "10004" => { "name" => "Joffrey", "age" => 19 }.to_json
         #
-        #   connection = {url: "redis://:[password]@[hostname]:[port]/[db]"}
-        #   df         = Daru::DataFrame.from_redis(connection)
-        #
-        #   df
+        #   df = default_instance.from({url: "redis://:[password]@[hostname]:[port]/[db]"})
         #
         #   #=> <Daru::DataFrame(4x2)>
         #   #           name     age
@@ -42,33 +58,20 @@ module Daru
         #   # 10003  Cersei      37
         #   # 10004 Joffrey      19
         #
-        # @example Importing with Redis configuration by specifying keys
-        #   # Say, the Redis connection has this setup
-        #   # Key "10001" => { "name" => "Tyrion", "age" => 32 }.to_json
-        #   # Key "10002" => { "name" => "Jamie", "age" => 37 }.to_json
-        #   # Key "10003" => { "name" => "Cersei", "age" => 37 }.to_json
-        #   # Key "10004" => { "name" => "Joffrey", "age" => 19 }.to_json
-        #
-        #   connection = {url: "redis://:[password]@[hostname]:[port]/[db]"}
-        #   df         = Daru::DataFrame.from_redis(connection, "10001", "10002")
-        #
-        #   df
+        #   df = keys_instance.from({url: "redis://:[password]@[hostname]:[port]/[db]"})
         #
         #   #=> <Daru::DataFrame(2x2)>
         #   #           name     age
         #   # 10001  Tyrion      32
         #   # 10002   Jamie      37
         #
-        # @example Importing with Redis instance without specifying keys
+        # @example Importing from Redis instance
         #   # Say, the Redis connection has this setup
         #   # Key "name"   => ["Tyrion", "Jamie", "Cersei", "Joffrey"]
         #   # Key "age"    => [32, 37, 37, 19]
         #   # Key "living" => [true, true, true, false]
         #
-        #   connection = Redis.new({url: "redis://:[password]@[hostname]:[port]/[db]"})
-        #   df         = Daru::DataFrame.from_redis(connection)
-        #
-        #   df
+        #   df = default_instance.from(Redis.new({url: "redis://:[password]@[hostname]:[port]/[db]"}))
         #
         #   #=> <Daru::DataFrame(4x3)>
         #   #         name     age  living
@@ -77,25 +80,7 @@ module Daru
         #   #    2  Cersei      37    true
         #   #    3 Joffrey      19   false
         #
-        # @example Importing with Redis instance by specifying keys
-        #   # Say, the Redis connection has this setup
-        #   # Key "name"   => ["Tyrion", "Jamie", "Cersei", "Joffrey"]
-        #   # Key "age"    => [32, 37, 37, 19]
-        #   # Key "living" => [true, true, true, false]
-        #
-        #   connection = Redis.new({url: "redis://:[password]@[hostname]:[port]/[db]"})
-        #   df         = Daru::DataFrame.from_redis(connection, "name", "age")
-        #
-        #   df
-        #
-        #   #=> <Daru::DataFrame(4x2)>
-        #   #         name     age
-        #   #    0  Tyrion      32
-        #   #    1   Jamie      37
-        #   #    2  Cersei      37
-        #   #    3 Joffrey      19
-        #
-        # @example Querying for matching keys with count
+        # @example Importing with query for matching keys and count
         #   # Say, the Redis connection has this setup
         #   # Key "key:1" => { "name" => "name1", "age" => "age1" }.to_json
         #   # Key "key:2" => { "name" => "name2", "age" => "age2" }.to_json
@@ -103,18 +88,7 @@ module Daru
         #   # ...
         #   # Key "key:2000" => { "name" => "name2000", "age" => "age2000" }.to_json
         #
-        #   connection = {url: "redis://:[password]@[hostname]:[port]/[db]"}
-        #   Daru::DataFrame.from_redis(connection, match: "key:1*")
-        #
-        #   #=> #<Daru::DataFrame(1111x2)>
-        #   #              name      age
-        #   # key:1045 name1045  age1045
-        #   # key:1919 name1919  age1919
-        #   # key:1155 name1155  age1155
-        #   # key:1649 name1649  age1649
-        #   #      ...      ...      ...
-        #
-        #   Daru::DataFrame.from_redis({}, match: "key:1*", count: 200)
+        #   df = match_instance.from({url: "redis://:[password]@[hostname]:[port]/[db]"})
         #
         #   #=> #<Daru::DataFrame(200x2)>
         #   #              name      age
@@ -123,15 +97,6 @@ module Daru
         #   # key:1703 name1703  age1703
         #   # key:1640 name1640  age1640
         #   #   ...        ...      ...
-        def initialize(*keys, match: nil, count: nil)
-          optional_gem 'json'
-          optional_gem 'redis'
-
-          @match  = match
-          @count  = count
-          @keys   = keys
-        end
-
         def from(connection={})
           @client = get_client(connection)
           @keys   = choose_keys(*@keys).map(&:to_sym)

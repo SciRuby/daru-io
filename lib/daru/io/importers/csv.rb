@@ -3,14 +3,12 @@ require 'daru/io/importers/base'
 module Daru
   module IO
     module Importers
-      # CSV Importer Class, that extends `from_csv` method to `Daru::DataFrame`
+      # CSV Importer Class, that extends `read_csv` method to `Daru::DataFrame`
       class CSV < Base
         Daru::DataFrame.register_io_module :read_csv, self
 
-        # Imports a `Daru::DataFrame` from a .csv / .csv.gz file.
+        # Initializes a CSV Importer instance
         #
-        # @param path [String] Local / Remote path of CSV file, where the
-        #   dataframe is to be imported from.
         # @param headers [Boolean] If this option is `true`, only those columns
         #   will be used to import the `Daru::DataFrame` whose header is given.
         # @param skiprows [Integer] Skips the first `:skiprows` number of rows from
@@ -32,10 +30,35 @@ module Daru
         #   (defaults to `','`), `:converters` (defaults to `:numeric`),
         #   `:header_converters` (defaults to `:symbol`).
         #
-        # @return A `Daru::DataFrame` imported from the given relation and fields
+        # @example Initializing a CSV Importer instance with options
+        #   instance = Daru::IO::Importers::CSV.new(col_sep: ' ', headers: true)
+        def initialize(headers: nil, skiprows: 0, compression: :infer,
+          clone: nil, index: nil, order: nil, name: nil, **options)
+          require 'csv'
+          require 'open-uri'
+          require 'zlib'
+
+          @headers      = headers
+          @skiprows     = skiprows
+          @compression  = compression
+          @daru_options = {clone: clone, index: index, order: order, name: name}
+          @options      = {
+            col_sep: ',',
+            converters: :numeric,
+            header_converters: :symbol,
+            headers: @headers
+          }.merge(options)
+        end
+
+        # Imports a `Daru::DataFrame` from a CSV Importer instance and csv / csv.gz file
         #
-        # @example Reading from a CSV file from columns whose header is given
-        #   df = Daru::DataFrame.from_csv("matrix_test.csv", col_sep: ' ', headers: true)
+        # @param path [String] Local / Remote path of CSV file, where the
+        #   dataframe is to be imported from.
+        #
+        # @return [Daru::DataFrame]
+        #
+        # @example Reading from a CSV file
+        #   df = instance.read("matrix_test.csv")
         #
         #   #=> #<Daru::DataFrame(99x3)>
         #   #        image_reso        mls true_trans
@@ -55,24 +78,6 @@ module Daru
         #   #     13    5.40811          0 -0.2362347
         #   #     14    8.19567          0 -0.1539447
         #   #    ...        ...        ...        ...
-        def initialize(headers: nil, skiprows: 0, compression: :infer,
-          clone: nil, index: nil, order: nil, name: nil, **options)
-          require 'csv'
-          require 'open-uri'
-          require 'zlib'
-
-          @headers      = headers
-          @skiprows     = skiprows
-          @compression  = compression
-          @daru_options = {clone: clone, index: index, order: order, name: name}
-          @options      = {
-            col_sep: ',',
-            converters: :numeric,
-            header_converters: :symbol,
-            headers: @headers
-          }.merge(options)
-        end
-
         def read(path)
           @path = path
 

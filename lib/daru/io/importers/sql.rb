@@ -7,37 +7,12 @@ module Daru
       class SQL < Base
         Daru::DataFrame.register_io_module :from_sql, self
 
-        # Imports a `Daru::DataFrame` from a SQL query.
+        # Initializes a SQL Importer instance
         #
-        # @param dbh [DBI::DatabaseHandle or String] A DBI connection OR Path to a
-        #   SQlite3 database.
         # @param query [String] The query to be executed
         #
-        # @return A `Daru::DataFrame` imported from the given query
-        #
-        # @example Reading from database with a DBI connection
-        #   dbh = DBI.connect("DBI:Mysql:database:localhost", "user", "password")
-        #   # Use the actual SQL credentials for the above line
-        #
-        #   df = Daru::IO::Importers::SQL.new(dbh, "SELECT * FROM test").call
-        #   df
-        #
-        #   #=> #<Daru::DataFrame(2x3)>
-        #   #      id  name   age
-        #   # 0     1 Homer    20
-        #   # 1     2 Marge    30
-        #
-        # @example Reading from a sqlite.db file
-        #   require 'dbi'
-        #
-        #   path = 'path/to/sqlite.db'
-        #   df = Daru::IO::Importers::SQL.new(path, "SELECT * FROM test").call
-        #   df
-        #
-        #   #=> #<Daru::DataFrame(2x3)>
-        #   #      id  name   age
-        #   # 0     1 Homer    20
-        #   # 1     2 Marge    30
+        # @example Initializing with a SQL query
+        #   instance = Daru::IO::Importers::SQL.new("SELECT * FROM test")
         def initialize(query)
           optional_gem 'dbd-sqlite3', requires: 'dbd/SQLite3'
           optional_gem 'activerecord', '~> 4.0', requires: 'active_record'
@@ -47,6 +22,28 @@ module Daru
           @query = query
         end
 
+        # Imports a `Daru::DataFrame` from a SQL Importer instance
+        #
+        # @param dbh [DBI::DatabaseHandle or String] A DBI connection OR Path to a
+        #   SQlite3 database.
+        #
+        # @return [Daru::DataFrame]
+        #
+        # @example Importing from a DBI connection
+        #   df = instance.from(DBI.connect("DBI:Mysql:database:localhost", "user", "password"))
+        #
+        #   #=> #<Daru::DataFrame(2x3)>
+        #   #      id  name   age
+        #   # 0     1 Homer    20
+        #   # 1     2 Marge    30
+        #
+        # @example Importing from a sqlite.db file
+        #   df = instance.from('path/to/sqlite.db')
+        #
+        #   #=> #<Daru::DataFrame(2x3)>
+        #   #      id  name   age
+        #   # 0     1 Homer    20
+        #   # 1     2 Marge    30
         def from(dbh)
           @conn, @adapter = choose_adapter(dbh, @query)
           df_hash         = result_hash
