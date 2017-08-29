@@ -3,9 +3,10 @@ require 'daru/io/importers/base'
 module Daru
   module IO
     module Importers
-      # SQL Importer Class, that extends `from_sql` method to `Daru::DataFrame`
+      # SQL Importer Class, that extends `from_sql` and `read_sql` methods to `Daru::DataFrame`
       class SQL < Base
         Daru::DataFrame.register_io_module :from_sql, self
+        Daru::DataFrame.register_io_module :read_sql, self
 
         # Initializes a SQL Importer instance
         #
@@ -24,8 +25,7 @@ module Daru
 
         # Imports a `Daru::DataFrame` from a SQL Importer instance
         #
-        # @param dbh [DBI::DatabaseHandle or String] A DBI connection OR Path to a
-        #   SQlite3 database.
+        # @param dbh [DBI::DatabaseHandle] A DBI connection.
         #
         # @return [Daru::DataFrame]
         #
@@ -36,18 +36,28 @@ module Daru
         #   #      id  name   age
         #   # 0     1 Homer    20
         #   # 1     2 Marge    30
+        def from(dbh)
+          @conn, @adapter = choose_adapter(dbh, @query)
+          df_hash         = result_hash
+          Daru::DataFrame.new(df_hash).tap(&:update)
+        end
+
+        # Imports a `Daru::DataFrame` from a SQL Importer instance and sqlite.db file
+        #
+        # @param path [String] Path to a SQlite3 database file.
+        #
+        # @return [Daru::DataFrame]
         #
         # @example Importing from a sqlite.db file
-        #   df = instance.from('path/to/sqlite.db')
+        #   df = instance.read('path/to/sqlite.db')
         #
         #   #=> #<Daru::DataFrame(2x3)>
         #   #      id  name   age
         #   # 0     1 Homer    20
         #   # 1     2 Marge    30
-        def from(dbh)
-          @conn, @adapter = choose_adapter(dbh, @query)
-          df_hash         = result_hash
-          Daru::DataFrame.new(df_hash).tap(&:update)
+        def read(path)
+          db = attempt_sqlite3_connection(path) if Pathname(db).exist?
+          from(db)
         end
 
         private
@@ -61,8 +71,6 @@ module Daru
         def choose_adapter(db, query)
           query = String.try_convert(query) or
             raise ArgumentError, "Query must be a string, #{query.class} received"
-
-          db = attempt_sqlite3_connection(db) if db.is_a?(String) && Pathname(db).exist?
 
           case db
           when DBI::DatabaseHandle
