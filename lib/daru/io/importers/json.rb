@@ -54,7 +54,7 @@ module Daru
         # @param instance [Array or Hash] A JSON structure, comprising of Arrays and Hashes.
         #
         # @return [Daru::DataFrame]
-        # 
+        #
         # @example Importing from a JSON structure
         #   df = default_instance.from({a: [1,3], b: [2,4]})
         #
