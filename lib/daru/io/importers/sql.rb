@@ -56,7 +56,7 @@ module Daru
         #   # 0     1 Homer    20
         #   # 1     2 Marge    30
         def read(path)
-          db = attempt_sqlite3_connection(path) if Pathname(db).exist?
+          db = attempt_sqlite3_connection(path) if Pathname(path).exist?
           from(db)
         end
 

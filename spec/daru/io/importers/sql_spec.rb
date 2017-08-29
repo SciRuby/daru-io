@@ -53,6 +53,8 @@ RSpec.describe Daru::IO::Importers::SQL do
   end
 
   context 'with path to sqlite3 file' do
+    subject { described_class.new(query).read(source) }
+
     let(:source) { db_name }
 
     it_behaves_like 'exact daru dataframe',
