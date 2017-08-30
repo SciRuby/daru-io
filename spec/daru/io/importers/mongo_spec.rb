@@ -10,7 +10,7 @@ unless RUBY_VERSION == '2.4.0'
   #   Signed off by @athityakumar on 19/06/2017 at 11:55PM IST.
   RSpec.describe Daru::IO::Importers::Mongo do
     subject do
-      described_class.new(
+      described_class.from(connection).call(
         collection,
         *columns,
         order: order,
@@ -19,7 +19,7 @@ unless RUBY_VERSION == '2.4.0'
         skip: skip,
         limit: limit,
         **named_columns
-      ).from(connection)
+      )
     end
 
     let(:connection)    { ::Mongo::Client.new('mongodb://127.0.0.1:27017/test') }

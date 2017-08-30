@@ -1,5 +1,5 @@
 RSpec.describe Daru::IO::Importers::Plaintext do
-  subject { described_class.new(vectors).read(path) }
+  subject { described_class.read(path).call(vectors) }
 
   let(:vectors) { %i[v1 v2 v3] }
 

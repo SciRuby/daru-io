@@ -62,15 +62,9 @@ module Daru
         #     '$..star..fuel',
         #     '$..star..cost'
         #   )
-        def initialize(collection, *columns, order: nil, index: nil,
-          filter: nil, limit: nil, skip: nil, **named_columns)
+        def initialize
+          super
           optional_gem 'mongo'
-
-          super(*columns, order: order, index: index, **named_columns)
-          @skip       = skip
-          @limit      = limit
-          @filter     = filter
-          @collection = collection.to_sym
         end
 
         # Imports a `Daru::DataFrame` from a Mongo Importer instance.
@@ -108,12 +102,16 @@ module Daru
         #   # 2 5948d44350      Volvo    29000.0        7.8        9.9
         def from(connection)
           @client = get_client(connection)
+          self
+        end
 
-          super(
-            @client[@collection]
-              .find(@filter, skip: @skip, limit: @limit)
-              .to_json
-          )
+        def call(collection, *columns, order: nil, index: nil,
+          filter: nil, limit: nil, skip: nil, **named_columns)
+          @file_string = @client[collection.to_sym]
+                           .find(filter, skip: skip, limit: limit)
+                           .to_json
+
+          super(*columns, order: order, index: index, **named_columns)
         end
 
         private

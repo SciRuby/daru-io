@@ -74,10 +74,16 @@ module Daru
         #   #     4        nil          1   OUT30045          3 New stock  2014-08-01      51035
         #   #    ...       ...        ...     ...           ...     ...       ...           ...
         def read(path)
-          book      = Roo::Excelx.new(path)
-          worksheet = book.sheet(@sheet)
+          @file_string = Roo::Excelx.new(path)
+          self
+        end
 
-          @data     = strip_html_tags(skip_data(worksheet.to_a, @skiprows, @skipcols))
+        def call(sheet: 0, order: true, index: false, skiprows: 0, skipcols: 0)
+          @order    = order
+          @index    = index
+
+          worksheet = @file_string.sheet(sheet)
+          @data     = strip_html_tags(skip_data(worksheet.to_a, skiprows, skipcols))
           @index    = process_index
           @order    = process_order || (0..@data.first.length-1)
           @data     = process_data

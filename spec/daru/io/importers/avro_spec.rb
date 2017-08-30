@@ -1,5 +1,5 @@
 RSpec.describe Daru::IO::Importers::Avro do
-  subject { described_class.new.read(path) }
+  subject { described_class.read(path).call }
 
   let(:path) { '' }
 

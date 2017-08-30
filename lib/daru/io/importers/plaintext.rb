@@ -14,8 +14,7 @@ module Daru
         #
         # @example Initializing with fields
         #   instance = Daru::IO::Importers::Plaintext.new([:v1, :v2, :v3, :v4, :v5, :v6])
-        def initialize(fields)
-          @fields = fields
+        def initialize
         end
 
         # Imports a `Daru::DataFrame` from a Plaintext Importer instance and dat file
@@ -46,15 +45,16 @@ module Daru
         #   # 14 215.1 129.9 129.7   7.7  10.8 141.8
         #   #...   ...   ...   ...   ...   ...   ...
         def read(path)
-          ds = Daru::DataFrame.new({}, order: @fields)
-          File.open(path,'r').each_line do |line|
+          @file_string = File.read(path).split("\n").map do |line|
             row = process_row(line.strip.split(/\s+/),[''])
             next if row == ["\x1A"]
-            ds.add_row(row)
+            row
           end
-          ds.update
-          @fields.each { |f| ds[f].rename f }
-          ds
+          self
+        end
+
+        def call(fields)
+          Daru::DataFrame.rows(@file_string, order: fields)
         end
 
         private

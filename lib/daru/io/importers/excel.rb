@@ -39,6 +39,11 @@ module Daru
           @worksheet_id = worksheet_id
         end
 
+        def read(path)
+          @file_string = Spreadsheet.open(path)
+          self
+        end
+
         # Imports a `Daru::DataFrame` from an Excel Importer instance and xls file
         #
         # @param path [String] Path of Excel file, where the DataFrame is to be imported from.
@@ -68,9 +73,9 @@ module Daru
         #   #    3        4    Franz      nil    Paris      nil
         #   #    4        5   George      5.5     Tome    a,b,c
         #   #    5        6  Fernand      nil      nil      nil
-        def read(path)
-          worksheet = Spreadsheet.open(path).worksheet(@worksheet_id)
-          headers   = if @headers
+        def call(worksheet_id: 0, headers: true)
+          worksheet = @file_string.worksheet(worksheet_id)
+          headers   = if headers
                         ArrayHelper.recode_repeated(worksheet.row(0)).map(&:to_sym)
                       else
                         (0..worksheet.row(0).to_a.size-1).to_a
@@ -79,7 +84,7 @@ module Daru
           df = Daru::DataFrame.new({})
           headers.each_with_index do |h,i|
             col = worksheet.column(i).to_a
-            col.delete_at(0) if @headers
+            col.delete_at(0) if headers
             df[h] = col
           end
 

@@ -33,7 +33,7 @@ end
 #
 #   Signed off by @athityakumar on 08/16/2017 at 10:00PM IST
 RSpec.describe Daru::IO::Importers::Redis do
-  subject { described_class.new(*keys, match: pattern, count: count).from(connection) }
+  subject { described_class.from(connection).call(*keys, match: pattern, count: count) }
 
   let(:keys)             { []                    }
   let(:count)            { nil                   }

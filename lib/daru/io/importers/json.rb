@@ -35,17 +35,10 @@ module Daru
         #     index: (10..70).to_a,
         #     RunTime: "$.._embedded..episodes..runtime"
         #   )
-        def initialize(*columns, order: nil, index: nil, **named_columns)
+        def initialize
           require 'open-uri'
           require 'json'
           optional_gem 'jsonpath'
-
-          @columns       = columns
-          @order         = order
-          @index         = index
-          @named_columns = named_columns
-
-          validate_params
         end
 
         # Imports a `Daru::DataFrame` from an Avro Importer instance and JSON structure
@@ -62,15 +55,6 @@ module Daru
         #   #        a   b
         #   #  0     1   2
         #   #  1     3   4
-        def from(instance)
-          @json    = instance.is_a?(String) ? ::JSON.parse(instance) : instance
-          @data    = fetch_data
-          @index   = at_jsonpath(@index)
-          @order   = at_jsonpath(@order)
-          @order ||= Array.new(@columns.count) { |x| x } + @named_columns.keys
-
-          Daru::DataFrame.new(@data, order: @order, index: @index)
-        end
 
         # Imports a `Daru::DataFrame` from a JSON Importer instance and json file
         #
@@ -98,7 +82,25 @@ module Daru
         #   #   12  Lord Snow          1          3         60
         #   #  ...        ...        ...        ...        ...
         def read(path)
-          from(::JSON.parse(open(path).read))
+          @file_string = open(path).read
+          self
+        end
+
+        def from(instance)
+          @file_string = instance
+          self
+        end
+
+        def call(*columns, order: nil, index: nil, **named_columns)
+          init_opts(*columns, order: order, index: index, **named_columns)
+
+          @json    = @file_string.is_a?(String) ? ::JSON.parse(@file_string) : @file_string
+          @data    = fetch_data
+          @index   = at_jsonpath(@index)
+          @order   = at_jsonpath(@order)
+          @order ||= Array.new(@columns.count) { |x| x } + @named_columns.keys
+
+          Daru::DataFrame.new(@data, order: @order, index: @index)
         end
 
         private
@@ -115,6 +117,15 @@ module Daru
           return at_jsonpath(@columns.first) if @columns.size == 1 && @named_columns.empty?
           data_columns = @columns + @named_columns.values
           data_columns.map { |col| at_jsonpath(col) }
+        end
+
+        def init_opts(*columns, order: nil, index: nil, **named_columns)
+          @columns       = columns
+          @order         = order
+          @index         = index
+          @named_columns = named_columns
+
+          validate_params
         end
 
         def validate_params

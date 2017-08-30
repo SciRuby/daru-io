@@ -44,6 +44,14 @@ module Daru
           when Hash then Daru::DataFrame.new(vals.flatten, index: keys)
           end
         end
+
+        def self.from(relation)
+          new.from(relation)
+        end
+
+        def self.read(path)
+          new.read(path)
+        end
       end
     end
   end

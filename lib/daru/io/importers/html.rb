@@ -32,11 +32,8 @@ module Daru
         #   Please note that this module works only for static table elements on a
         #   HTML page, and won't work in cases where the data is being loaded into
         #   the HTML table by inline Javascript.
-        def initialize(match: nil, order: nil, index: nil, name: nil)
+        def initialize
           optional_gem 'mechanize'
-
-          @match = match
-          @options = {name: name, order: order, index: index}
         end
 
         # Imports a `Daru::DataFrame` from a HTML Importer instance and html file
@@ -65,13 +62,21 @@ module Daru
         #   #   3        ITC     315.85       6.75     621.12
         #   #   4       HDFC    1598.85      50.95     553.91
         def read(path)
-          page = Mechanize.new.get(path)
-          page
+          @page = Mechanize.new.get(path)
+          self
+        end
+
+        def call(match: nil, order: nil, index: nil, name: nil)
+          @match = match
+          @options = {name: name, order: order, index: index}
+
+          @page
             .search('table').map { |table| parse_table table }
             .keep_if { |table| search table }
             .compact
             .map { |table| decide_values table, @options }
             .map { |table| table_to_dataframe table }
+
         end
 
         private

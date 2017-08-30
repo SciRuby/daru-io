@@ -14,13 +14,11 @@ module Daru
         #
         # @example Initializing with a SQL query
         #   instance = Daru::IO::Importers::SQL.new("SELECT * FROM test")
-        def initialize(query)
+        def initialize
           optional_gem 'dbd-sqlite3', requires: 'dbd/SQLite3'
           optional_gem 'activerecord', '~> 4.0', requires: 'active_record'
           optional_gem 'dbi'
           optional_gem 'sqlite3'
-
-          @query = query
         end
 
         # Imports a `Daru::DataFrame` from a SQL Importer instance
@@ -37,9 +35,8 @@ module Daru
         #   # 0     1 Homer    20
         #   # 1     2 Marge    30
         def from(dbh)
-          @conn, @adapter = choose_adapter(dbh, @query)
-          df_hash         = result_hash
-          Daru::DataFrame.new(df_hash).tap(&:update)
+          @dbh = dbh
+          self
         end
 
         # Imports a `Daru::DataFrame` from a SQL Importer instance and sqlite.db file
@@ -56,9 +53,18 @@ module Daru
         #   # 0     1 Homer    20
         #   # 1     2 Marge    30
         def read(path)
-          db = attempt_sqlite3_connection(path) if Pathname(path).exist?
-          from(db)
+          @dbh = attempt_sqlite3_connection(path) if Pathname(path).exist?
+          self
         end
+
+        def call(query)
+          @query          = query
+          @conn, @adapter = choose_adapter(@dbh, @query)
+          df_hash         = result_hash
+          Daru::DataFrame.new(df_hash).tap(&:update)
+
+        end
+
 
         private
 

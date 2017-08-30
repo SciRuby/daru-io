@@ -24,13 +24,9 @@ module Daru
         #
         # @example Initializing with matching keys and count
         #   match_instance = Daru::IO::Importers::Redis.new(match: "key:1*", count: 200)
-        def initialize(*keys, match: nil, count: nil)
+        def initialize
           require 'json'
           optional_gem 'redis'
-
-          @match  = match
-          @count  = count
-          @keys   = keys
         end
 
         # Imports a `Daru::DataFrame` from a Redis Importer instance
@@ -99,6 +95,13 @@ module Daru
         #   #   ...        ...      ...
         def from(connection={})
           @client = get_client(connection)
+          self
+        end
+
+        def call(*keys, match: nil, count: nil)
+          @match  = match
+          @count  = count
+          @keys   = keys
           @keys   = choose_keys(*@keys).map(&:to_sym)
 
           vals = @keys.map { |key| ::JSON.parse(@client.get(key), symbolize_names: true) }

@@ -1,5 +1,5 @@
 RSpec.describe Daru::IO::Importers::Excelx do
-  subject { described_class.new(opts).read(path) }
+  subject { described_class.read(path).call(opts) }
 
   let(:opts) { {} }
 
@@ -63,7 +63,7 @@ RSpec.describe Daru::IO::Importers::Excelx do
 
   context 'checks for equal parsing of local XLSX files and remote XLSX files' do
     %w[LOBSTAHS_rt.windows Microcode Stock-counts-sheet].each do |file|
-      let(:local) { described_class.new.read("spec/fixtures/excelx/#{file}.xlsx") }
+      let(:local) { described_class.read("spec/fixtures/excelx/#{file}.xlsx").call }
       let(:path)  { "http://dummy-remote-url/#{file}.xlsx" }
 
       it { is_expected.to be_an(Daru::DataFrame) }

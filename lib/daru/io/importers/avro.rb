@@ -19,6 +19,11 @@ module Daru
           optional_gem 'snappy'
         end
 
+        def read(path)
+          @path = path
+          self
+        end
+
         # Imports a `Daru::DataFrame` from an Avro Importer instance and avro file
         #
         # @param path [String] Path to Avro file, where the dataframe is to be imported from.
@@ -33,8 +38,8 @@ module Daru
         #   #    0   Dany    100   true
         #   #    1    Jon    100   true
         #   #    2 Tyrion    100   true
-        def read(path)
-          @buffer = StringIO.new(File.read(path))
+        def call
+          @buffer = StringIO.new(File.read(@path))
           @data   = ::Avro::DataFile::Reader.new(@buffer, ::Avro::IO::DatumReader.new).to_a
 
           Daru::DataFrame.new(@data)

@@ -7,47 +7,10 @@ module Daru
       class CSV < Base
         Daru::DataFrame.register_io_module :read_csv, self
 
-        # Initializes a CSV Importer instance
-        #
-        # @param headers [Boolean] If this option is `true`, only those columns
-        #   will be used to import the `Daru::DataFrame` whose header is given.
-        # @param skiprows [Integer] Skips the first `:skiprows` number of rows from
-        #   the CSV file. Defaults to 0.
-        # @param compression [Symbol] Defaults to `:infer`, to parse depending on file format
-        #   like `.csv.gz`. For explicitly parsing data from a `.csv.gz` file, set
-        #   `:compression` as `:gzip`.
-        # @param clone [Boolean] Have a look at `:clone` option
-        #   [here](http://www.rubydoc.info/gems/daru/0.1.5/Daru%2FDataFrame:initialize)
-        # @param index [Array or Daru::Index or Daru::MultiIndex] Have a look at
-        #   `:index` option
-        #   [here](http://www.rubydoc.info/gems/daru/0.1.5/Daru%2FDataFrame:initialize)
-        # @param order [Array or Daru::Index or Daru::MultiIndex] Have a look at
-        #   `:order` option
-        #   [here](http://www.rubydoc.info/gems/daru/0.1.5/Daru%2FDataFrame:initialize)
-        # @param name [String] Have a look at `:name` option
-        #   [here](http://www.rubydoc.info/gems/daru/0.1.5/Daru%2FDataFrame:initialize)
-        # @param options [Hash] CSV standard library options such as `:col_sep`
-        #   (defaults to `','`), `:converters` (defaults to `:numeric`),
-        #   `:header_converters` (defaults to `:symbol`).
-        #
-        # @example Initializing a CSV Importer instance with options
-        #   instance = Daru::IO::Importers::CSV.new(col_sep: ' ', headers: true)
-        def initialize(headers: nil, skiprows: 0, compression: :infer,
-          clone: nil, index: nil, order: nil, name: nil, **options)
+        def initialize
           require 'csv'
           require 'open-uri'
           require 'zlib'
-
-          @headers      = headers
-          @skiprows     = skiprows
-          @compression  = compression
-          @daru_options = {clone: clone, index: index, order: order, name: name}
-          @options      = {
-            col_sep: ',',
-            converters: :numeric,
-            header_converters: :symbol,
-            headers: @headers
-          }.merge(options)
         end
 
         # Imports a `Daru::DataFrame` from a CSV Importer instance and csv / csv.gz file
@@ -79,13 +42,44 @@ module Daru
         #   #     14    8.19567          0 -0.1539447
         #   #    ...        ...        ...        ...
         def read(path)
-          @path = path
+          @path        = path
+          @file_string = open(@path)
+          self
+        end
+
+        # Initializes a CSV Importer instance
+        #
+        # @param headers [Boolean] If this option is `true`, only those columns
+        #   will be used to import the `Daru::DataFrame` whose header is given.
+        # @param skiprows [Integer] Skips the first `:skiprows` number of rows from
+        #   the CSV file. Defaults to 0.
+        # @param compression [Symbol] Defaults to `:infer`, to parse depending on file format
+        #   like `.csv.gz`. For explicitly parsing data from a `.csv.gz` file, set
+        #   `:compression` as `:gzip`.
+        # @param clone [Boolean] Have a look at `:clone` option
+        #   [here](http://www.rubydoc.info/gems/daru/0.1.5/Daru%2FDataFrame:initialize)
+        # @param index [Array or Daru::Index or Daru::MultiIndex] Have a look at
+        #   `:index` option
+        #   [here](http://www.rubydoc.info/gems/daru/0.1.5/Daru%2FDataFrame:initialize)
+        # @param order [Array or Daru::Index or Daru::MultiIndex] Have a look at
+        #   `:order` option
+        #   [here](http://www.rubydoc.info/gems/daru/0.1.5/Daru%2FDataFrame:initialize)
+        # @param name [String] Have a look at `:name` option
+        #   [here](http://www.rubydoc.info/gems/daru/0.1.5/Daru%2FDataFrame:initialize)
+        # @param options [Hash] CSV standard library options such as `:col_sep`
+        #   (defaults to `','`), `:converters` (defaults to `:numeric`),
+        #   `:header_converters` (defaults to `:symbol`).
+        #
+        # @example Initializing a CSV Importer instance with options
+        #   instance = Daru::IO::Importers::CSV.new(col_sep: ' ', headers: true)
+        def call(headers: nil, skiprows: 0, compression: :infer,
+          clone: nil, index: nil, order: nil, name: nil, **options)
+          init_args(headers: headers, skiprows: skiprows, compression: compression,
+            clone: clone, index: index, order: order, name: name, **options)
+          process_compression
 
           # Preprocess headers for detecting and correcting repetition in
           # case the :headers option is not specified.
-
-          @file_string = process_compression
-
           hsh =
             if @headers
               hash_with_headers
@@ -93,7 +87,7 @@ module Daru
               hash_without_headers.tap { |hash| @daru_options[:order] = hash.keys }
             end
 
-          Daru::DataFrame.new(hsh,@daru_options)
+          Daru::DataFrame.new(hsh, @daru_options)
         end
 
         private
@@ -129,9 +123,22 @@ module Daru
             .to_h
         end
 
+        def init_args(headers: nil, skiprows: 0, compression: :infer,
+          clone: nil, index: nil, order: nil, name: nil, **options)
+          @headers      = headers
+          @skiprows     = skiprows
+          @compression  = compression
+          @daru_options = {clone: clone, index: index, order: order, name: name}
+          @options      = {
+            col_sep: ',',
+            converters: :numeric,
+            header_converters: :symbol,
+            headers: @headers
+          }.merge(options)
+        end
+
         def process_compression
-          return ::Zlib::GzipReader.new(open(@path)).read if compression?(:gzip, '.csv.gz')
-          open(@path)
+          @file_string = ::Zlib::GzipReader.new(@file_string).read if compression?(:gzip, '.csv.gz')
         end
       end
     end

@@ -30,7 +30,12 @@ module Daru
         #   #  1      012  CSPT              NaN        4.1    50.6167    MITC BY 2MN26012 M ...
         #   # ...     ...  ...               ...        ...       ...       ...       ...    ...
         def read(path)
-          process_dataframe(RSRuby.instance.eval_R("readRDS('#{path}')"))
+          @instance = RSRuby.instance.eval_R("readRDS('#{path}')")
+          self
+        end
+
+        def call
+          process_dataframe(@instance)
         end
 
         private

@@ -16,9 +16,8 @@ module Daru
         #
         # @example Initializing with a variable name
         #   instance = Daru::IO::Importers::RData.new("ACS3")
-        def initialize(variable)
+        def initialize
           super()
-          @variable = variable.to_s
         end
 
         # Imports a `Daru::DataFrame` from a RData Importer instance and rdata file
@@ -41,6 +40,11 @@ module Daru
         def read(path)
           @instance = RSRuby.instance
           @instance.eval_R("load('#{path}')")
+          self
+        end
+
+        def call(variable)
+          @variable = variable.to_s
 
           validate_params
 

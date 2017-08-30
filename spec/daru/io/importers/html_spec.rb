@@ -1,5 +1,5 @@
 RSpec.describe Daru::IO::Importers::HTML do
-  subject { described_class.new(opts).read(path)[df_index] }
+  subject { described_class.read(path).call(opts)[df_index] }
 
   let(:opts)     { {} }
   let(:df_index) { 0  }
