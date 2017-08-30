@@ -7,7 +7,33 @@ module Daru
       class Mongo < JSON
         Daru::DataFrame.register_io_module :from_mongo, self
 
-        # Initializes a Mongo Importer instance
+        # Checks for required gem dependencies of Mongo Importer
+        def initialize
+          super
+          optional_gem 'mongo'
+        end
+
+        # Loads data from a given connection
+        #
+        # @param connection [String or Hash or Mongo::Client] Contains details
+        #   about a Mongo database / hosts to connect.
+        #
+        # @return [Daru::IO::Importers::Mongo]
+        #
+        # @example Loading from a connection string
+        #   instance_1 = Daru::IO::Importers::Mongo.from('mongodb://127.0.0.1:27017/test')
+        #
+        # @example Loading from a connection hash
+        #   instance_2 = Daru::IO::Importers::Mongo.from({ hosts: ['127.0.0.1:27017'], database: 'test' })
+        #
+        # @example Loading from a Mongo::Client connection
+        #   instance_3 = Daru::IO::Importers::Mongo.from(Mongo::Client.new ['127.0.0.1:27017'], database: 'test')
+        def from(connection)
+          @client = get_client(connection)
+          self
+        end
+
+        # Imports a `Daru::DataFrame` from a Mongo Importer instance.
         #
         # @param collection [String or Symbol] A specific collection in the
         #   Mongo database, to import as `Daru::DataFrame`.
@@ -38,23 +64,31 @@ module Daru
         #     been fixed in Ruby 2.4.1 onwards. Hence, please avoid using this
         #     Mongo Importer in Ruby version 2.4.0.
         #
-        # @example Initializing without jsonpath selectors
+        # @return [Daru::DataFrame]
+        #
+        # @example Importing without jsonpath selectors
         #   # The below 'cars' collection can be recreated in a Mongo shell with -
         #   # db.cars.drop()
         #   # db.cars.insert({name: "Audi", price: 52642})
         #   # db.cars.insert({name: "Mercedes", price: 57127})
         #   # db.cars.insert({name: "Volvo", price: 29000})
         #
-        #   instance_without_jsonpath = Daru::IO::Importers::Mongo.new('cars')
+        #   df = instance.call('cars')
         #
-        # @example Initializing with jsonpath selectors
+        #   #=> #<Daru::DataFrame(3x3)>
+        #   #           _id       name      price
+        #   #  0 5948d0bfcd       Audi    52642.0
+        #   #  1 5948d0c6cd   Mercedes    57127.0
+        #   #  2 5948d0cecd      Volvo    29000.0
+        #
+        # @example Importing with jsonpath selectors
         #   # The below 'cars' collection can be recreated in a Mongo shell with -
         #   # db.cars.drop()
         #   # db.cars.insert({name: "Audi", price: 52642, star: { fuel: 9.8, cost: 8.6, seats: 9.9, sound: 9.3 }})
         #   # db.cars.insert({name: "Mercedes", price: 57127, star: { fuel: 9.3, cost: 8.9, seats: 8.4, sound: 9.1 }})
         #   # db.cars.insert({name: "Volvo", price: 29000, star: { fuel: 7.8, cost: 9.9, seats: 8.2, sound: 8.9 }})
         #
-        #   instance_with_jsonpath = Daru::IO::Importers::Mongo.new(
+        #   df = instance.call(
         #     'cars',
         #     '$.._id',
         #     '$..name',
@@ -62,54 +96,19 @@ module Daru
         #     '$..star..fuel',
         #     '$..star..cost'
         #   )
-        def initialize
-          super
-          optional_gem 'mongo'
-        end
-
-        # Imports a `Daru::DataFrame` from a Mongo Importer instance.
-        #
-        # @param connection [String or Hash or Mongo::Client] Contains details
-        #   about a Mongo database / hosts to connect.
-        #
-        # @return [Daru::DataFrame]
-        #
-        # @example Reading from a connection string
-        #   df = instance_without_jsonpath.from('mongodb://127.0.0.1:27017/test')
-        #
-        #   #=> #<Daru::DataFrame(3x3)>
-        #   #           _id       name      price
-        #   #  0 5948d0bfcd       Audi    52642.0
-        #   #  1 5948d0c6cd   Mercedes    57127.0
-        #   #  2 5948d0cecd      Volvo    29000.0
-        #
-        # @example Reading from a connection hash
-        #   df = instance_without_jsonpath.from({ hosts: ['127.0.0.1:27017'], database: 'test' })
-        #
-        #   #=> #<Daru::DataFrame(3x3)>
-        #   #           _id       name      price
-        #   #  0 5948d0bfcd       Audi    52642.0
-        #   #  1 5948d0c6cd   Mercedes    57127.0
-        #   #  2 5948d0cecd      Volvo    29000.0
-        #
-        # @example Reading from a Mongo::Client connection
-        #   df = instance_with_jsonpath.from(Mongo::Client.new ['127.0.0.1:27017'], database: 'test')
         #
         #   #=> #<Daru::DataFrame(3x5)>
         #   #          _id       name      price       fuel       cost
         #   # 0 5948d40b50       Audi    52642.0        9.8        8.6
         #   # 1 5948d42850   Mercedes    57127.0        9.3        8.9
         #   # 2 5948d44350      Volvo    29000.0        7.8        9.9
-        def from(connection)
-          @client = get_client(connection)
-          self
-        end
-
         def call(collection, *columns, order: nil, index: nil,
           filter: nil, limit: nil, skip: nil, **named_columns)
-          @file_string = @client[collection.to_sym]
-                           .find(filter, skip: skip, limit: limit)
-                           .to_json
+          @json = ::JSON.parse(
+            @client[collection.to_sym]
+            .find(filter, skip: skip, limit: limit)
+            .to_json
+          )
 
           super(*columns, order: order, index: index, **named_columns)
         end

@@ -9,7 +9,48 @@ module Daru
         Daru::DataFrame.register_io_module :from_json, self
         Daru::DataFrame.register_io_module :read_json, self
 
-        # Initializes a JSON Importer instance
+        # Checks for required gem dependencies of JSON Importer
+        def initialize
+          require 'open-uri'
+          require 'json'
+          optional_gem 'jsonpath'
+        end
+
+        # Reads data from a json file / remote json response
+        #
+        # @param path [String] Local / Remote path to json file, where the dataframe is to be imported
+        #   from.
+        #
+        # @return [Daru::IO::Importers::JSON]
+        #
+        # @example Reading from simply nested remote json response
+        #   url = 'https://data.nasa.gov/resource/2vr3-k9wn.json'
+        #   simple_read_instance = Daru::IO::Importers::JSON.read(url)
+        #
+        # @example Reading from complexy nested remote json response
+        #   url = 'http://api.tvmaze.com/singlesearch/shows?q=game-of-thrones&embed=episodes'
+        #   complex_read_instance = Daru::IO::Importers::JSON.read(url)
+        def read(path)
+          @file_data = ::JSON.parse(open(path).read)
+          @json      = @file_data
+          self
+        end
+
+        # Loads from a Ruby structure of Hashes and / or Arrays
+        #
+        # @param instance [Hash or Array] A simple / complexly nested JSON structure
+        #
+        # @return [Daru::IO::Importers::JSON]
+        #
+        # @example Loading from Ruby Hash of Arrays
+        #   from_instance = Daru::IO::Importers::JSON.from({x: [1,4], y: [2,5], z: [3, 6]})
+        def from(instance)
+          @file_data = instance
+          @json      = @file_data.is_a?(String) ? ::JSON.parse(@file_data) : @file_data
+          self
+        end
+
+        # Imports a `Daru::DataFrame` from a JSON Importer instance
         #
         # @param columns [Array] JSON-path slectors to select specific fields
         #   from the JSON input.
@@ -20,50 +61,14 @@ module Daru
         # @param named_columns [Hash] JSON-path slectors to select specific fields
         #   from the JSON input.
         #
+        # @return [Daru::DataFrame]
+        #
         # @note For more information on using JSON-path selectors, have a look at
         #   the explanations {http://www.rubydoc.info/gems/jsonpath/0.5.8 here}
         #   and {http://goessner.net/articles/JsonPath/ here}.
         #
-        # @example Initializing without json-path selectors
-        #   default_instance = Daru::IO::Importers::JSON.new
-        #
-        # @example Initializing with json-path selectors
-        #   jsonpath_instance = Daru::IO::Importers::JSON.new(
-        #     "$.._embedded..episodes..name",
-        #     "$.._embedded..episodes..season",
-        #     "$.._embedded..episodes..number",
-        #     index: (10..70).to_a,
-        #     RunTime: "$.._embedded..episodes..runtime"
-        #   )
-        def initialize
-          require 'open-uri'
-          require 'json'
-          optional_gem 'jsonpath'
-        end
-
-        # Imports a `Daru::DataFrame` from an Avro Importer instance and JSON structure
-        #   of Arrays and Hashes
-        #
-        # @param instance [Array or Hash] A JSON structure, comprising of Arrays and Hashes.
-        #
-        # @return [Daru::DataFrame]
-        #
-        # @example Importing from a JSON structure
-        #   df = default_instance.from({a: [1,3], b: [2,4]})
-        #
-        #   #=> #<Daru::DataFrame(2x2)>
-        #   #        a   b
-        #   #  0     1   2
-        #   #  1     3   4
-
-        # Imports a `Daru::DataFrame` from a JSON Importer instance and json file
-        #
-        # @param path [String] Local / Remote path to JSON file or API response.
-        #
-        # @return [Daru::DataFrame]
-        #
-        # @example Importing from simple json response of remote file
-        #   df = default_instance.read('https://data.nasa.gov/resource/2vr3-k9wn.json')
+        # @example Importing without jsonpath selectors
+        #   df = simple_read_instance.call
         #
         #   #=> #<Daru::DataFrame(202x10)>
         #   #    designation discovery_      h_mag      i_deg    moid_au orbit_clas  period_yr ...
@@ -72,8 +77,14 @@ module Daru
         #   #  2 414772 (20 2010-07-28         19      23.11      0.333     Apollo       1.31  ...
         #   # ...        ...        ...        ...        ...        ...        ...       ...  ...
         #
-        # @example Importing from complex json response of remote file
-        #   df = jsonpath_instance.read('http://api.tvmaze.com/singlesearch/shows?q=game-of-thrones&embed=episodes')
+        # @example Importing with jsonpath selectors
+        #   df = complex_read_instance.call(
+        #     "$.._embedded..episodes..name",
+        #     "$.._embedded..episodes..season",
+        #     "$.._embedded..episodes..number",
+        #     index: (10..70).to_a,
+        #     RunTime: "$.._embedded..episodes..runtime"
+        #   )
         #
         #   #=> #<Daru::DataFrame(61x4)>
         #   #         name           season     number    RunTime
@@ -81,20 +92,16 @@ module Daru
         #   #   11 The Kingsr          1          2         60
         #   #   12  Lord Snow          1          3         60
         #   #  ...        ...        ...        ...        ...
-        def read(path)
-          @file_string = open(path).read
-          self
-        end
-
-        def from(instance)
-          @file_string = instance
-          self
-        end
-
+        #
+        # @example Importing from `from` method
+        #   df = from_instance.call
+        #
+        #   #=> #<Daru::DataFrame(2x3)>
+        #   #       x   y   z
+        #   #   0   1   2   3
+        #   #   1   4   5   6
         def call(*columns, order: nil, index: nil, **named_columns)
           init_opts(*columns, order: order, index: index, **named_columns)
-
-          @json    = @file_string.is_a?(String) ? ::JSON.parse(@file_string) : @file_string
           @data    = fetch_data
           @index   = at_jsonpath(@index)
           @order   = at_jsonpath(@order)

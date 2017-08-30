@@ -4,10 +4,34 @@ module Daru
   module IO
     module Importers
       # HTML Importer Class, that extends `read_html` method to `Daru::DataFrame`
+      #
+      # @note
+      #   Please note that this module works only for static table elements on a
+      #   HTML page, and won't work in cases where the data is being loaded into
+      #   the HTML table by inline Javascript.
       class HTML < Base
         Daru::DataFrame.register_io_module :read_html, self
 
-        # Initializes a HTML Importer instance
+        # Checks for required gem dependencies of HTML Importer
+        def initialize
+          optional_gem 'mechanize'
+        end
+
+        # Reads from a html file / website
+        #
+        # @param path [String] Website URL / path to HTML file, where the
+        #   DataFrame is to be imported from.
+        #
+        # @return [Daru::IO::Importers::HTML]
+        #
+        # @example Reading from a website url file
+        #   instance = Daru::IO::Importers::HTML.read('http://www.moneycontrol.com/')
+        def read(path)
+          @file_data = Mechanize.new.get(path)
+          self
+        end
+
+        # Imports Array of `Daru::DataFrame`s from a HTML Importer instance
         #
         # @param match [String] A `String` to match and choose a particular table(s)
         #   from multiple tables of a HTML page.
@@ -25,26 +49,10 @@ module Daru
         #   See `:name` option
         #   [here](http://www.rubydoc.info/gems/daru/0.1.5/Daru%2FDataFrame:initialize)
         #
-        # @example Initializing with given options
-        #   instance = Daru::IO::Importers::HTML.new(match: 'Sun Pharma')
-        #
-        # @note
-        #   Please note that this module works only for static table elements on a
-        #   HTML page, and won't work in cases where the data is being loaded into
-        #   the HTML table by inline Javascript.
-        def initialize
-          optional_gem 'mechanize'
-        end
-
-        # Imports a `Daru::DataFrame` from a HTML Importer instance and html file
-        #
-        # @param path [String] Website URL / path to HTML file, where the
-        #   DataFrame is to be imported from.
-        #
         # @return [Array<Daru::DataFrame>]
         #
-        # @example Reading from a website whose tables are static
-        #   list_of_dfs = instance.read('http://www.moneycontrol.com/')
+        # @example Importing with matching tables
+        #   list_of_dfs = instance.call(match: 'Sun Pharma')
         #   list_of_dfs.count
         #   #=> 4
         #
@@ -61,22 +69,16 @@ module Daru
         #   #   2 Tech Mahin     379.45     -49.70     650.22
         #   #   3        ITC     315.85       6.75     621.12
         #   #   4       HDFC    1598.85      50.95     553.91
-        def read(path)
-          @page = Mechanize.new.get(path)
-          self
-        end
-
         def call(match: nil, order: nil, index: nil, name: nil)
           @match = match
           @options = {name: name, order: order, index: index}
 
-          @page
+          @file_data
             .search('table').map { |table| parse_table table }
             .keep_if { |table| search table }
             .compact
             .map { |table| decide_values table, @options }
             .map { |table| table_to_dataframe table }
-
         end
 
         private

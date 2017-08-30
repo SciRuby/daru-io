@@ -7,47 +7,32 @@ module Daru
       class CSV < Base
         Daru::DataFrame.register_io_module :read_csv, self
 
+        # Checks for required gem dependencies of CSV Importer
         def initialize
           require 'csv'
           require 'open-uri'
           require 'zlib'
         end
 
-        # Imports a `Daru::DataFrame` from a CSV Importer instance and csv / csv.gz file
+        # Reads data from a csv / csv.gz file
         #
-        # @param path [String] Local / Remote path of CSV file, where the
-        #   dataframe is to be imported from.
+        # @param path [String] Path to csv / csv.gz file, where the dataframe is to be imported
+        #   from.
         #
-        # @return [Daru::DataFrame]
+        # @return [Daru::IO::Importers::CSV]
         #
-        # @example Reading from a CSV file
-        #   df = instance.read("matrix_test.csv")
+        # @example Reading from csv file
+        #   instance = Daru::IO::Importers::CSV.read("matrix_test.csv")
         #
-        #   #=> #<Daru::DataFrame(99x3)>
-        #   #        image_reso        mls true_trans
-        #   #      0    6.55779          0 -0.2362347
-        #   #      1    2.14746          0 -0.1539447
-        #   #      2    8.31104          0 0.3832846,
-        #   #      3    3.47872          0 0.3832846,
-        #   #      4    4.16725          0 -0.2362347
-        #   #      5    5.79983          0 -0.2362347
-        #   #      6     1.9058          0 -0.895577,
-        #   #      7     1.9058          0 -0.2362347
-        #   #      8    4.11806          0 -0.895577,
-        #   #      9    6.26622          0 -0.2362347
-        #   #     10    2.57805          0 -0.1539447
-        #   #     11    4.76151          0 -0.2362347
-        #   #     12    7.11002          0 -0.895577,
-        #   #     13    5.40811          0 -0.2362347
-        #   #     14    8.19567          0 -0.1539447
-        #   #    ...        ...        ...        ...
+        # @example Reading from csv.gz file
+        #   instance = Daru::IO::Importers::CSV.read("matrix_test.csv.gz")
         def read(path)
-          @path        = path
-          @file_string = open(@path)
+          @path      = path
+          @file_data = open(@path)
           self
         end
 
-        # Initializes a CSV Importer instance
+        # Imports a `Daru::DataFrame` from a CSV Importer instance
         #
         # @param headers [Boolean] If this option is `true`, only those columns
         #   will be used to import the `Daru::DataFrame` whose header is given.
@@ -70,12 +55,55 @@ module Daru
         #   (defaults to `','`), `:converters` (defaults to `:numeric`),
         #   `:header_converters` (defaults to `:symbol`).
         #
-        # @example Initializing a CSV Importer instance with options
-        #   instance = Daru::IO::Importers::CSV.new(col_sep: ' ', headers: true)
+        # @return [Daru::DataFrame]
+        #
+        # @example Calling with csv options
+        #   df = instance.call(col_sep: ' ', headers: true)
+        #
+        #   #=> #<Daru::DataFrame(99x3)>
+        #   #        image_reso        mls true_trans
+        #   #      0    6.55779          0 -0.2362347
+        #   #      1    2.14746          0 -0.1539447
+        #   #      2    8.31104          0 0.3832846,
+        #   #      3    3.47872          0 0.3832846,
+        #   #      4    4.16725          0 -0.2362347
+        #   #      5    5.79983          0 -0.2362347
+        #   #      6     1.9058          0 -0.895577,
+        #   #      7     1.9058          0 -0.2362347
+        #   #      8    4.11806          0 -0.895577,
+        #   #      9    6.26622          0 -0.2362347
+        #   #     10    2.57805          0 -0.1539447
+        #   #     11    4.76151          0 -0.2362347
+        #   #     12    7.11002          0 -0.895577,
+        #   #     13    5.40811          0 -0.2362347
+        #   #     14    8.19567          0 -0.1539447
+        #   #    ...        ...        ...        ...
+        #
+        # @example Calling with csv.gz options
+        #   df = instance.call(compression: :gzip, col_sep: ' ', headers: true)
+        #
+        #   #=> #<Daru::DataFrame(99x3)>
+        #   #        image_reso        mls true_trans
+        #   #      0    6.55779          0 -0.2362347
+        #   #      1    2.14746          0 -0.1539447
+        #   #      2    8.31104          0 0.3832846,
+        #   #      3    3.47872          0 0.3832846,
+        #   #      4    4.16725          0 -0.2362347
+        #   #      5    5.79983          0 -0.2362347
+        #   #      6     1.9058          0 -0.895577,
+        #   #      7     1.9058          0 -0.2362347
+        #   #      8    4.11806          0 -0.895577,
+        #   #      9    6.26622          0 -0.2362347
+        #   #     10    2.57805          0 -0.1539447
+        #   #     11    4.76151          0 -0.2362347
+        #   #     12    7.11002          0 -0.895577,
+        #   #     13    5.40811          0 -0.2362347
+        #   #     14    8.19567          0 -0.1539447
+        #   #    ...        ...        ...        ...
         def call(headers: nil, skiprows: 0, compression: :infer,
           clone: nil, index: nil, order: nil, name: nil, **options)
-          init_args(headers: headers, skiprows: skiprows, compression: compression,
-            clone: clone, index: index, order: order, name: name, **options)
+          init_opts(headers: headers, skiprows: skiprows, compression: compression,
+                    clone: clone, index: index, order: order, name: name, **options)
           process_compression
 
           # Preprocess headers for detecting and correcting repetition in
@@ -98,7 +126,7 @@ module Daru
 
         def hash_with_headers
           ::CSV
-            .parse(@file_string, @options)
+            .parse(@file_data, @options)
             .tap { |c| yield c if block_given? }
             .by_col
             .map do |col_name, values|
@@ -110,7 +138,7 @@ module Daru
         def hash_without_headers
           csv_as_arrays =
             ::CSV
-            .parse(@file_string, @options)
+            .parse(@file_data, @options)
             .tap { |c| yield c if block_given? }
             .to_a
           headers       = ArrayHelper.recode_repeated(csv_as_arrays.shift)
@@ -123,7 +151,7 @@ module Daru
             .to_h
         end
 
-        def init_args(headers: nil, skiprows: 0, compression: :infer,
+        def init_opts(headers: nil, skiprows: 0, compression: :infer,
           clone: nil, index: nil, order: nil, name: nil, **options)
           @headers      = headers
           @skiprows     = skiprows
@@ -138,7 +166,7 @@ module Daru
         end
 
         def process_compression
-          @file_string = ::Zlib::GzipReader.new(@file_string).read if compression?(:gzip, '.csv.gz')
+          @file_data = ::Zlib::GzipReader.new(@file_data).read if compression?(:gzip, '.csv.gz')
         end
       end
     end

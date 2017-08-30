@@ -4,6 +4,8 @@ module Daru
   module IO
     module Importers
       # Excel Importer Class, that extends `read_excel` method to `Daru::DataFrame`
+      #
+      # @see Daru::IO::Importers::Excelx For .xlsx format
       class Excel < Base
         Daru::DataFrame.register_io_module :read_excel do |*args, &io_block|
           if args.first.end_with?('.xlsx')
@@ -14,7 +16,25 @@ module Daru
           end
         end
 
-        # Initializes an Excel Importer instance
+        # Checks for required gem dependencies of Excel Importer
+        def initialize
+          optional_gem 'spreadsheet', '~> 1.1.1'
+        end
+
+        # Reads from an excel (.xls) file
+        #
+        # @param path [String] Path of Excel file, where the DataFrame is to be imported from.
+        #
+        # @return [Daru::IO::Importers::Excel]
+        #
+        # @example Reading from an excel file
+        #   instance = Daru::IO::Importers::Excel.read("test_xls.xls")
+        def read(path)
+          @file_data = Spreadsheet.open(path)
+          self
+        end
+
+        # Imports a `Daru::DataFrame` from an Excel Importer instance
         #
         # @param worksheet_id [Integer] The index of the worksheet in the excel file,
         #   from where the `Daru::DataFrame` will be imported. By default, the first
@@ -27,31 +47,12 @@ module Daru
         #   given worksheet_id is used as the order of the Daru::DataFrame and data of
         #   the Dataframe consists of the remaining rows.
         #
-        # @example Initializing from default worksheet_id
-        #   default_instance = Daru::IO::Importers::Excel.new
-        #
-        # @example Initializing from a specific worksheet
-        #   specific_instance = Daru::IO::Importers::Excel.new(worksheet_id: 0)
-        def initialize(worksheet_id: 0, headers: true)
-          optional_gem 'spreadsheet', '~> 1.1.1'
-
-          @headers      = headers
-          @worksheet_id = worksheet_id
-        end
-
-        def read(path)
-          @file_string = Spreadsheet.open(path)
-          self
-        end
-
-        # Imports a `Daru::DataFrame` from an Excel Importer instance and xls file
-        #
-        # @param path [String] Path of Excel file, where the DataFrame is to be imported from.
-        #
         # @return [Daru::DataFrame]
         #
-        # @example Reading from a default worksheet_id of an Excel file
-        #   df = default_instance.read("test_xls.xls")
+        #   default_instance = Daru::IO::Importers::Excel.new
+        #
+        # @example Importing from a default worksheet
+        #   df = instance.call
         #
         #   #=> #<Daru::DataFrame(6x5)>
         #   #            id     name      age     city       a1
@@ -62,8 +63,8 @@ module Daru
         #   #    4        5   George      5.5     Tome    a,b,c
         #   #    5        6  Fernand      nil      nil      nil
         #
-        # @example Reading from a specific worksheet_id of an Excel file
-        #   df = specific_instance.read("test_xls.xls")
+        # @example Importing from a specific worksheet
+        #   df = instance.call(worksheet_id: 0)
         #
         #   #=> #<Daru::DataFrame(6x5)>
         #   #            id     name      age     city       a1
@@ -74,7 +75,7 @@ module Daru
         #   #    4        5   George      5.5     Tome    a,b,c
         #   #    5        6  Fernand      nil      nil      nil
         def call(worksheet_id: 0, headers: true)
-          worksheet = @file_string.worksheet(worksheet_id)
+          worksheet = @file_data.worksheet(worksheet_id)
           headers   = if headers
                         ArrayHelper.recode_repeated(worksheet.row(0)).map(&:to_sym)
                       else

@@ -4,9 +4,35 @@ module Daru
   module IO
     module Importers
       # Excelx Importer Class, that handles .xlsx files in the Excel Importer
+      #
+      # @see Daru::IO::Importers::Excel For .xls format
       class Excelx < Base
-        # Initializes an Excelx Importer instance
+        # Checks for required gem dependencies of Excelx Importer
+        def initialize
+          optional_gem 'roo', '~> 2.7.0'
+        end
+
+        # Reads from an excelx (xlsx) file
         #
+        # @param path [String] Local / Remote path of xlsx file, where the DataFrame is
+        #   to be imported from.
+        #
+        # @return [Daru::IO::Importers::Excelx]
+        #
+        # @example Reading from a local xlsx file
+        #   local_instance = Daru::IO::Importers::Excelx.read("Stock-counts-sheet.xlsx")
+        #
+        # @example Reading from a remote xlsx file
+        #   url = "https://www.exact.com/uk/images/downloads/getting-started-excel-sheets/Stock-counts-sheet.xlsx"
+        #   remote_instance = Daru::IO::Importers::Excelx.read(url)
+        def read(path)
+          @file_data = Roo::Excelx.new(path)
+          self
+        end
+
+        # Imports a `Daru::DataFrame` from an Excelx Importer instance
+        #
+        # @param sheet [Integer or String] Imports from a specific sheet
         # @param skiprows [Integer] Skips the first `:skiprows` number of rows from the
         #   sheet being parsed.
         # @param skipcols [Integer] Skips the first `:skipcols` number of columns from the
@@ -21,27 +47,10 @@ module Daru
         #   When set to false, a default order (0 to n-1) is chosen for the DataFrame,
         #   and the data of the DataFrame consists of all rows in the sheet.
         #
-        # @example Initializing with options
-        #   normal_instance = Daru::IO::Importers::Excelx.new(sheet: 'Example Stock Counts')
-        #   headers_instance = Daru::IO::Importers::Excelx.new(sheet: 'Example Stock Counts', headers: false)
-        def initialize(sheet: 0, order: true, index: false, skiprows: 0, skipcols: 0)
-          optional_gem 'roo', '~> 2.7.0'
-
-          @sheet    = sheet
-          @order    = order
-          @index    = index
-          @skiprows = skiprows
-          @skipcols = skipcols
-        end
-
-        # Imports a `Daru::DataFrame` from an Excelx Importer instance and xlsx file
-        #
-        # @param path [String] Local / remote path to xlsx file
-        #
         # @return [Daru::DataFrame]
         #
-        # @example Importing from a local file
-        #   df = normal_instance.read("spec/fixtures/excelx/Stock-counts-sheet.xlsx")
+        # @example Importing from specific sheet
+        #   df = local_instance.call(sheet: 'Example Stock Counts')
         #
         #   #=> <Daru::DataFrame(15x7)>
         #   #           Status Stock coun  Item code        New Descriptio Stock coun Offset G/L
@@ -51,8 +60,8 @@ module Daru
         #   #     3        nil          1   OUT30045          3 New stock  2014-08-01      51035
         #   #    ...       ...        ...     ...           ...     ...       ...           ...
         #
-        # @example Importing from a remote URL
-        #   df = normal_instance.read('https://www.exact.com/uk/images/downloads/getting-started-excel-sheets/Stock-counts-sheet.xlsx')
+        # @example Importing from a remote URL and default sheet
+        #   df = remote_instance.call
         #
         #   #=> <Daru::DataFrame(15x7)>
         #   #           Status Stock coun  Item code        New Descriptio Stock coun Offset G/L
@@ -63,7 +72,7 @@ module Daru
         #   #    ...       ...        ...     ...           ...     ...       ...           ...
         #
         # @example Importing without headers
-        #   df = headers_instance.read('spec/fixtures/excelx/Stock-counts-sheet.xlsx')
+        #   df = local_instance.call(sheet: 'Example Stock Counts', headers: false)
         #
         #   #=> <Daru::DataFrame(16x7)>
         #   #                0           1          2          3          4          5        6
@@ -73,16 +82,10 @@ module Daru
         #   #     3        nil          1   IND43201          5 New stock  2014-08-01      51035
         #   #     4        nil          1   OUT30045          3 New stock  2014-08-01      51035
         #   #    ...       ...        ...     ...           ...     ...       ...           ...
-        def read(path)
-          @file_string = Roo::Excelx.new(path)
-          self
-        end
-
-        def call(sheet: 0, order: true, index: false, skiprows: 0, skipcols: 0)
+        def call(sheet: 0, skiprows: 0, skipcols: 0, order: true, index: false)
           @order    = order
           @index    = index
-
-          worksheet = @file_string.sheet(sheet)
+          worksheet = @file_data.sheet(sheet)
           @data     = strip_html_tags(skip_data(worksheet.to_a, skiprows, skipcols))
           @index    = process_index
           @order    = process_order || (0..@data.first.length-1)

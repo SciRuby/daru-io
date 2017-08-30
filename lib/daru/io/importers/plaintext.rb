@@ -8,23 +8,35 @@ module Daru
       class Plaintext < Base
         Daru::DataFrame.register_io_module :read_plaintext, self
 
-        # Initializes a Plaintext Importer instance
+        # Checks for required gem dependencies of Plaintext Importer
+        def initialize; end
+
+        # Reads data from a plaintext (.dat) file
+        #
+        # @param path [String] Path to plaintext file, where the dataframe is to be
+        #   imported from.
+        #
+        # @return [Daru::IO::Importers::Plaintext]
+        #
+        # @example Reading from plaintext file
+        #   instance = Daru::IO::Importers::Plaintext.read("bank2.dat")
+        def read(path)
+          @file_data = File.read(path).split("\n").map do |line|
+            row = process_row(line.strip.split(/\s+/),[''])
+            next if row == ["\x1A"]
+            row
+          end
+          self
+        end
+
+        # Imports `Daru::DataFrame` from a Plaintext Importer instance
         #
         # @param fields [Array] An array of vectors.
         #
-        # @example Initializing with fields
-        #   instance = Daru::IO::Importers::Plaintext.new([:v1, :v2, :v3, :v4, :v5, :v6])
-        def initialize
-        end
-
-        # Imports a `Daru::DataFrame` from a Plaintext Importer instance and dat file
-        #
-        # @param path [String] Path to Plaintext file, where the dataframe is to be imported from.
-        #
         # @return [Daru::DataFrame]
         #
-        # @example Reading from a Plaintext file
-        #   df = instance.read("bank2.dat")
+        # @example Initializing with fields
+        #   df = instance.call([:v1, :v2, :v3, :v4, :v5, :v6])
         #
         #   #=> #<Daru::DataFrame(200x6)>
         #   #       v1    v2    v3    v4    v5    v6
@@ -44,17 +56,8 @@ module Daru
         #   # 13 214.7 129.7 129.7   7.7  10.9 141.7
         #   # 14 215.1 129.9 129.7   7.7  10.8 141.8
         #   #...   ...   ...   ...   ...   ...   ...
-        def read(path)
-          @file_string = File.read(path).split("\n").map do |line|
-            row = process_row(line.strip.split(/\s+/),[''])
-            next if row == ["\x1A"]
-            row
-          end
-          self
-        end
-
         def call(fields)
-          Daru::DataFrame.rows(@file_string, order: fields)
+          Daru::DataFrame.rows(@file_data, order: fields)
         end
 
         private

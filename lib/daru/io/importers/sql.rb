@@ -8,12 +8,7 @@ module Daru
         Daru::DataFrame.register_io_module :from_sql, self
         Daru::DataFrame.register_io_module :read_sql, self
 
-        # Initializes a SQL Importer instance
-        #
-        # @param query [String] The query to be executed
-        #
-        # @example Initializing with a SQL query
-        #   instance = Daru::IO::Importers::SQL.new("SELECT * FROM test")
+        # Checks for required gem dependencies of SQL Importer
         def initialize
           optional_gem 'dbd-sqlite3', requires: 'dbd/SQLite3'
           optional_gem 'activerecord', '~> 4.0', requires: 'active_record'
@@ -21,50 +16,51 @@ module Daru
           optional_gem 'sqlite3'
         end
 
-        # Imports a `Daru::DataFrame` from a SQL Importer instance
+        # Loads from a DBI connection
         #
         # @param dbh [DBI::DatabaseHandle] A DBI connection.
         #
-        # @return [Daru::DataFrame]
+        # @return [Daru::IO::Importers::SQL]
         #
         # @example Importing from a DBI connection
-        #   df = instance.from(DBI.connect("DBI:Mysql:database:localhost", "user", "password"))
-        #
-        #   #=> #<Daru::DataFrame(2x3)>
-        #   #      id  name   age
-        #   # 0     1 Homer    20
-        #   # 1     2 Marge    30
+        #   instance = Daru::IO::Importers::SQL.from(DBI.connect("DBI:Mysql:database:localhost", "user", "password"))
         def from(dbh)
           @dbh = dbh
           self
         end
 
-        # Imports a `Daru::DataFrame` from a SQL Importer instance and sqlite.db file
+        # Reads from a sqlite.db file
         #
         # @param path [String] Path to a SQlite3 database file.
         #
-        # @return [Daru::DataFrame]
+        # @return [Daru::IO::Importers::SQL]
         #
-        # @example Importing from a sqlite.db file
-        #   df = instance.read('path/to/sqlite.db')
-        #
-        #   #=> #<Daru::DataFrame(2x3)>
-        #   #      id  name   age
-        #   # 0     1 Homer    20
-        #   # 1     2 Marge    30
+        # @example Reading from a sqlite.db file
+        #   instance = Daru::IO::Importers::SQL.read('path/to/sqlite.db')
         def read(path)
           @dbh = attempt_sqlite3_connection(path) if Pathname(path).exist?
           self
         end
 
+        # Imports a `Daru::DataFrame` from SQL Importer instance
+        #
+        # @param query [String] The query to be executed
+        #
+        # @return [Daru::DataFrame]
+        #
+        # @example Importing with a SQL query
+        #   df = instance.call("SELECT * FROM test")
+        #
+        #   #=> #<Daru::DataFrame(2x3)>
+        #   #      id  name   age
+        #   # 0     1 Homer    20
+        #   # 1     2 Marge    30
         def call(query)
           @query          = query
           @conn, @adapter = choose_adapter(@dbh, @query)
           df_hash         = result_hash
           Daru::DataFrame.new(df_hash).tap(&:update)
-
         end
-
 
         private
 

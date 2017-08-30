@@ -4,30 +4,41 @@ module Daru
   module IO
     module Importers
       # RData Importer Class, that extends `read_rdata` method to `Daru::DataFrame`
+      #
+      # @see Daru::IO::Importers::RDS For .rds format
       class RData < RDS
         Daru::DataFrame.register_io_module :read_rdata, self
 
-        # Initializes a RData Importer instance
+        # Checks for required gem dependencies of RData Importer
+        def initialize
+          super
+        end
+
+        # Reads data from a Rdata file
+        #
+        # @param path [String] Path to RData file, where the dataframe is to be imported from.
+        #
+        # @return [Daru::IO::Importers::RData]
+        #
+        # @example Reading from rdata file
+        #   instance = Daru::IO::Importers::RData.read('ACScounty.RData')
+        def read(path)
+          @instance = RSRuby.instance
+          @instance.eval_R("load('#{path}')")
+          self
+        end
+
+        # Imports a `Daru::DataFrame` from a RData Importer instance and rdata file
         #
         # @param variable [String] The variable to be imported from the
         #   variables stored in the RData file. Please note that the R
         #   variable to be imported from the RData file should be a
         #   `data.frame`
         #
-        # @example Initializing with a variable name
-        #   instance = Daru::IO::Importers::RData.new("ACS3")
-        def initialize
-          super()
-        end
-
-        # Imports a `Daru::DataFrame` from a RData Importer instance and rdata file
-        #
-        # @param path [String] Path to RData file, where the dataframe is to be imported from.
-        #
         # @return [Daru::DataFrame]
         #
-        # @example Reading from an RData file
-        #   df = instance.read('ACScounty.RData')
+        # @example Importing a particular variable
+        #   df = instance.call("ACS3")
         #
         #   #=>   #<Daru::DataFrame(1629x30)>
         #   #           Abbreviati       FIPS     Non.US      State       cnty females.di  ...
@@ -37,12 +48,6 @@ module Daru
         #   #         3         AL       1009       18.0    alabama     blount       13.7  ...
         #   #         4         AL       1015       18.6    alabama    calhoun       12.9  ...
         #   #       ...        ...        ...        ...        ...        ...        ...  ...
-        def read(path)
-          @instance = RSRuby.instance
-          @instance.eval_R("load('#{path}')")
-          self
-        end
-
         def call(variable)
           @variable = variable.to_s
 
