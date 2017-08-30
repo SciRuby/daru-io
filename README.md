@@ -68,9 +68,10 @@ all Importers can be called in two ways - from **Daru::IO** or **Daru::DataFrame
 require 'daru/io/importers/format'
 
 #! Usage from Daru::IO
-instance = Daru::IO::Importers::Format.new(opts)
-df1 = instance.from(connection)
-df2 = instance.read(path)
+instance = Daru::IO::Importers::Format.from(connection)
+# or,
+instance = Daru::IO::Importers::Format.read(path)
+df = instance.call(opts)
 
 #! Usage from Daru::DataFrame
 df1 = Daru::DataFrame.from_format(connection, opts)
@@ -94,7 +95,7 @@ Imports a **Daru::DataFrame** from an **ActiveRecord** connection.
     require 'daru/io/importers/active_record'
 
     #! Usage from Daru::IO
-    df = Daru::IO::Importers::ActiveRecord.new(:field_1, :field_2).from(activerecord_relation)
+    df = Daru::IO::Importers::ActiveRecord.from(activerecord_relation).call(:field_1, :field_2)
 
     #! Usage from Daru::DataFrame
     df = Daru::DataFrame.from_activerecord(activerecord_relation, :field_1, :field_2)
@@ -114,10 +115,10 @@ Imports a **Daru::DataFrame** from an **.avro** file.
     require 'daru/io/importers/avro'
 
     #! Usage from Daru::IO
-    df = Daru::IO::Importers::Avro.new.read('path/to/file.avro')
+    df = Daru::IO::Importers::Avro.read('path/to/file.avro').call
 
     #! Usage from Daru::DataFrame
-    df = Daru::DataFrame.from_avro('path/to/file.avro')
+    df = Daru::DataFrame.read_avro('path/to/file.avro')
     ```
 
 ### CSV Importer
@@ -133,12 +134,12 @@ Imports a **Daru::DataFrame** from a **.csv** or **.csv.gz** file.
     require 'daru/io/importers/csv'
 
     #! Usage from Daru::IO
-    df1 = Daru::IO::Importers::CSV.new(skiprows: 10, col_sep: ' ').read('path/to/file.csv')
-    df2 = Daru::IO::Importers::CSV.new(skiprows: 10, compression: :gzip).read('path/to/file.csv.gz')
+    df1 = Daru::IO::Importers::CSV.read('path/to/file.csv').call(skiprows: 10, col_sep: ' ')
+    df2 = Daru::IO::Importers::CSV.read('path/to/file.csv.gz').call(skiprows: 10, compression: :gzip)
 
     #! Usage from Daru::DataFrame
-    df1 = Daru::DataFrame.from_csv('path/to/file.csv', skiprows: 10, col_sep: ' ')
-    df2 = Daru::DataFrame.from_csv('path/to/file.csv.gz', skiprows: 10, compression: :gzip)
+    df1 = Daru::DataFrame.read_csv('path/to/file.csv', skiprows: 10, col_sep: ' ')
+    df2 = Daru::DataFrame.read_csv('path/to/file.csv.gz', skiprows: 10, compression: :gzip)
     ```
 
 ### Excel Importer
@@ -155,10 +156,10 @@ Imports a **Daru::DataFrame** from a **.xls** file.
     require 'daru/io/importers/excel'
 
     #! Usage from Daru::IO
-    df = Daru::IO::Importers::Excel.new(worksheet_id: 1).read('path/to/file.xls')
+    df = Daru::IO::Importers::Excel.read('path/to/file.xls').call(worksheet_id: 1)
 
     #! Usage from Daru::DataFrame
-    df = Daru::DataFrame.from_excel('path/to/file.xls', worksheet_id: 1)
+    df = Daru::DataFrame.read_excel('path/to/file.xls', worksheet_id: 1)
     ```
 
 ### Excelx Importer
@@ -175,11 +176,11 @@ Imports a **Daru::DataFrame** from a **.xlsx** file.
     require 'daru/io/importers/excelx'
 
     #! Usage from Daru::IO
-    df = Daru::IO::Importers::Excelx.new(sheet: 2, skiprows: 10, skipcols: 2).read('path/to/file.xlsx')
+    df = Daru::IO::Importers::Excelx.read('path/to/file.xlsx').call(sheet: 2, skiprows: 10, skipcols: 2)
 
     #! Usage from Daru::DataFrame
     require 'daru/io/importers/excel'
-    df = Daru::DataFrame.from_excel('path/to/file.xlsx', sheet: 2, skiprows: 10, skipcols: 2)
+    df = Daru::DataFrame.read_excel('path/to/file.xlsx', sheet: 2, skiprows: 10, skipcols: 2)
     ```
 
 ### HTML Importer
@@ -198,12 +199,12 @@ Imports an **Array** of **Daru::DataFrame**s from a **.html** file or website.
     require 'daru/io/importers/html'
 
     #! Usage from Daru::IO
-    df1 = Daru::IO::Importers::HTML.new(match: 'market', name: 'Shares analysis').read('https://some/url/with/tables')
-    df2 = Daru::IO::Importers::HTML.new(match: 'market', name: 'Shares analysis').read('path/to/file.html')
+    df1 = Daru::IO::Importers::HTML.read('https://some/url/with/tables').call(match: 'market', name: 'Shares analysis')
+    df2 = Daru::IO::Importers::HTML.read('path/to/file.html').call(match: 'market', name: 'Shares analysis')
 
     #! Usage from Daru::DataFrame
-    df1 = Daru::DataFrame.from_html('https://some/url/with/tables', match: 'market', name: 'Shares analysis')
-    df2 = Daru::DataFrame.from_html('path/to/file.html', match: 'market', name: 'Shares analysis')
+    df1 = Daru::DataFrame.read_html('https://some/url/with/tables', match: 'market', name: 'Shares analysis')
+    df2 = Daru::DataFrame.read_html('path/to/file.html', match: 'market', name: 'Shares analysis')
     ```
 
 ### JSON Importer
@@ -220,12 +221,12 @@ Imports a **Daru::DataFrame** from a **.json** file / response.
     require 'daru/io/importers/json'
 
     #! Usage from Daru::IO
-    df1 = Daru::IO::Importers::JSON.new(index: '$..time', col1: '$..name', col2: '$..age').read('https://path/to/json/response')
-    df2 = Daru::IO::Importers::JSON.new(index: '$..time', col1: '$..name', col2: '$..age').read('path/to/file.json')
+    df1 = Daru::IO::Importers::JSON.read('https://path/to/json/response').call(index: '$..time', col1: '$..name', col2: '$..age')
+    df2 = Daru::IO::Importers::JSON.read('path/to/file.json').call(index: '$..time', col1: '$..name', col2: '$..age')
 
     #! Usage from Daru::DataFrame
-    df1 = Daru::DataFrame.from_json('https://path/to/json/response', index: '$..time', col1: '$..name', col2: '$..age')
-    df2 = Daru::DataFrame.from_json('path/to/file.json', index: '$..time', col1: '$..name', col2: '$..age')
+    df1 = Daru::DataFrame.read_json('https://path/to/json/response', index: '$..time', col1: '$..name', col2: '$..age')
+    df2 = Daru::DataFrame.read_json('path/to/file.json', index: '$..time', col1: '$..name', col2: '$..age')
     ```
 
 ### Mongo Importer
@@ -245,7 +246,7 @@ Imports a **Daru::DataFrame** from a Mongo collection.
     require 'daru/io/importers/mongo'
 
     #! Usage from Daru::IO
-    df = Daru::IO::Importers::Mongo.new('cars').from('mongodb://127.0.0.1:27017/test')
+    df = Daru::IO::Importers::Mongo.from('mongodb://127.0.0.1:27017/test').call('cars')
 
     #! Usage from Daru::DataFrame
     df = Daru::DataFrame.from_mongo('mongodb://127.0.0.1:27017/test', 'cars')
@@ -264,10 +265,10 @@ Imports a **Daru::DataFrame** from a **.dat** plaintext file (space separated ta
     require 'daru/io/importers/plaintext'
 
     #! Usage from Daru::IO
-    df = Daru::IO::Importers::Plaintext.new([:col1, :col2, :col3]).read('path/to/file.dat')
+    df = Daru::IO::Importers::Plaintext.read('path/to/file.dat').call([:col1, :col2, :col3])
 
     #! Usage from Daru::DataFrame
-    df = Daru::DataFrame.from_plaintext('path/to/file.dat', [:col1, :col2, :col3])
+    df = Daru::DataFrame.read_plaintext('path/to/file.dat', [:col1, :col2, :col3])
     ```
 
 ### RData Importer
@@ -285,10 +286,10 @@ Imports a **Daru::DataFrame** from a variable in **.rdata** file.
     require 'daru/io/importers/r_data'
 
     #! Usage from Daru::IO
-    df = Daru::IO::Importers::RData.new('ACS3').read('path/to/file.RData')
+    df = Daru::IO::Importers::RData.read('path/to/file.RData').call('ACS3')
 
     #! Usage from Daru::DataFrame
-    df = Daru::DataFrame.from_rdata('path/to/file.RData', 'ACS3')
+    df = Daru::DataFrame.read_rdata('path/to/file.RData', 'ACS3')
     ```
 
 ### RDS Importer
@@ -306,10 +307,10 @@ Imports a **Daru::DataFrame** from a **.rds** file.
     require 'daru/io/importers/rds'
 
     #! Usage from Daru::IO
-    df = Daru::IO::Importers::RDS.new.read('path/to/file.rds')
+    df = Daru::IO::Importers::RDS.read('path/to/file.rds').call
 
     #! Usage from Daru::DataFrame
-    df = Daru::DataFrame.from_rds('path/to/file.rds')
+    df = Daru::DataFrame.read_rds('path/to/file.rds')
     ```
 
 ### Redis Importer
@@ -327,7 +328,7 @@ Imports a **Daru::DataFrame** from **Redis** key(s).
     require 'daru/io/importers/redis'
 
     #! Usage from Daru::IO
-    df = Daru::IO::Importers::Redis.new(match: 'time:1*', count: 1000).from({url: 'redis://:password@host:port/db'})
+    df = Daru::IO::Importers::Redis.from({url: 'redis://:password@host:port/db'}).call(match: 'time:1*', count: 1000)
 
     #! Usage from Daru::DataFrame
     df = Daru::DataFrame.from_redis({url: 'redis://:password@host:port/db'}, match: 'time:1*', count: 1000)
@@ -347,8 +348,8 @@ Imports a **Daru::DataFrame** from a **sqlite.db** file / **DBI** connection.
     require 'daru/io/importers/sql'
 
     #! Usage from Daru::IO
-    df1 = Daru::IO::Importers::SQL.new('SELECT * FROM test').read('path/to/file.sqlite')
-    df2 = Daru::IO::Importers::SQL.new('SELECT * FROM test').from(dbi_connection)
+    df1 = Daru::IO::Importers::SQL.read('path/to/file.sqlite').call('SELECT * FROM test')
+    df2 = Daru::IO::Importers::SQL.from(dbi_connection).call('SELECT * FROM test')
 
     #! Usage from Daru::DataFrame
     df1 = Daru::DataFrame.read_sql('path/to/file.sqlite', 'SELECT * FROM test')
@@ -560,24 +561,32 @@ Exports a **Daru::DataFrame** into a database (SQL) table through DBI connection
       Daru::DataFrame.register_io_module :from_yaml, self
       Daru::DataFrame.register_io_module :read_yaml, self
 
-      def initialize(opts)
-        @opts = opts
+      def initialize
+        optional_gem 'yaml'
+        #! Add all required gem(s) here.
       end
 
       def from(instance)
-        #! Your code to create Daru::DataFrame
-        #! from given YAML instance
+        #! Your code to create initialize instance
+        self
       end
 
       def read(path)
         #! Your code to read the YAML file
         #! and create Daru::DataFrame
+        self
+      end
+
+      def call(opts)
+        #! Unified code to create Daru::DataFrame
+        #! irrespective of which method
+        #! (from / read) is used by user
       end
     end
 
-    df = Daru::DataFrame.from_yaml('path/to/file.yaml', skip: 10)
+    df = Daru::DataFrame.read_yaml('path/to/file.yaml', skip: 10)
     # or,
-    df = Daru::IO::Importers::YAML.new(skip: 10).read('path/to/file.yaml')
+    df = Daru::IO::Importers::YAML.read('path/to/file.yaml').call(skip: 10)
     ```
 
     ```ruby
