@@ -13,6 +13,8 @@ module Daru
 
         # Reads data from a plaintext (.dat) file
         #
+        # @!method self.read(path)
+        #
         # @param path [String] Path to plaintext file, where the dataframe is to be
         #   imported from.
         #

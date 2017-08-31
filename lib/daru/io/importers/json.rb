@@ -18,6 +18,8 @@ module Daru
 
         # Reads data from a json file / remote json response
         #
+        # @!method self.read(path)
+        #
         # @param path [String] Local / Remote path to json file, where the dataframe is to be imported
         #   from.
         #
@@ -37,6 +39,8 @@ module Daru
         end
 
         # Loads from a Ruby structure of Hashes and / or Arrays
+        #
+        # @!method self.from(instance)
         #
         # @param instance [Hash or Array] A simple / complexly nested JSON structure
         #

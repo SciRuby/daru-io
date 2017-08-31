@@ -16,6 +16,8 @@ module Daru
 
         # Reads data from a csv / csv.gz file
         #
+        # @!method self.read(path)
+        #
         # @param path [String] Path to csv / csv.gz file, where the dataframe is to be imported
         #   from.
         #

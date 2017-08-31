@@ -18,6 +18,8 @@ module Daru
 
         # Reads data from an avro file
         #
+        # @!method self.read(path)
+        #
         # @param path [String] Path to Avro file, where the dataframe is to be imported from.
         #
         # @return [Daru::IO::Importers::Avro]
@@ -27,6 +29,7 @@ module Daru
         def read(path)
           @path   = path
           @buffer = StringIO.new(File.read(@path))
+          @data = ::Avro::DataFile::Reader.new(@buffer, ::Avro::IO::DatumReader.new).to_a
           self
         end
 
@@ -43,7 +46,6 @@ module Daru
         #   #    1    Jon    100   true
         #   #    2 Tyrion    100   true
         def call
-          @data = ::Avro::DataFile::Reader.new(@buffer, ::Avro::IO::DatumReader.new).to_a
           Daru::DataFrame.new(@data)
         end
       end

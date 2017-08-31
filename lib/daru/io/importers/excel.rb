@@ -23,6 +23,8 @@ module Daru
 
         # Reads from an excel (.xls) file
         #
+        # @!method self.read(path)
+        #
         # @param path [String] Path of Excel file, where the DataFrame is to be imported from.
         #
         # @return [Daru::IO::Importers::Excel]

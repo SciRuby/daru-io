@@ -15,6 +15,8 @@ module Daru
 
         # Loads data from a given relation
         #
+        # @!method self.from(relation)
+        #
         # @param relation [ActiveRecord::Relation] A relation to be used to load
         #   the contents of DataFrame
         #

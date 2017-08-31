@@ -16,6 +16,8 @@ module Daru
 
         # Reads data from a Rdata file
         #
+        # @!method self.read(path)
+        #
         # @param path [String] Path to RData file, where the dataframe is to be imported from.
         #
         # @return [Daru::IO::Importers::RData]

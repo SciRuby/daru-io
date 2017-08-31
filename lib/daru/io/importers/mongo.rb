@@ -15,6 +15,8 @@ module Daru
 
         # Loads data from a given connection
         #
+        # @!method self.from(connection)
+        #
         # @param connection [String or Hash or Mongo::Client] Contains details
         #   about a Mongo database / hosts to connect.
         #

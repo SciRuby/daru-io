@@ -16,6 +16,8 @@ module Daru
 
         # Reads data from a rds file
         #
+        # @!method self.read(path)
+        #
         # @param path [String] Path to rds file, where the dataframe is to be
         #   imported from.
         #

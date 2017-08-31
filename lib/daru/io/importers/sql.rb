@@ -18,6 +18,8 @@ module Daru
 
         # Loads from a DBI connection
         #
+        # @!method self.from(dbh)
+        #
         # @param dbh [DBI::DatabaseHandle] A DBI connection.
         #
         # @return [Daru::IO::Importers::SQL]
@@ -30,6 +32,8 @@ module Daru
         end
 
         # Reads from a sqlite.db file
+        #
+        # @!method self.read(path)
         #
         # @param path [String] Path to a SQlite3 database file.
         #

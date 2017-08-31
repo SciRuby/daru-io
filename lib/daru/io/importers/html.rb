@@ -19,6 +19,8 @@ module Daru
 
         # Reads from a html file / website
         #
+        # @!method self.read(path)
+        #
         # @param path [String] Website URL / path to HTML file, where the
         #   DataFrame is to be imported from.
         #

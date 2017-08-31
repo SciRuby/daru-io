@@ -15,6 +15,8 @@ module Daru
 
         # Loads data from a given connection
         #
+        # @!method self.from(connection)
+        #
         # @param connection [Hash or Redis Instance] Either a Hash of *Redis* configurations,
         #   or an existing *Redis* instance. For the hash configurations, have a
         #   look at

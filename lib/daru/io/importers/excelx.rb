@@ -14,6 +14,8 @@ module Daru
 
         # Reads from an excelx (xlsx) file
         #
+        # @!method self.read(path)
+        #
         # @param path [String] Local / Remote path of xlsx file, where the DataFrame is
         #   to be imported from.
         #
