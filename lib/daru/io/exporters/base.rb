@@ -32,6 +32,22 @@ module Daru
           end
           @dataframe = dataframe
         end
+
+        # Exports an Exporter instance to a file-writable String.
+        #
+        # @return A file-writable `String`
+        #
+        # @example Getting a file-writable string from Avro Exporter instance
+        #
+        #   instance = Daru::IO::Exporters::Format.new(opts)
+        #   instance.to_s #! same as df.to_format_string(opts)
+        def to_s
+          tempfile = Tempfile.new('tempfile')
+          path     = tempfile.path
+          write(path)
+
+          File.read(path)
+        end
       end
     end
   end

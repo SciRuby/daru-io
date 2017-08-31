@@ -3,22 +3,42 @@ require 'daru/io/importers/base'
 module Daru
   module IO
     module Importers
-      # Plaintext Importer Class, that extends `from_plaintext` method to
+      # Plaintext Importer Class, that extends `read_plaintext` method to
       # `Daru::DataFrame`
       class Plaintext < Base
-        Daru::DataFrame.register_io_module :from_plaintext, self
+        Daru::DataFrame.register_io_module :read_plaintext, self
 
-        # Imports a `Daru::DataFrame` from a plaintext file.
+        # Checks for required gem dependencies of Plaintext Importer
+        def initialize; end
+
+        # Reads data from a plaintext (.dat) file
         #
-        # @param path [String] Path of the input plaintext file
+        # @!method self.read(path)
+        #
+        # @param path [String] Path to plaintext file, where the dataframe is to be
+        #   imported from.
+        #
+        # @return [Daru::IO::Importers::Plaintext]
+        #
+        # @example Reading from plaintext file
+        #   instance = Daru::IO::Importers::Plaintext.read("bank2.dat")
+        def read(path)
+          @file_data = File.read(path).split("\n").map do |line|
+            row = process_row(line.strip.split(/\s+/),[''])
+            next if row == ["\x1A"]
+            row
+          end
+          self
+        end
+
+        # Imports `Daru::DataFrame` from a Plaintext Importer instance
+        #
         # @param fields [Array] An array of vectors.
         #
-        # @return A `Daru::DataFrame` imported from the given plaintext file
+        # @return [Daru::DataFrame]
         #
-        # @example Reading from a Plaintext file
-        #   fields = [:v1, :v2, :v3, :v4, :v5, :v6]
-        #   df = Daru::IO::Importers::Plaintext.new("bank2.dat", fields).call
-        #   df
+        # @example Initializing with fields
+        #   df = instance.call([:v1, :v2, :v3, :v4, :v5, :v6])
         #
         #   #=> #<Daru::DataFrame(200x6)>
         #   #       v1    v2    v3    v4    v5    v6
@@ -38,21 +58,8 @@ module Daru
         #   # 13 214.7 129.7 129.7   7.7  10.9 141.7
         #   # 14 215.1 129.9 129.7   7.7  10.8 141.8
         #   #...   ...   ...   ...   ...   ...   ...
-        def initialize(path, fields)
-          @path   = path
-          @fields = fields
-        end
-
-        def call
-          ds = Daru::DataFrame.new({}, order: @fields)
-          File.open(@path,'r').each_line do |line|
-            row = process_row(line.strip.split(/\s+/),[''])
-            next if row == ["\x1A"]
-            ds.add_row(row)
-          end
-          ds.update
-          @fields.each { |f| ds[f].rename f }
-          ds
+        def call(fields)
+          Daru::DataFrame.rows(@file_data, order: fields)
         end
 
         private

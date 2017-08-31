@@ -1,5 +1,5 @@
 RSpec.describe Daru::IO::Importers::JSON do
-  subject { described_class.new(path, *columns, order: order, index: index, **named_columns).call }
+  subject { described_class.read(path).call(*columns, order: order, index: index, **named_columns) }
 
   let(:path)          { ''  }
   let(:index)         { nil }
@@ -23,7 +23,9 @@ RSpec.describe Daru::IO::Importers::JSON do
   it_behaves_like 'importer with json-path option'
 
   context 'parses json response' do
-    let(:path) { ::JSON.parse(File.read('spec/fixtures/json/nasadata.json')) }
+    subject { described_class.from(instance).call(*columns, order: order, index: index, **named_columns) }
+
+    let(:instance) { ::JSON.parse(File.read('spec/fixtures/json/nasadata.json')) }
 
     it_behaves_like 'exact daru dataframe',
       ncols: 10,
@@ -32,7 +34,9 @@ RSpec.describe Daru::IO::Importers::JSON do
   end
 
   context 'parses json string' do
-    let(:path) { File.read('spec/fixtures/json/nasadata.json') }
+    subject { described_class.from(instance).call(*columns, order: order, index: index, **named_columns) }
+
+    let(:instance) { File.read('spec/fixtures/json/nasadata.json') }
 
     it_behaves_like 'exact daru dataframe',
       ncols: 10,
@@ -59,12 +63,8 @@ RSpec.describe Daru::IO::Importers::JSON do
 
   context 'raises error for invalid argument' do # rubocop:disable RSpec/EmptyExampleGroup
     context 'json input is invalid' do # rubocop:disable RSpec/EmptyExampleGroup
-      let(:path) { Object.new }
+      subject { described_class.from([]).call(*columns, order: order, index: index, **named_columns) }
 
-      its_call { is_expected.to raise_error(ArgumentError) }
-    end
-
-    context 'json input is invalid' do # rubocop:disable RSpec/EmptyExampleGroup
       let(:order)         { %i[a b] }
       let(:named_columns) { {x: 1, y: 2} }
 

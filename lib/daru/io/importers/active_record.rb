@@ -8,39 +8,51 @@ module Daru
       class ActiveRecord < Base
         Daru::DataFrame.register_io_module :from_activerecord, self
 
-        # Imports a `Daru::DataFrame` from an ActiveRecord Relation
+        # Checks for required gem dependencies of ActiveRecord Importer
+        def initialize
+          optional_gem 'activerecord', '~> 4.0', requires: 'active_record'
+        end
+
+        # Loads data from a given relation
+        #
+        # @!method self.from(relation)
         #
         # @param relation [ActiveRecord::Relation] A relation to be used to load
         #   the contents of DataFrame
+        #
+        # @return [Daru::IO::Importers::ActiveRecord]
+        #
+        # @example Loading from a ActiveRecord instance
+        #   instance = Daru::IO::Importers::ActiveRecord.from(Account.all)
+        def from(relation)
+          @relation = relation
+          self
+        end
+
+        # Imports a `Daru::DataFrame` from an ActiveRecord Importer instance
+        #
         # @param fields [String or Array of Strings] A set of fields to load from.
         #
-        # @return A `Daru::DataFrame` imported from the given relation and fields
+        # @return [Daru::DataFrame]
         #
-        # @example Importing from an ActiveRecord relation without specifying fields
-        #   df = Daru::IO::Importers::ActiveRecord.new(Account.all).call
-        #   df
+        # @example Importing from an instance without specifying fields
+        #   instance.call
         #
         #   #=> #<Daru::DataFrame(2x3)>
         #   #=>        id  name   age
         #   #=>   0     1 Homer    20
         #   #=>   1     2 Marge    30
         #
-        # @example Importing from an ActiveRecord relation by specifying fields
-        #   df = Daru::IO::Importers::ActiveRecord.new(Account.all, :id, :name).call
-        #   df
+        # @example Importing from an instance with specific fields
+        #   instance.call(:id, :name)
         #
         #   #=> #<Daru::DataFrame(2x2)>
         #   #=>        id  name
         #   #=>   0     1 Homer
         #   #=>   1     2 Marge
-        def initialize(relation, *fields)
-          optional_gem 'activerecord', '~> 4.0', requires: 'active_record'
+        def call(*fields)
+          @fields = fields
 
-          @relation = relation
-          @fields   = fields
-        end
-
-        def call
           if @fields.empty?
             records = @relation.map { |record| record.attributes.symbolize_keys }
             return Daru::DataFrame.new(records)

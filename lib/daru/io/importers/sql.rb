@@ -3,53 +3,65 @@ require 'daru/io/importers/base'
 module Daru
   module IO
     module Importers
-      # SQL Importer Class, that extends `from_sql` method to `Daru::DataFrame`
+      # SQL Importer Class, that extends `from_sql` and `read_sql` methods to `Daru::DataFrame`
       class SQL < Base
         Daru::DataFrame.register_io_module :from_sql, self
+        Daru::DataFrame.register_io_module :read_sql, self
 
-        # Imports a `Daru::DataFrame` from a SQL query.
-        #
-        # @param dbh [DBI::DatabaseHandle or String] A DBI connection OR Path to a
-        #   SQlite3 database.
-        # @param query [String] The query to be executed
-        #
-        # @return A `Daru::DataFrame` imported from the given query
-        #
-        # @example Reading from database with a DBI connection
-        #   dbh = DBI.connect("DBI:Mysql:database:localhost", "user", "password")
-        #   # Use the actual SQL credentials for the above line
-        #
-        #   df = Daru::IO::Importers::SQL.new(dbh, "SELECT * FROM test").call
-        #   df
-        #
-        #   #=> #<Daru::DataFrame(2x3)>
-        #   #      id  name   age
-        #   # 0     1 Homer    20
-        #   # 1     2 Marge    30
-        #
-        # @example Reading from a sqlite.db file
-        #   require 'dbi'
-        #
-        #   path = 'path/to/sqlite.db'
-        #   df = Daru::IO::Importers::SQL.new(path, "SELECT * FROM test").call
-        #   df
-        #
-        #   #=> #<Daru::DataFrame(2x3)>
-        #   #      id  name   age
-        #   # 0     1 Homer    20
-        #   # 1     2 Marge    30
-        def initialize(dbh, query)
+        # Checks for required gem dependencies of SQL Importer
+        def initialize
           optional_gem 'dbd-sqlite3', requires: 'dbd/SQLite3'
           optional_gem 'activerecord', '~> 4.0', requires: 'active_record'
           optional_gem 'dbi'
           optional_gem 'sqlite3'
-
-          @dbh   = dbh
-          @query = query
         end
 
-        def call
-          @conn, @adapter = choose_adapter @dbh, @query
+        # Loads from a DBI connection
+        #
+        # @!method self.from(dbh)
+        #
+        # @param dbh [DBI::DatabaseHandle] A DBI connection.
+        #
+        # @return [Daru::IO::Importers::SQL]
+        #
+        # @example Importing from a DBI connection
+        #   instance = Daru::IO::Importers::SQL.from(DBI.connect("DBI:Mysql:database:localhost", "user", "password"))
+        def from(dbh)
+          @dbh = dbh
+          self
+        end
+
+        # Reads from a sqlite.db file
+        #
+        # @!method self.read(path)
+        #
+        # @param path [String] Path to a SQlite3 database file.
+        #
+        # @return [Daru::IO::Importers::SQL]
+        #
+        # @example Reading from a sqlite.db file
+        #   instance = Daru::IO::Importers::SQL.read('path/to/sqlite.db')
+        def read(path)
+          @dbh = attempt_sqlite3_connection(path) if Pathname(path).exist?
+          self
+        end
+
+        # Imports a `Daru::DataFrame` from SQL Importer instance
+        #
+        # @param query [String] The query to be executed
+        #
+        # @return [Daru::DataFrame]
+        #
+        # @example Importing with a SQL query
+        #   df = instance.call("SELECT * FROM test")
+        #
+        #   #=> #<Daru::DataFrame(2x3)>
+        #   #      id  name   age
+        #   # 0     1 Homer    20
+        #   # 1     2 Marge    30
+        def call(query)
+          @query          = query
+          @conn, @adapter = choose_adapter(@dbh, @query)
           df_hash         = result_hash
           Daru::DataFrame.new(df_hash).tap(&:update)
         end
@@ -65,8 +77,6 @@ module Daru
         def choose_adapter(db, query)
           query = String.try_convert(query) or
             raise ArgumentError, "Query must be a string, #{query.class} received"
-
-          db = attempt_sqlite3_connection(db) if db.is_a?(String) && Pathname(db).exist?
 
           case db
           when DBI::DatabaseHandle

@@ -44,6 +44,18 @@ module Daru
           when Hash then Daru::DataFrame.new(vals.flatten, index: keys)
           end
         end
+
+        # Adds the `from` class method to all inheriting children Importer classes, which
+        # calls corresponding Importer's `initialize` and instance method `from`.
+        def self.from(relation)
+          new.from(relation)
+        end
+
+        # Adds the `read` class method to all inheriting children Importer classes, which
+        # calls corresponding Importer's `initialize` and instance method `read`.
+        def self.read(path)
+          new.read(path)
+        end
       end
     end
   end

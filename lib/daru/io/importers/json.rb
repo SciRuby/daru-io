@@ -3,15 +3,58 @@ require 'daru/io/importers/base'
 module Daru
   module IO
     module Importers
-      # JSON Importer Class, that extends `from_json` method to `Daru::DataFrame`
+      # JSON Importer Class, that extends `from_json` and `read_json` methods
+      # to `Daru::DataFrame`
       class JSON < Base
         Daru::DataFrame.register_io_module :from_json, self
+        Daru::DataFrame.register_io_module :read_json, self
 
-        # Imports a `Daru::DataFrame` from a JSON file or response.
+        # Checks for required gem dependencies of JSON Importer
+        def initialize
+          require 'open-uri'
+          require 'json'
+          optional_gem 'jsonpath'
+        end
+
+        # Reads data from a json file / remote json response
         #
-        # @param json_input [String or JSON response] Either the path to local /
-        #   remote JSON file, or JSON response (which can be a
-        #   nested `Hash` or `Array of Hashes`) from any API.
+        # @!method self.read(path)
+        #
+        # @param path [String] Local / Remote path to json file, where the dataframe is to be imported
+        #   from.
+        #
+        # @return [Daru::IO::Importers::JSON]
+        #
+        # @example Reading from simply nested remote json response
+        #   url = 'https://data.nasa.gov/resource/2vr3-k9wn.json'
+        #   simple_read_instance = Daru::IO::Importers::JSON.read(url)
+        #
+        # @example Reading from complexy nested remote json response
+        #   url = 'http://api.tvmaze.com/singlesearch/shows?q=game-of-thrones&embed=episodes'
+        #   complex_read_instance = Daru::IO::Importers::JSON.read(url)
+        def read(path)
+          @file_data = ::JSON.parse(open(path).read)
+          @json      = @file_data
+          self
+        end
+
+        # Loads from a Ruby structure of Hashes and / or Arrays
+        #
+        # @!method self.from(instance)
+        #
+        # @param instance [Hash or Array] A simple / complexly nested JSON structure
+        #
+        # @return [Daru::IO::Importers::JSON]
+        #
+        # @example Loading from Ruby Hash of Arrays
+        #   from_instance = Daru::IO::Importers::JSON.from({x: [1,4], y: [2,5], z: [3, 6]})
+        def from(instance)
+          @file_data = instance
+          @json      = @file_data.is_a?(String) ? ::JSON.parse(@file_data) : @file_data
+          self
+        end
+
+        # Imports a `Daru::DataFrame` from a JSON Importer instance
         #
         # @param columns [Array] JSON-path slectors to select specific fields
         #   from the JSON input.
@@ -22,19 +65,14 @@ module Daru
         # @param named_columns [Hash] JSON-path slectors to select specific fields
         #   from the JSON input.
         #
+        # @return [Daru::DataFrame]
+        #
         # @note For more information on using JSON-path selectors, have a look at
         #   the explanations {http://www.rubydoc.info/gems/jsonpath/0.5.8 here}
         #   and {http://goessner.net/articles/JsonPath/ here}.
         #
-        # @return A `Daru::DataFrame` imported from the given JSON input
-        #   and x-path selected fields.
-        #
-        # @example Importing from remote JSON file without json-path selectors
-        #
-        #   url = 'https://data.nasa.gov/resource/2vr3-k9wn.json'
-        #   df  = Daru::IO::Importers::JSON.new(url).call
-        #
-        #   df
+        # @example Importing without jsonpath selectors
+        #   df = simple_read_instance.call
         #
         #   #=> #<Daru::DataFrame(202x10)>
         #   #    designation discovery_      h_mag      i_deg    moid_au orbit_clas  period_yr ...
@@ -43,18 +81,14 @@ module Daru
         #   #  2 414772 (20 2010-07-28         19      23.11      0.333     Apollo       1.31  ...
         #   # ...        ...        ...        ...        ...        ...        ...       ...  ...
         #
-        # @example Importing from remote JSON response with json-path selectors
-        #
-        #   url = 'http://api.tvmaze.com/singlesearch/shows?q=game-of-thrones&embed=episodes'
-        #   df  = Daru::IO::Importers::JSON.new(url,
-        #             "$.._embedded..episodes..name",
-        #           "$.._embedded..episodes..season",
-        #           "$.._embedded..episodes..number",
-        #            index: (10..70).to_a,
-        #            RunTime: "$.._embedded..episodes..runtime"
-        #         ).call
-        #
-        #   df
+        # @example Importing with jsonpath selectors
+        #   df = complex_read_instance.call(
+        #     "$.._embedded..episodes..name",
+        #     "$.._embedded..episodes..season",
+        #     "$.._embedded..episodes..number",
+        #     index: (10..70).to_a,
+        #     RunTime: "$.._embedded..episodes..runtime"
+        #   )
         #
         #   #=> #<Daru::DataFrame(61x4)>
         #   #         name           season     number    RunTime
@@ -62,23 +96,16 @@ module Daru
         #   #   11 The Kingsr          1          2         60
         #   #   12  Lord Snow          1          3         60
         #   #  ...        ...        ...        ...        ...
-        def initialize(json_input, *columns, order: nil, index: nil,
-          **named_columns)
-          require 'open-uri'
-          optional_gem 'json'
-          optional_gem 'jsonpath'
-
-          @json_input    = json_input
-          @columns       = columns
-          @order         = order
-          @index         = index
-          @named_columns = named_columns
-
-          validate_params
-        end
-
-        def call
-          @json    = read_json
+        #
+        # @example Importing from `from` method
+        #   df = from_instance.call
+        #
+        #   #=> #<Daru::DataFrame(2x3)>
+        #   #       x   y   z
+        #   #   0   1   2   3
+        #   #   1   4   5   6
+        def call(*columns, order: nil, index: nil, **named_columns)
+          init_opts(*columns, order: order, index: index, **named_columns)
           @data    = fetch_data
           @index   = at_jsonpath(@index)
           @order   = at_jsonpath(@order)
@@ -103,24 +130,21 @@ module Daru
           data_columns.map { |col| at_jsonpath(col) }
         end
 
-        def validate_params
-          unless @order.nil? || @named_columns.empty?
-            raise ArgumentError,
-              'Do not pass on order and named columns together, at the same '\
-              'function call. Please use only order or only named_columns.'
-          end
+        def init_opts(*columns, order: nil, index: nil, **named_columns)
+          @columns       = columns
+          @order         = order
+          @index         = index
+          @named_columns = named_columns
 
-          return true if [String, Array, Hash].include?(@json_input.class)
-
-          raise ArgumentError,
-            'Expected the first argument to be a String, Array or Hash.'\
-            "Received #{@json_input.class} instead."
+          validate_params
         end
 
-        def read_json
-          return @json_input unless @json_input.is_a?(String)
-          return ::JSON.parse(@json_input) unless @json_input.start_with?('http') || @json_input.end_with?('.json')
-          ::JSON.parse(open(@json_input).read)
+        def validate_params
+          return if @order.nil? || @named_columns.empty?
+
+          raise ArgumentError,
+            'Do not pass on order and named columns together, at the same '\
+            'function call. Please use only order or only named_columns.'
         end
       end
     end

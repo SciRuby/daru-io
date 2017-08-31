@@ -8,7 +8,7 @@ RSpec.describe Daru::IO::Importers::CSV do
     end
   end
 
-  subject    { described_class.new(path, opts).call }
+  subject    { described_class.new.read(path).call(opts) }
 
   let(:path) { 'spec/fixtures/csv/matrix_test.csv' }
   let(:opts) { {col_sep: ' ', headers: true}       }
@@ -103,11 +103,11 @@ RSpec.describe Daru::IO::Importers::CSV do
     %w[matrix_test repeated_fields scientific_notation sales-funnel column_headers_only].each do |file|
       before { Zlib::GzipWriter.open(path) { |gz| gz.write File.read(csv_path) } }
 
-      let(:csv_path) { "spec/fixtures/csv/#{file}.csv"    }
-      let(:tempfile) { Tempfile.new("#{file}.csv.gz")     }
-      let(:csv)      { described_class.new(csv_path).call }
-      let(:path)     { tempfile.path                      }
-      let(:opts)     { {compression: :gzip}               }
+      let(:csv_path) { "spec/fixtures/csv/#{file}.csv"     }
+      let(:tempfile) { Tempfile.new("#{file}.csv.gz")      }
+      let(:csv)      { described_class.read(csv_path).call }
+      let(:path)     { tempfile.path                       }
+      let(:opts)     { {compression: :gzip}                }
 
       it_behaves_like 'a daru dataframe'
       it { is_expected.to eq(csv) }
@@ -116,9 +116,9 @@ RSpec.describe Daru::IO::Importers::CSV do
 
   context 'checks for equal parsing of local CSV files and remote CSV files' do
     %w[matrix_test repeated_fields scientific_notation sales-funnel column_headers_only].each do |file|
-      let(:local) { described_class.new("spec/fixtures/csv/#{file}.csv").call }
-      let(:path)  { "http://dummy-remote-url/#{file}.csv" }
-      let(:opts)  { {} }
+      let(:local) { described_class.read("spec/fixtures/csv/#{file}.csv").call }
+      let(:path)  { "http://dummy-remote-url/#{file}.csv"                      }
+      let(:opts)  { {}                                                         }
 
       it_behaves_like 'a daru dataframe'
       it { is_expected.to eq(local) }
