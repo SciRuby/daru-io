@@ -70,8 +70,8 @@ module Daru
       def register_importer(function, instance)
         define_singleton_method(function) do |*args, &io_block|
           case function.to_s
-          when /\Afrom_/ then instance.new(*args[1..-1], &io_block).from(*args[0])
-          when /\Aread_/ then instance.new(*args[1..-1], &io_block).read(*args[0])
+          when /\Afrom_/ then instance.new.from(*args[0]).call(*args[1..-1], &io_block)
+          when /\Aread_/ then instance.new.read(*args[0]).call(*args[1..-1], &io_block)
           end
         end
       end
