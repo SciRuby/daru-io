@@ -7,6 +7,16 @@ module Daru
       class CSV < Base
         Daru::DataFrame.register_io_module :read_csv, self
 
+        CONVERTERS = {
+          boolean: lambda { |f, _|
+            case f.downcase.strip
+            when 'true'  then true
+            when 'false' then false
+            else f
+            end
+          }
+        }.freeze
+
         # Checks for required gem dependencies of CSV Importer
         def initialize
           require 'csv'
@@ -161,10 +171,16 @@ module Daru
           @daru_options = {clone: clone, index: index, order: order, name: name}
           @options      = {
             col_sep: ',',
-            converters: :numeric,
+            converters: [:numeric],
             header_converters: :symbol,
             headers: @headers
           }.merge(options)
+
+          @options[:converters] = @options[:converters].flat_map do |c|
+            next ::CSV::Converters[c] if ::CSV::Converters[c]
+            next CONVERTERS[c] if CONVERTERS[c]
+            c
+          end
         end
 
         def process_compression
