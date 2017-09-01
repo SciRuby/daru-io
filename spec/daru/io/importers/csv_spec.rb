@@ -1,9 +1,11 @@
 RSpec.describe Daru::IO::Importers::CSV do
+  ALL_CSV_FILES = %w[
+    boolean_converter_test matrix_test repeated_fields scientific_notation
+    sales-funnel column_headers_only empty_rows_test
+  ].freeze
+
   before do
-    %w[
-      boolean_converter_test matrix_test repeated_fields scientific_notation
-      sales-funnel column_headers_only
-    ].each do |file|
+    ALL_CSV_FILES.each do |file|
       WebMock
         .stub_request(:get,"http://dummy-remote-url/#{file}.csv")
         .to_return(status: 200, body: File.read("spec/fixtures/csv/#{file}.csv"))
@@ -102,7 +104,7 @@ RSpec.describe Daru::IO::Importers::CSV do
       order: %w[Account Name Rep Manager Product Quantity Price Status]
   end
 
-  context '' do
+  context 'checks for boolean converter' do
     let(:path) { 'spec/fixtures/csv/boolean_converter_test.csv' }
     let(:opts) { {converters: [:boolean]} }
 
@@ -112,11 +114,16 @@ RSpec.describe Daru::IO::Importers::CSV do
     its('Domestic.to_a') { is_expected.to all be_boolean }
   end
 
+  context 'checks for skip_blanks option to skip empty rows' do
+    let(:path) { 'spec/fixtures/csv/empty_rows_test.csv' }
+
+    it_behaves_like 'exact daru dataframe',
+      ncols: 3,
+      nrows: 13
+  end
+
   context 'checks for equal parsing of csv and csv.gz files' do
-    %w[
-      boolean_converter_test matrix_test repeated_fields scientific_notation
-      sales-funnel column_headers_only
-    ].each do |file|
+    ALL_CSV_FILES.each do |file|
       before { Zlib::GzipWriter.open(path) { |gz| gz.write File.read(csv_path) } }
 
       let(:csv_path) { "spec/fixtures/csv/#{file}.csv"     }
@@ -131,10 +138,7 @@ RSpec.describe Daru::IO::Importers::CSV do
   end
 
   context 'checks for equal parsing of local CSV files and remote CSV files' do
-    %w[
-      boolean_converter_test matrix_test repeated_fields scientific_notation
-      sales-funnel column_headers_only
-    ].each do |file|
+    ALL_CSV_FILES.each do |file|
       let(:local) { described_class.read("spec/fixtures/csv/#{file}.csv").call }
       let(:path)  { "http://dummy-remote-url/#{file}.csv"                      }
       let(:opts)  { {}                                                         }

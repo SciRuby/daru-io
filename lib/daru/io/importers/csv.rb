@@ -170,10 +170,8 @@ module Daru
           @compression  = compression
           @daru_options = {clone: clone, index: index, order: order, name: name}
           @options      = {
-            col_sep: ',',
-            converters: [:numeric],
-            header_converters: :symbol,
-            headers: @headers
+            col_sep: ',', converters: [:numeric], header_converters: :symbol,
+            headers: @headers, skip_blanks: true
           }.merge(options)
 
           @options[:converters] = @options[:converters].flat_map do |c|
