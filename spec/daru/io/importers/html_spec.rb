@@ -5,7 +5,7 @@ RSpec.describe Daru::IO::Importers::HTML do
   let(:df_index) { 0  }
 
   context 'in wiki info table' do
-    let(:path)  { "file://#{Dir.pwd}/spec/fixtures/html/wiki_table_info.html" }
+    let(:path)  { 'spec/fixtures/html/wiki_table_info.html' }
     let(:order) { %w[FName LName Age]                                         }
     let(:index) { %w[One Two Three Four Five Six Seven]                       }
     let(:name)  { 'Wikipedia Information Table'                               }
@@ -40,7 +40,7 @@ RSpec.describe Daru::IO::Importers::HTML do
   end
 
   context 'in wiki climate data' do
-    let(:path) { "file://#{Dir.pwd}/spec/fixtures/html/wiki_climate.html" }
+    let(:path) { 'spec/fixtures/html/wiki_climate.html' }
 
     context 'returns default dataframe' do
       it_behaves_like 'exact daru dataframe',
@@ -58,7 +58,7 @@ RSpec.describe Daru::IO::Importers::HTML do
   end
 
   context 'with valid html table markups' do
-    let(:path)  { "file://#{Dir.pwd}/spec/fixtures/html/valid_markup.html" }
+    let(:path)  { 'spec/fixtures/html/valid_markup.html' }
     let(:index) { %w[W X Y Z]                                              }
     let(:name)  { 'Small HTML table with index'                            }
 
@@ -76,7 +76,7 @@ RSpec.describe Daru::IO::Importers::HTML do
   end
 
   context 'in year-wise passengers figure' do
-    let(:path)  { "file://#{Dir.pwd}/spec/fixtures/html/macau.html" }
+    let(:path)  { 'spec/fixtures/html/macau.html' }
     let(:match) { '2001'                                            }
     let(:name)  { 'Year-wise Passengers Figure'                     }
 
@@ -108,7 +108,7 @@ RSpec.describe Daru::IO::Importers::HTML do
   end
 
   context 'in share market data' do
-    let(:path)  { "file://#{Dir.pwd}/spec/fixtures/html/moneycontrol.html" }
+    let(:path)  { 'spec/fixtures/html/moneycontrol.html' }
     let(:match) { 'Sun Pharma'                                             }
     let(:index) { %w[Alpha Beta Gamma Delta Misc]                          }
     let(:name)  { 'Share Market Analysis' }
@@ -149,7 +149,7 @@ RSpec.describe Daru::IO::Importers::HTML do
   end
 
   context 'in election results data' do
-    let(:path) { "file://#{Dir.pwd}/spec/fixtures/html/eciresults.html" }
+    let(:path) { 'spec/fixtures/html/eciresults.html' }
 
     context 'returns default dataframes' do
       it_behaves_like 'exact daru dataframe',
