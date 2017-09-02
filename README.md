@@ -192,7 +192,7 @@ Imports a **Daru::DataFrame** from a **.xlsx** file.
 Imports an **Array** of **Daru::DataFrame**s from a **.html** file or website.
 
 - **Docs**: [rubydoc.info](http://www.rubydoc.info/github/athityakumar/daru-io/master/Daru/IO/Importers/HTML)
-- **Gem Dependencies**: `mechanize` gem
+- **Gem Dependencies**: `nokogiri` gem
 - **Usage**:
     ```ruby
     #! Partially require just HTML Importer

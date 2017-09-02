@@ -14,7 +14,8 @@ module Daru
 
         # Checks for required gem dependencies of HTML Importer
         def initialize
-          optional_gem 'mechanize'
+          require 'open-uri'
+          optional_gem 'nokogiri'
         end
 
         # Reads from a html file / website
@@ -29,7 +30,7 @@ module Daru
         # @example Reading from a website url file
         #   instance = Daru::IO::Importers::HTML.read('http://www.moneycontrol.com/')
         def read(path)
-          @file_data = Mechanize.new.get(path)
+          @file_data = Nokogiri.parse(open(path).read)
           self
         end
 
@@ -72,25 +73,23 @@ module Daru
         #   #   3        ITC     315.85       6.75     621.12
         #   #   4       HDFC    1598.85      50.95     553.91
         def call(match: nil, order: nil, index: nil, name: nil)
-          @match = match
-          @options = {name: name, order: order, index: index}
+          @match   = match
+          @options = {name: name, index: index, order: order}
 
           @file_data
-            .search('table').map { |table| parse_table table }
-            .keep_if { |table| search table }
+            .search('table')
+            .map { |table| parse_table(table) }
             .compact
-            .map { |table| decide_values table, @options }
-            .map { |table| table_to_dataframe table }
+            .keep_if { |table| satisfy_dimension(table) && search(table) }
+            .map { |table| decide_values(table, @options) }
+            .map { |table| table_to_dataframe(table) }
         end
 
         private
 
         # Allows user to override the scraped order / index / data
-        def decide_values(scraped_val={}, user_val={})
-          %I[data index name order].each do |key|
-            user_val[key] ||= scraped_val[key]
-          end
-          user_val
+        def decide_values(scraped_val, user_val)
+          scraped_val.merge(user_val) { |_key, scraped, user| user || scraped }
         end
 
         # Splits headers (all th tags) into order and index. Wherein,
@@ -121,15 +120,23 @@ module Daru
           [arr, size]
         end
 
+        def satisfy_dimension(table)
+          return false if @options[:order] && table[:data].first.size != @options[:order].size
+          return false if @options[:index] && table[:data].size != @options[:index].size
+          true
+        end
+
         def search(table)
-          @match.nil? ? true : (table.to_s.include? @match)
+          @match.nil? ? true : table.to_s.include?(@match)
         end
 
         def table_to_dataframe(table)
-          Daru::DataFrame.rows table[:data],
+          Daru::DataFrame.rows(
+            table[:data],
             index: table[:index],
             order: table[:order],
             name: table[:name]
+          )
         end
       end
     end
