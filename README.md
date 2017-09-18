@@ -1,7 +1,7 @@
 # Daru-IO
 
-[![Build Status](https://travis-ci.org/athityakumar/daru-io.svg?branch=master)](https://travis-ci.org/athityakumar/daru-io)
-[![Yard Docs](http://img.shields.io/badge/yard-docs-blue.svg)](http://www.rubydoc.info/github/athityakumar/daru-io/master/)
+[![Build Status](https://travis-ci.org/SciRuby/daru-io.svg?branch=master)](https://travis-ci.org/SciRuby/daru-io)
+[![Yard Docs](http://img.shields.io/badge/yard-docs-blue.svg)](http://www.rubydoc.info/github/sciruby/daru-io/master)
 [![Inline docs](http://inch-ci.org/github/athityakumar/daru-io.png)](http://inch-ci.org/github/athityakumar/daru-io)
 [![Code Climate](https://codeclimate.com/github/athityakumar/daru-io.png)](https://codeclimate.com/github/athityakumar/daru-io)
 [![Stories in Ready](https://badge.waffle.io/athityakumar/daru-io.png?label=ready&title=Ready)](https://waffle.io/athityakumar/daru-io?utm_source=badge)
