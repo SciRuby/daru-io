@@ -1,10 +1,11 @@
 # Daru-IO
 
+[![Gem Version](https://badge.fury.io/rb/daru-io.svg)](https://badge.fury.io/rb/daru-io)
 [![Build Status](https://travis-ci.org/SciRuby/daru-io.svg?branch=master)](https://travis-ci.org/SciRuby/daru-io)
 [![Yard Docs](http://img.shields.io/badge/yard-docs-blue.svg)](http://www.rubydoc.info/github/sciruby/daru-io/master)
 [![Inline docs](http://inch-ci.org/github/athityakumar/daru-io.png)](http://inch-ci.org/github/athityakumar/daru-io)
 [![Code Climate](https://codeclimate.com/github/athityakumar/daru-io.png)](https://codeclimate.com/github/athityakumar/daru-io)
-[![Stories in Ready](https://badge.waffle.io/athityakumar/daru-io.png?label=ready&title=Ready)](https://waffle.io/athityakumar/daru-io?utm_source=badge)
+[![Stories in Ready](https://badge.waffle.io/SciRuby/daru-io.png?label=ready&title=Ready)](https://waffle.io/athityakumar/daru-io?utm_source=badge)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
 A Ruby plugin-gem to [daru gem](https://github.com/SciRuby/daru), that extends support for many Import and
@@ -38,14 +39,14 @@ While supporting various IO modules, daru-io also provides an easier way of addi
 
     - And then execute on your terminal:
 
-        ```sh
-        bundle
+        ```console
+        $ bundle
         ```
 
 - If you're NOT working with a Gemfile, simply install it yourself by executing on your terminal:
 
-    ```sh
-    gem install daru-io
+    ```console
+    $ gem install daru-io
     ```
 
 - Require `daru-io` gem in your application:
