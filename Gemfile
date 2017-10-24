@@ -3,6 +3,7 @@ gemspec
 
 group :optional do
   gem 'activerecord', '~> 4.0'
+  gem 'axlsx'
   gem 'avro'
   gem 'dbd-sqlite3'
   gem 'dbi'
