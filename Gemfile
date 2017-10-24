@@ -3,7 +3,6 @@ gemspec
 
 group :optional do
   gem 'activerecord', '~> 4.0'
-  gem 'axlsx'
   gem 'avro'
   gem 'dbd-sqlite3'
   gem 'dbi'
@@ -18,4 +17,5 @@ group :optional do
   gem 'sqlite3'
 end
 
+gem 'axlsx', git: 'https://github.com/randym/axlsx.git'
 gem 'saharspec', git: 'https://github.com/zverok/saharspec.git'
