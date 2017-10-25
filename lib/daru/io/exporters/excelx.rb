@@ -9,11 +9,18 @@ module Daru
         Daru::DataFrame.register_io_module :to_excelx_string, self
         Daru::DataFrame.register_io_module :write_excelx, self
 
-        # Initializes an Excel Exporter instance.
+        # Initializes an Excelx Exporter instance.
         #
         # @param dataframe [Daru::DataFrame] A dataframe to export. Supports even dataframes
         #   with multi-index.
-        # @param sheet [String] A sheet name, to export the dataframe into.
+        # @param sheet [String] A sheet name, to export the dataframe into. Defaults to
+        #   'Sheet0'.
+        # @param header [Boolean] Defaults to true. When set to false or nil,
+        #   headers are not written.
+        # @param data [Boolean] Defaults to true. When set to false or nil,
+        #   data values are not written.
+        # @param index [Boolean] Defaults to true. When set to false or nil,
+        #   index values are not written
         #
         # @example Initializing an Excel Exporter instance
         #   df = Daru::DataFrame.new([[1,2],[3,4]], order: [:a, :b])
@@ -23,13 +30,7 @@ module Daru
         #   #  0   1   3
         #   #  1   2   4
         #
-        #   simple_instance = Daru::IO::Exporters::Excel.new(df)
-        #   formatted_instance = Daru::IO::Exporters::Excel.new(
-        #     df,
-        #     header: { color: :red, weight: :bold },
-        #     index: false,
-        #     data: { color: :blue }
-        #   )
+        #   instance = Daru::IO::Exporters::Excelx.new(df)
         def initialize(dataframe, sheet: 'Sheet0', header: true, data: true, index: true)
           optional_gem 'rubyXL'
 
@@ -44,10 +45,10 @@ module Daru
         #
         # @return [String] A file-writable string
         #
-        # @example Getting a file-writable string from Excel Exporter instance
-        #   simple_instance.to_s #! same as df.to_avro_string(schema)
+        # @example Getting a file-writable string from Excelx Exporter instance
+        #   instance.to_s
         #
-        #   #=> "\xD0\xCF\u0011\u0871\u001A\xE1\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000..."
+        #   #=> "PK\u0003\u0004\u0014\u0000\u0000\u0000\b\u0000X\xA5YK\u0018\x87\xFC\u0017..."
         def to_s
           super(file_extension: '.xlsx')
         end
@@ -56,7 +57,7 @@ module Daru
         #
         # @param path [String] Path of excelx file where the dataframe is to be saved
         #
-        # @example Writing an Excel Exporterx instance to an xlsx file
+        # @example Writing an Excelx Exporter instance to an xlsx file
         #   instance.write('filename.xlsx')
         def write(path)
           @workbook = RubyXL::Workbook.new
@@ -97,9 +98,7 @@ module Daru
           return [] unless format
 
           case idx
-          when Daru::Vector then idx.to_a
-          when Array then idx.map(&:to_s)
-          when Daru::MultiIndex then idx
+          when Daru::Vector, Daru::MultiIndex, Array then idx.map(&:to_s)
           else [idx.to_s]
           end
         end

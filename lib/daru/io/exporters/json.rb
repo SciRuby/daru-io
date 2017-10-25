@@ -487,6 +487,7 @@ module Daru
           File.open(path, 'w') do |file|
             file.write(::JSON.send(@pretty ? :pretty_generate : :generate, to))
           end
+          true
         end
 
         private

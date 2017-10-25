@@ -80,6 +80,7 @@ module Daru
             contents.each { |content| csv << content }
             csv.close
           end
+          true
         end
 
         private

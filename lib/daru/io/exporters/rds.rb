@@ -53,6 +53,7 @@ module Daru
           @statements  = process_statements(@r_variable, @dataframe)
           @statements << "saveRDS(#{@r_variable}, file='#{path}')"
           @statements.each { |statement| @instance.eval_R(statement) }
+          true
         end
 
         private

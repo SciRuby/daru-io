@@ -25,20 +25,22 @@ module Daru
       #
       # #### Exporters
       #
-      # | `Daru::DataFrame` instance method | `Daru::IO::Exporters` class        |
-      # | --------------------------------- | -----------------------------------|
-      # | `Daru::DataFrame.to_avro_string`  | {Daru::IO::Exporters::Avro#to_s}   |
-      # | `Daru::DataFrame.write_avro`      | {Daru::IO::Exporters::Avro#write}  |
-      # | `Daru::DataFrame.to_csv_string`   | {Daru::IO::Exporters::CSV#to_s}    |
-      # | `Daru::DataFrame.write_csv`       | {Daru::IO::Exporters::CSV#write}   |
-      # | `Daru::DataFrame.to_excel_string` | {Daru::IO::Exporters::Excel#to_s}  |
-      # | `Daru::DataFrame.write_excel`     | {Daru::IO::Exporters::Excel#write} |
-      # | `Daru::DataFrame.to_json`         | {Daru::IO::Exporters::JSON#to}     |
-      # | `Daru::DataFrame.to_json_string`  | {Daru::IO::Exporters::JSON#to_s}   |
-      # | `Daru::DataFrame.write_json`      | {Daru::IO::Exporters::JSON#write}  |
-      # | `Daru::DataFrame.to_rds_string`   | {Daru::IO::Exporters::RDS#to_s}    |
-      # | `Daru::DataFrame.write_rds`       | {Daru::IO::Exporters::RDS#write}   |
-      # | `Daru::DataFrame.to_sql`          | {Daru::IO::Exporters::SQL#to}      |
+      # | `Daru::DataFrame` instance method  | `Daru::IO::Exporters` class         |
+      # | -----------------------------------| ------------------------------------|
+      # | `Daru::DataFrame.to_avro_string`   | {Daru::IO::Exporters::Avro#to_s}    |
+      # | `Daru::DataFrame.write_avro`       | {Daru::IO::Exporters::Avro#write}   |
+      # | `Daru::DataFrame.to_csv_string`    | {Daru::IO::Exporters::CSV#to_s}     |
+      # | `Daru::DataFrame.write_csv`        | {Daru::IO::Exporters::CSV#write}    |
+      # | `Daru::DataFrame.to_excel_string`  | {Daru::IO::Exporters::Excel#to_s}   |
+      # | `Daru::DataFrame.write_excel`      | {Daru::IO::Exporters::Excel#write}  |
+      # | `Daru::DataFrame.to_excelx_string` | {Daru::IO::Exporters::Excelx#to_s}  |
+      # | `Daru::DataFrame.write_excelx`     | {Daru::IO::Exporters::Excelx#write} |
+      # | `Daru::DataFrame.to_json`          | {Daru::IO::Exporters::JSON#to}      |
+      # | `Daru::DataFrame.to_json_string`   | {Daru::IO::Exporters::JSON#to_s}    |
+      # | `Daru::DataFrame.write_json`       | {Daru::IO::Exporters::JSON#write}   |
+      # | `Daru::DataFrame.to_rds_string`    | {Daru::IO::Exporters::RDS#to_s}     |
+      # | `Daru::DataFrame.write_rds`        | {Daru::IO::Exporters::RDS#write}    |
+      # | `Daru::DataFrame.to_sql`           | {Daru::IO::Exporters::SQL#to}       |
       #
       # @param function [Symbol] Functon name to be monkey-patched into +Daru::DataFrame+
       # @param instance [Class] The Daru-IO class to be linked to monkey-patched function
@@ -62,7 +64,7 @@ module Daru
           case function.to_s
           when /\Ato_.*_string\Z/ then instance.new(self, *args, &io_block).to_s
           when /\Ato_/            then instance.new(self, *args, &io_block).to
-          when /\Awrite_/          then instance.new(self, *args[1..-1], &io_block).write(*args[0])
+          when /\Awrite_/         then instance.new(self, *args[1..-1], &io_block).write(*args[0])
           end
         end
       end
