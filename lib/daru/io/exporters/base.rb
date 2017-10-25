@@ -41,8 +41,8 @@ module Daru
         #
         #   instance = Daru::IO::Exporters::Format.new(opts)
         #   instance.to_s #! same as df.to_format_string(opts)
-        def to_s
-          tempfile = Tempfile.new('tempfile')
+        def to_s(file_extension: '')
+          tempfile = Tempfile.new(['filename', file_extension])
           path     = tempfile.path
           write(path)
 

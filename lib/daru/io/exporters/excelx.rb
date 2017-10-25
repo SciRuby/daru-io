@@ -30,8 +30,8 @@ module Daru
         #     index: false,
         #     data: { color: :blue }
         #   )
-        def initialize(dataframe, sheet: '0', header: true, data: true, index: true)
-          optional_gem 'axlsx'
+        def initialize(dataframe, sheet: 'Sheet0', header: true, data: true, index: true)
+          optional_gem 'rubyXL'
 
           super(dataframe)
           @data   = data
@@ -49,7 +49,7 @@ module Daru
         #
         #   #=> "\xD0\xCF\u0011\u0871\u001A\xE1\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000..."
         def to_s
-          super
+          super(file_extension: '.xlsx')
         end
 
         # Exports an Excelx Exporter instance to an xlsx file.
@@ -59,20 +59,18 @@ module Daru
         # @example Writing an Excel Exporterx instance to an xlsx file
         #   instance.write('filename.xlsx')
         def write(path)
-          @package = Axlsx::Package.new
-          @workbook = @package.workbook
-
+          @workbook = RubyXL::Workbook.new
+          @sheet    = @workbook.add_worksheet(@sheet)
           process_offsets
 
-          @workbook.add_worksheet(:name => @sheet) do |sheet|
-            sheet.add_row(fetch_headers)
+          write_row(@header ? 0 : 1, fetch_headers)
 
-            @dataframe.each_row_with_index do |row, idx|
-              sheet.add_row(fetch_index(idx) + fetch_data(row))
-            end
+          @dataframe.each_row_with_index.with_index do |(row, idx), i|
+            write_row(@row_offset+i, fetch_index(idx) + fetch_data(row))
           end
 
-          @package.serialize(path)
+          @workbook.write(path)
+          true
         end
 
         private
@@ -84,24 +82,31 @@ module Daru
         end
 
         def fetch_headers
-          fetching([' '] * @col_offset + @dataframe.vectors.map(&:to_s), @header)
+          formatting([' '] * @col_offset + @dataframe.vectors.map(&:to_s), @header)
         end
 
         def fetch_index(idx)
-          fetching(idx, @index)
+          formatting(idx, @index)
         end
 
         def fetch_data(row)
-          fetching(row, @data)
+          formatting(row, @data)
         end
 
-        def fetching(idx, format)
+        def formatting(idx, format)
           return [] unless format
 
           case idx
           when Daru::Vector then idx.to_a
           when Array then idx.map(&:to_s)
+          when Daru::MultiIndex then idx
           else [idx.to_s]
+          end
+        end
+
+        def write_row(row_index, row_array)
+          row_array.each_with_index do |element, col_index|
+            @sheet.insert_cell(row_index, col_index, element.to_s)
           end
         end
       end

@@ -62,7 +62,7 @@ module Daru
           case function.to_s
           when /\Ato_.*_string\Z/ then instance.new(self, *args, &io_block).to_s
           when /\Ato_/            then instance.new(self, *args, &io_block).to
-          when /Awrite_/          then instance.new(self, *args[1..-1], &io_block).write(*args[0])
+          when /\Awrite_/          then instance.new(self, *args[1..-1], &io_block).write(*args[0])
           end
         end
       end

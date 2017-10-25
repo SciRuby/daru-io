@@ -12,10 +12,10 @@ group :optional do
   gem 'redis'
   gem 'roo', '~> 2.7.0'
   gem 'rsruby'
+  gem 'rubyXL'
   gem 'snappy'
   gem 'spreadsheet', '~> 1.1.1'
   gem 'sqlite3'
 end
 
-gem 'axlsx', git: 'https://github.com/randym/axlsx.git'
 gem 'saharspec', git: 'https://github.com/zverok/saharspec.git'
