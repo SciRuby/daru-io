@@ -107,3 +107,6 @@ RSpec/MessageSpies:
 
 RSpec/NestedGroups:
   Max: 5
+
+RSpec/ContextWording:
+    Enabled: false
