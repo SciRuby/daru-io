@@ -9,10 +9,11 @@ RSpec.describe Daru::IO::Importers::RDS do
       nrows: 1113,
       index: (0..1112).to_a,
       order: %i[
-        area description epa_reach format_version latitude location location_code location_type
-        longitude name psc_basin psc_region record_code record_origin region reporting_agency
-        rmis_basin rmis_latitude rmis_longitude rmis_region sector state_or_province sub_location
-        submission_date water_type
+        state_or_province water_type sector region area location sub_location
+        record_code format_version submission_date reporting_agency
+        location_code location_type name latitude longitude psc_basin
+        psc_region epa_reach description rmis_region rmis_basin rmis_latitude
+        rmis_longitude record_origin
       ]
   end
 
@@ -24,7 +25,7 @@ RSpec.describe Daru::IO::Importers::RDS do
       nrows: 6940,
       index: (0..6939).to_a,
       order: %i[
-        city date dptp no2tmean2 o3tmean2 pm10tmean2 pm25tmean2 tmpd
+        city tmpd dptp date pm25tmean2 pm10tmean2 o3tmean2 no2tmean2
       ]
   end
 
@@ -36,7 +37,7 @@ RSpec.describe Daru::IO::Importers::RDS do
       nrows: 3030,
       index: (0..3029).to_a,
       order: %i[
-        Country Health.Expenditure Life.Expectancy Population Region Year
+        Country Region Year Population Life.Expectancy Health.Expenditure
       ]
   end
 
@@ -48,7 +49,7 @@ RSpec.describe Daru::IO::Importers::RDS do
       nrows: 3988,
       index: (0..3987).to_a,
       order: %i[
-        asvab bdate education height id income race sat_math sex weight
+        id income height weight sex race education asvab sat_math bdate
       ]
   end
 
@@ -60,9 +61,13 @@ RSpec.describe Daru::IO::Importers::RDS do
       nrows: 750,
       index: (0..749).to_a,
       order: %i[
-        MxNum VisitNum airCanF airFelD airmus airnic coarse duBdRmBlaG duBdRmCanF duBdRmDerF duBdRmFelD
-        duBdRmMusM duBdRmWeight duBedBlaG duBedCanF duBedDerF duBedFelD duBedMusM duBedWeight duKitchBlaG
-        duKitchCanF duKitchDerF duKitchFelD duKitchMusM duKitchWeight no2 pm25
+        MxNum VisitNum pm25 no2 airnic coarse
+        duBedWeight duBdRmWeight duKitchWeight
+        duBedBlaG duBdRmBlaG duKitchBlaG
+        duBedMusM duBdRmMusM duKitchMusM airmus
+        duBedFelD duBdRmFelD duKitchFelD airFelD
+        duBedCanF duBdRmCanF duKitchCanF airCanF
+        duBedDerF duBdRmDerF duKitchDerF
       ]
   end
 
@@ -74,34 +79,46 @@ RSpec.describe Daru::IO::Importers::RDS do
       nrows: 168,
       index: (0..167).to_a,
       order: %i[
-        1st.author.O 1st.author.R 80.power 90.power 95.power Actual.Power.O Analysis.completion.date.R
-        Area.of.expertise.R Authors.O Calculated.P.value.O Citation.Count.1st.author.O
-        Citation.count.1st.author.R Citation.count.paper.O Citation.count.senior.author.O
-        Citation.count.senior.author.R Citations.R Coder.s.email.R Collect.materials.from.authors
-        Completion.R Contact.Researcher.R Current.position.R Data.collection.quality.R Degree.R
-        Description.of.effect.O Descriptors.O Differences.R Difficulty.of.implimentation.R Direction.R
-        Discipline.O Domain.expertise.R Dummy Effect.Size.R Effect.similarity.R Effect.size.O
-        Exciting.result.O Feasibility.O Findings.similarity.R Implementation.quality.R
-        Institution.1st.author.O Institution.1st.author.R Institution.prestige.1st.author.O
-        Institution.prestige.1st.author.R Institution.prestige.senior.author.O
-        Institution.prestige.senior.author.R Institution.senior.author.O Institution.senior.author.R
-        Internal.conceptual.replications.O Internal.direct.replications.O Issue.O Journal.O Local.ID
-        Meta.analysis.significant Meta.analytic.estimate.Fz Method.expertise.R
-        Methodology.expertise.required.O N.O N.R Notes.R Number.of.Authors.O Number.of.Authors.R
-        Number.of.Research.sites.R Number.of.Studies.O Number.of.research.sites.O O.within.CI.R
-        OSC.reviewer.O OSC.reviewer.R Opportunity.for.expectancy.bias.O Opportunity.for.lack.of.diligence.O
-        Original.Author.s.Assessment P.value.R Pages.O Peer.reviewed.articles.R Planned.Power
-        Planned.Sample Power.R Project.URL Project.audit.complete.R R.check.location.R Replicate.R
-        Replicated.study.number.R Replication.similarity.R Reported.P.value.O Secondary.R Secondary.data.O
-        Secondary.data.R Senior.author.O Senior.author.R Status.R Study.Title.O Study.claim.date.R
-        Successful.conceptual.replications.O Successful.direct.replications.O Surprise.of.outcome.R
-        Surprising.result.O T.Comparison.effects.R.O T.N.O T.N.O.for.tables T.N.R T.N.R.for.tables
-        T.O.larger T.Test.Comparison.R T.Test.Statistic.O T.Test.Statistic.R T.Test.value.O T.Test.value.R
-        T.TestComparison.O T.df1.O T.df1.R T.df2.O T.df2.R T.p.comparison.O T.p.comparison.R T.pval.O
-        T.pval.R T.pval.USE.O T.pval.USE.R T.pval.recalc.O T.pval.recalc.R T.r.O T.r.R T.sign.O.113
-        T.sign.O.131 T.sign.R.125 T.sign.R.132 Tails.O Tails.R Test.statistic.O Test.statistic.R
-        Total.publications.R Type.of.analysis.O.128 Type.of.analysis.O.56 Type.of.analysis.R.129
-        Type.of.analysis.R.74 Type.of.effect.O Type.of.effect.R V130 Volume.O Year.of.highest.degree.R
+        Local.ID Study.Title.O Authors.O Journal.O Volume.O Issue.O Pages.O
+        Project.URL Descriptors.O Number.of.Authors.O Number.of.Authors.R
+        1st.author.O Citation.Count.1st.author.O Institution.1st.author.O
+        Senior.author.O Citation.count.senior.author.O
+        Institution.senior.author.O 1st.author.R Citation.count.1st.author.R
+        Institution.1st.author.R Senior.author.R Citation.count.senior.author.R
+        Institution.senior.author.R Citation.count.paper.O
+        Institution.prestige.1st.author.O Institution.prestige.senior.author.O
+        Institution.prestige.1st.author.R Institution.prestige.senior.author.R
+        Number.of.Studies.O Discipline.O Number.of.research.sites.O
+        Secondary.data.O Methodology.expertise.required.O
+        Opportunity.for.expectancy.bias.O Opportunity.for.lack.of.diligence.O
+        Surprising.result.O Exciting.result.O
+        Internal.conceptual.replications.O Successful.conceptual.replications.O
+        Internal.direct.replications.O Successful.direct.replications.O
+        Feasibility.O Status.R Completion.R Secondary.R Contact.Researcher.R
+        Study.claim.date.R Analysis.completion.date.R Coder.s.email.R
+        Replicated.study.number.R Test.statistic.O N.O Reported.P.value.O
+        Calculated.P.value.O Tails.O Type.of.analysis.O.56 Type.of.effect.O
+        Description.of.effect.O Effect.size.O Actual.Power.O 80.power 90.power
+        95.power Collect.materials.from.authors Planned.Sample Planned.Power
+        Original.Author.s.Assessment OSC.reviewer.O Test.statistic.R N.R
+        P.value.R Direction.R Tails.R Type.of.analysis.R.74 Type.of.effect.R
+        Replicate.R Power.R Effect.Size.R OSC.reviewer.R Notes.R
+        Project.audit.complete.R R.check.location.R Degree.R
+        Year.of.highest.degree.R Current.position.R Domain.expertise.R
+        Method.expertise.R Total.publications.R Peer.reviewed.articles.R
+        Citations.R Implementation.quality.R Data.collection.quality.R
+        Replication.similarity.R Differences.R Effect.similarity.R
+        Findings.similarity.R Difficulty.of.implimentation.R
+        Surprise.of.outcome.R Dummy Number.of.Research.sites.R
+        Secondary.data.R Area.of.expertise.R T.N.O T.Test.Statistic.O
+        T.TestComparison.O T.df1.O T.df2.O T.Test.value.O T.p.comparison.O
+        T.pval.O T.pval.recalc.O T.pval.USE.O T.sign.O.113 T.r.O T.N.R
+        T.Test.Statistic.R T.Test.Comparison.R T.df1.R T.df2.R T.Test.value.R
+        T.p.comparison.R T.pval.R T.pval.recalc.R T.pval.USE.R T.sign.R.125
+        T.r.R T.Comparison.effects.R.O Type.of.analysis.O.128
+        Type.of.analysis.R.129 V130 T.sign.O.131 T.sign.R.132 T.O.larger
+        T.N.O.for.tables T.N.R.for.tables Meta.analytic.estimate.Fz
+        O.within.CI.R Meta.analysis.significant
       ]
   end
 end

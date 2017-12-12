@@ -24,7 +24,7 @@ RSpec.describe Daru::IO::Importers::CSV do
     it_behaves_like 'exact daru dataframe',
       ncols: 3,
       nrows: 99,
-      order: %i[image_resolution mls true_transform],
+      order: %i[image_resolution true_transform mls],
       :'image_resolution.first' => 6.55779,
       :'true_transform.first'   => '-0.2362347,0.6308649,0.7390552,0,0.6523478'\
                                    ',-0.4607318,0.6018043,0,0.7201635,0.6242881'\
@@ -91,7 +91,7 @@ RSpec.describe Daru::IO::Importers::CSV do
     it_behaves_like 'exact daru dataframe',
       ncols: 8,
       nrows: 9,
-      order: %i[account manager name price product quantity rep status]
+      order: %i[account name rep manager product quantity price status]
   end
 
   context 'skips rows from CSV files without headers option' do

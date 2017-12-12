@@ -12,11 +12,13 @@ RSpec.describe Daru::IO::Importers::RData do
       nrows: 1629,
       index: (0..1628).to_a,
       order: %i[
-        Abbreviation FIPS Non.US State cnty females.divorced females.married ind-agric
-        ind-arts ind-construc ind-educational ind-finance ind-information ind-manufact
-        ind-other.industry ind-public.admin ind-retail ind-scientific ind-transport
-        ind-wholesale males.diorced males.married median.earnings perc.HS+ perc.disability
-        perc.no.health.insurance race-am.ind race-asian race-black race-white
+        State Abbreviation FIPS
+        males.married males.diorced females.married females.divorced
+        perc.HS+ Non.US perc.disability
+        race-white race-black race-am.ind race-asian
+        ind-agric ind-construc ind-manufact ind-wholesale ind-retail ind-transport ind-information
+        ind-finance ind-scientific ind-educational ind-arts ind-other.industry ind-public.admin
+        median.earnings perc.no.health.insurance cnty
       ]
   end
 
@@ -29,7 +31,7 @@ RSpec.describe Daru::IO::Importers::RData do
       nrows: 1755,
       index: (0..1754).to_a,
       order: %i[
-        Business.Filings Non.Business.Filings State.Code Total.Filings year
+        State.Code Total.Filings Business.Filings Non.Business.Filings year
       ]
   end
 
@@ -42,7 +44,7 @@ RSpec.describe Daru::IO::Importers::RData do
       nrows: 1632,
       index: (0..1631).to_a,
       order: %i[
-        Date State own.rate se
+        State Date own.rate se
       ]
   end
 

@@ -14,8 +14,8 @@ RSpec.describe Daru::IO::Importers::SQL do
     it_behaves_like 'exact daru dataframe',
       ncols: 3,
       nrows: 2,
-      order: %i[age id name],
-      data: [[20, 30],[1,2],%w[Homer Marge]]
+      order: %i[id name age],
+      data: [[1,2],%w[Homer Marge],[20, 30]]
   end
 
   context 'with a database connection of ActiveRecord' do
@@ -28,8 +28,8 @@ RSpec.describe Daru::IO::Importers::SQL do
     it_behaves_like 'exact daru dataframe',
       ncols: 3,
       nrows: 2,
-      order: %i[age id name],
-      data: [[20, 30],[1,2],%w[Homer Marge]]
+      order: %i[id name age],
+      data: [[1,2],%w[Homer Marge],[20, 30]]
   end
 
   before { ActiveRecord::Base.establish_connection("sqlite3:#{db_name}") }
@@ -40,16 +40,16 @@ RSpec.describe Daru::IO::Importers::SQL do
     it_behaves_like 'exact daru dataframe',
       ncols: 3,
       nrows: 2,
-      order: %i[age id name],
-      data: [[20, 30],[1,2],%w[Homer Marge]]
+      order: %i[id name age],
+      data: [[1,2],%w[Homer Marge],[20, 30]]
   end
 
   context 'with ActiveRecord::Connection' do
     it_behaves_like 'exact daru dataframe',
       ncols: 3,
       nrows: 2,
-      order: %i[age id name],
-      data: [[20, 30],[1,2],%w[Homer Marge]]
+      order: %i[id name age],
+      data: [[1,2],%w[Homer Marge],[20, 30]]
   end
 
   context 'with path to sqlite3 file' do
@@ -60,8 +60,8 @@ RSpec.describe Daru::IO::Importers::SQL do
     it_behaves_like 'exact daru dataframe',
       ncols: 3,
       nrows: 2,
-      order: %i[age id name],
-      data: [[20, 30],[1,2],%w[Homer Marge]]
+      order: %i[id name age],
+      data: [[1,2],%w[Homer Marge],[20, 30]]
   end
 
   context 'raises error for invalid arguments' do # rubocop:disable RSpec/EmptyExampleGroup
