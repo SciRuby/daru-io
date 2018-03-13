@@ -33,7 +33,7 @@ module Daru
         #   url = 'http://api.tvmaze.com/singlesearch/shows?q=game-of-thrones&embed=episodes'
         #   complex_read_instance = Daru::IO::Importers::JSON.read(url)
         def read(path)
-          @file_data = ::JSON.parse(open(path).read)
+          @file_data = ::JSON.parse(File.open(path).read)
           @json      = @file_data
           self
         end

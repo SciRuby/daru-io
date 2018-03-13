@@ -1,3 +1,4 @@
+
 RSpec.describe Daru::IO::Exporters::CSV do
   subject { File.open(tempfile.path, &:readline).chomp.split(',', -1) }
 
@@ -48,7 +49,7 @@ RSpec.describe Daru::IO::Exporters::CSV do
   end
 
   context 'writes into .csv.gz format' do
-    subject        { Zlib::GzipReader.new(open(tempfile.path)).read.split("\n") }
+    subject        { Zlib::GzipReader.new(File.open(tempfile.path)).read.split("\n") }
 
     let(:opts)     { {compression: :gzip} }
     let(:filename) { 'test.csv.gz'        }

@@ -30,7 +30,7 @@ module Daru
         # @example Reading from a website url file
         #   instance = Daru::IO::Importers::HTML.read('http://www.moneycontrol.com/')
         def read(path)
-          @file_data = Nokogiri.parse(open(path).read)
+          @file_data = Nokogiri.parse(File.open(path).read)
           self
         end
 
