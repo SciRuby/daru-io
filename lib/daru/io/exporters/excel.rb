@@ -98,8 +98,10 @@ module Daru
 
         def process_offsets
           @row_offset   = @header ? 1 : 0
+          # rubocop:disable Naming/MemoizedInstanceVariableName
           @col_offset   = 0 unless @index
           @col_offset ||= @dataframe.index.is_a?(Daru::MultiIndex) ? @dataframe.index.width : 1
+          # rubocop:enable Naming/MemoizedInstanceVariableName
         end
 
         def write_headers
