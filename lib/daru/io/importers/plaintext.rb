@@ -81,14 +81,14 @@ module Daru
           end
         end
 
-        def try_string_to_number(s)
-          case s
+        def try_string_to_number(str)
+          case str
           when INT_PATTERN
-            s.to_i
+            str.to_i
           when FLOAT_PATTERN
-            s.tr(',', '.').to_f
+            str.tr(',', '.').to_f
           else
-            s
+            str
           end
         end
       end

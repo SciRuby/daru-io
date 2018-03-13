@@ -105,6 +105,7 @@ Metrics/ParameterLists:
 Naming/UncommunicativeMethodParamName:
   AllowedNames:
     - db
+    - str
 
 ### RSpec --------------------------------------------------------------
 
