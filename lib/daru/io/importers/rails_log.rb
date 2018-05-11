@@ -3,9 +3,9 @@ require 'daru/io/importers/base'
 module Daru
   module IO
     module Importers
-      class Rails < Base
-        Daru::DataFrame.register_io_module :read_rails, self
-        Daru::DataFrame.register_io_module :from_rails, self
+      class RailsLog < Base
+        Daru::DataFrame.register_io_module :read_rails_log, self
+        Daru::DataFrame.register_io_module :from_rails_log, self
 
         def initialize()
           @path = nil
@@ -14,7 +14,7 @@ module Daru
 
         def read(path)
           @path = path
-          @file_data = Base.parse_log('/home/rohitner/blog/log/development.log',:rails3)
+          @file_data = Base.parse_log(@path,:rails3)
           self
         end
 
