@@ -56,6 +56,42 @@ module Daru
         def self.read(path)
           new.read(path)
         end
+
+        def self.parse_log(file,format)
+          require 'request_log_analyzer'
+          RequestLogAnalyzer::Source::LogParser.class_eval do
+            def parse_hash(file)
+              logfile = File.open(file, 'rb')
+              @max_line_length = max_line_length
+              @line_divider    = line_divider
+              @current_lineno  = 0
+              raw_list = []
+              while line = logfile.gets(@line_divider, @max_line_length)
+                @current_lineno += 1
+                if request_data = @file_format.parse_line(line) { |wt, message| warn(wt, message) }
+                  @parsed_lines += 1
+                  raw_hash = @file_format.request(request_data).attributes
+                  raw_list << raw_hash if not raw_hash.nil?
+                end
+              end
+              parsed_list = []
+              raw_list.each do |hash|
+                parsed_list << hash if hash.key? :method
+              end
+              for i in (0...parsed_list.size - 1)
+                j = raw_list.index(parsed_list[i+1])
+                k = raw_list.index(parsed_list[i]) + 1
+                for l in (k...j)
+                  parsed_list[i].merge!(raw_list[l])
+                end
+              end
+              parsed_list
+            end
+          end
+          RequestLogAnalyzer::Source::LogParser
+            .new(RequestLogAnalyzer::FileFormat.load(format))
+            .parse_hash(file)
+        end
       end
     end
   end

@@ -35,6 +35,4 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'yard'
 
   spec.add_development_dependency 'guard-rspec' if RUBY_VERSION >= '2.2.5'
-
-  spec.add_runtime_dependency 'request-log-analyzer', '~> 1.13.4'
 end
