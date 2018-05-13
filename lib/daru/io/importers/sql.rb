@@ -68,23 +68,23 @@ module Daru
 
         private
 
-        def attempt_sqlite3_connection(db)
-          DBI.connect("DBI:SQLite3:#{db}")
+        def attempt_sqlite3_connection(dtb)
+          DBI.connect("DBI:SQLite3:#{dtb}")
         rescue SQLite3::NotADatabaseException
-          raise ArgumentError, "Expected #{db} to point to a SQLite3 database"
+          raise ArgumentError, "Expected #{dtb} to point to a SQLite3 database"
         end
 
-        def choose_adapter(db, query)
+        def choose_adapter(dtb, query)
           query = String.try_convert(query) or
             raise ArgumentError, "Query must be a string, #{query.class} received"
 
-          case db
+          case dtb
           when DBI::DatabaseHandle
-            [db, :dbi]
+            [dtb, :dbi]
           when ::ActiveRecord::ConnectionAdapters::AbstractAdapter
-            [db, :activerecord]
+            [dtb, :activerecord]
           else
-            raise ArgumentError, "Unknown database adapter type #{db.class}"
+            raise ArgumentError, "Unknown database adapter type #{dtb.class}"
           end
         end
 

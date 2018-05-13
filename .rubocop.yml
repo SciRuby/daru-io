@@ -110,3 +110,14 @@ RSpec/NestedGroups:
 
 RSpec/ContextWording:
     Enabled: false
+
+### Security -----------------------------------------------------------
+
+Security/Open:
+  Enabled: false
+
+### Naming -----------------------------------------------------------
+
+Naming/MemoizedInstanceVariableName:
+  Exclude:
+    - 'lib/daru/io/exporters/excel.rb'

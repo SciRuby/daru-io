@@ -10,12 +10,12 @@ group :optional do
   gem 'mongo'
   gem 'nokogiri'
   gem 'redis'
+  gem 'request-log-analyzer', '~> 1.13.4'
   gem 'roo', '~> 2.7.0'
   gem 'rsruby'
   gem 'snappy'
   gem 'spreadsheet', '~> 1.1.1'
   gem 'sqlite3'
-  gem 'request-log-analyzer', '~> 1.13.4'
 end
 
 gem 'saharspec', git: 'https://github.com/zverok/saharspec.git'

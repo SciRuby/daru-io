@@ -9,7 +9,7 @@ module Daru
         Daru::DataFrame.register_io_module :read_rails_log, self
         Daru::DataFrame.register_io_module :from_rails_log, self
 
-        def initialize()
+        def initialize
           @path = nil
           @file_data = nil
         end
@@ -20,18 +20,14 @@ module Daru
           self
         end
 
-        INDEX = [:method, :path, :ip, :timestamp, :line_type, :lineno, :source,
-                 :controller, :action, :format, :params, :rendered_file,
-                 :partial_duration, :status, :duration, :view, :db]
+        INDEX = %i[method path ip timestamp line_type lineno source
+                   controller action format params rendered_file
+                   partial_duration status duration view db].freeze
 
-        def call()
+        def call
           data = Daru::DataFrame.new({},index: INDEX).transpose
           @file_data.each do |hash|
-            row = []
-            INDEX.each do |attr|
-              row << hash[attr]
-            end
-            data.add_row row
+            data.add_row(INDEX.map { |attr| hash[attr] })
           end
           data
         end
