@@ -10,7 +10,7 @@ RSpec.describe Daru::IO::Importers::RailsLog do
       order: %i[method path ip timestamp line_type lineno source
                 controller action format params rendered_file
                 partial_duration status duration view db],
-      :'timestamp.to_a' => [20180312174118], # rubocop:disable Style/NumericLiterals
+      :'timestamp.to_a' => [20_180_312_174_118],
       :'duration.to_a' => [0.097]
   end
 end

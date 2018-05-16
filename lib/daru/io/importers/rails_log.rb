@@ -1,5 +1,4 @@
 require 'daru/io/importers/base'
-require 'daru/io/importers/shared/request_log_analyzer_patch'
 
 module Daru
   module IO
@@ -7,13 +6,13 @@ module Daru
       # RailsLog Importer Class, that extends `read_rails_log` methods
       # to `Daru::DataFrame`
       class RailsLog < Base
-        include RequestLogAnalyzerPatch
         Daru::DataFrame.register_io_module :read_rails_log, self
 
-        # initializes the instance variables @path and @file_data to nil
+        # Checks for required gem dependencies of RailsLog importer
+        # and requires the patch for request-log-analyzer gem
         def initialize
-          @path = nil
-          @file_data = nil
+          optional_gem 'request-log-analyzer', '~> 1.13.4', requires: 'request_log_analyzer'
+          require 'daru/io/importers/shared/request_log_analyzer_patch'
         end
 
         # Reads data from a rails log file
@@ -27,14 +26,15 @@ module Daru
         #
         # @example Reading from plaintext file
         #   instance = Daru::IO::Importers::RailsLog.read("rails_test.log")
-        def read(path)
-          @path = path
-          @file_data = RequestLogAnalyzerPatch.parse_log(@path,:rails3)
+        def read(path, format: :rails3)
+          parser = RequestLogAnalyzer::Source::LogParser.new(RequestLogAnalyzer::FileFormat.load(format))
+          parser.extend(RequestLogAnalyzerPatch)
+          @file_data = parser.parse_hash(path)
           self
         end
 
-        # index of header of the parsed information
-        INDEX = %i[method path ip timestamp line_type lineno source
+        # header of the parsed information
+        ORDER = %i[method path ip timestamp line_type lineno source
                    controller action format params rendered_file
                    partial_duration status duration view db].freeze
 
@@ -51,11 +51,7 @@ module Daru
         #   #   1        GET          /  127.0.0.1 2018022716  completed         12  /home/roh Rails...
         #   # ...        ...        ...        ...        ...        ...        ...        ...      ...
         def call
-          data = Daru::DataFrame.new({},index: INDEX).transpose
-          @file_data.each do |hash|
-            data.add_row(INDEX.map { |attr| hash[attr] })
-          end
-          data
+          Daru::DataFrame.rows(@file_data, order: ORDER)
         end
       end
     end
