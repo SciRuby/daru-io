@@ -7,8 +7,8 @@ RSpec.describe Daru::IO::Importers::Log.new do
     it_behaves_like 'exact daru dataframe',
       ncols: 17,
       nrows: 1,
-      order: %i[method path ip timestamp line_type lineno source
-                controller action format params rendered_file
+      order: %i[method resource_path ip timestamp line_type lineno
+                source controller action format params rendered_file
                 partial_duration status duration view db],
       :'timestamp.to_a' => [20_180_312_174_118],
       :'duration.to_a' => [0.097]
@@ -23,8 +23,8 @@ RSpec.describe Daru::IO::Importers::Log.new do
       ncols: 14,
       nrows: 1,
       order: %i[remote_host remote_logname user timestamp http_method
-                path http_version http_status bytes_sent referer
-                user_agent line_type lineno source],
+                resource_path http_version http_status bytes_sent
+                referer user_agent line_type lineno source],
       :'timestamp.to_a' => [20_161_207_103_443],
       :'bytes_sent.to_a' => [571]
   end

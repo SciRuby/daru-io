@@ -71,7 +71,8 @@ module Daru
         #   #   1        GET          /  127.0.0.1 2018022716  completed         12  /home/roh Rails...
         #   # ...        ...        ...        ...        ...        ...        ...        ...      ...
         def call
-          Daru::DataFrame.rows(@file_data, order: ORDERS.fetch(@format))
+          Daru::DataFrame.rows(@file_data, order: ORDERS.fetch(@format)
+            .map { |attr| attr == :path ? :resource_path : attr })
         end
       end
     end
