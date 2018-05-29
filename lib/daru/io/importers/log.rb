@@ -26,6 +26,10 @@ module Daru
                         turnaround_time referer user_agent line_type lineno source].freeze
         }.freeze
 
+        RENAME_FIELDS = {
+          path: :resource_path
+        }.freeze
+
         # Reads data from a log file
         #
         # @!method self.read(path, format: :rails3)
@@ -66,13 +70,13 @@ module Daru
         #   df = instance.call
         #
         #   => #<Daru::DataFrame(150x17)>
-        #   #         method       path         ip  timestamp  line_type     lineno     source contr...
-        #   #   0        GET          /  127.0.0.1 2018022607  completed          5  /home/roh Rails...
-        #   #   1        GET          /  127.0.0.1 2018022716  completed         12  /home/roh Rails...
+        #   #         method resource_path         ip  timestamp  line_type     lineno     source contr...
+        #   #   0        GET             /  127.0.0.1 2018022607  completed          5  /home/roh Rails...
+        #   #   1        GET             /  127.0.0.1 2018022716  completed         12  /home/roh Rails...
         #   # ...        ...        ...        ...        ...        ...        ...        ...      ...
         def call
           Daru::DataFrame.rows(@file_data, order: ORDERS.fetch(@format)
-            .map { |attr| attr == :path ? :resource_path : attr })
+            .map { |attr| RENAME_FIELDS.fetch(attr, attr) })
         end
       end
     end

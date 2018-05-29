@@ -125,3 +125,8 @@ Naming/MemoizedInstanceVariableName:
 Naming/UncommunicativeMethodParamName:
   AllowedNames:
     - 'db'
+
+### Lint ---------------------------------------------------------------
+
+Lint/SplatKeywordArguments:
+  Enabled: false
