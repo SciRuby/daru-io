@@ -10,6 +10,7 @@ group :optional do
   gem 'mongo'
   gem 'nokogiri'
   gem 'redis'
+  gem 'request-log-analyzer', '~> 1.13.4'
   gem 'roo', '~> 2.7.0'
   gem 'rsruby'
   gem 'snappy'

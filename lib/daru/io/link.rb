@@ -18,6 +18,7 @@ module Daru
       # | `Daru::DataFrame.read_json`         | {Daru::IO::Importers::JSON#read}         |
       # | `Daru::DataFrame.from_mongo`        | {Daru::IO::Importers::Mongo#from}        |
       # | `Daru::DataFrame.read_plaintext`    | {Daru::IO::Importers::Plaintext#read}    |
+      # | `Daru::DataFrame.read_rails_log`    | {Daru::IO::Importers::RailsLog#read}     |
       # | `Daru::DataFrame.read_rdata`        | {Daru::IO::Importers::RData#read}        |
       # | `Daru::DataFrame.read_rds`          | {Daru::IO::Importers::RDS#read}          |
       # | `Daru::DataFrame.from_redis`        | {Daru::IO::Importers::Redis#from}        |
