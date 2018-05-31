@@ -59,6 +59,7 @@ module Daru
           end.flatten
           @statements << "save(#{@options.keys.map(&:to_s).join(', ')}, file='#{path}')"
           @statements.each { |statement| @instance.eval_R(statement) }
+          true
         end
       end
     end

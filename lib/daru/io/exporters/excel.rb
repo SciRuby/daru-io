@@ -62,7 +62,7 @@ module Daru
         # @return [String] A file-writable string
         #
         # @example Getting a file-writable string from Excel Exporter instance
-        #   simple_instance.to_s #! same as df.to_avro_string(schema)
+        #   simple_instance.to_s
         #
         #   #=> "\xD0\xCF\u0011\u0871\u001A\xE1\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000..."
         #
@@ -92,6 +92,7 @@ module Daru
           end
 
           @book.write(path)
+          true
         end
 
         private

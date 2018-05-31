@@ -39,7 +39,7 @@ Please proceed with a Pull Request only after you're assigned. It'd be sad if yo
 
 4. Add any gem dependencies required for the Format Importer to the `:optional` group of the Gemfile.
 
-5. Add code and YARD documentation to `lib/daru/io/importers/format.rb`, consistent with other IO modules.
+5. Add code and YARD documentation to `lib/daru/io/importers/format.rb`, consistent with other IO modules. Update the `README.md` if required.
 
 6. Add tests to `spec/daru/io/importers/format_spec.rb`. Add any `.format` files required for importer in `spec/fixtures/format/` directory.
 

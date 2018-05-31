@@ -20,7 +20,7 @@ While supporting various IO modules, daru-io also provides an easier way of addi
 
 - [Installation](#installation)
 - *[Importers](#importers): [ActiveRecord](#activerecord-importer), [Avro](#avro-importer), [CSV](#csv-importer), [Excel](#excel-importer), [Excelx](#excelx-importer), [HTML](#html-importer), [JSON](#json-importer), [Mongo](#mongo-importer), [Plaintext](#plaintext-importer), [RData](#rdata-importer), [RDS](#rds-importer), [Redis](#redis-importer), [SQL](#sql-importer)*
-- *[Exporters](#exporters): [Avro](#avro-exporter), [CSV](#csv-exporter), [Excel](#excel-exporter), [JSON](#json-exporter), [RData](#rdata-exporter), [RDS](#rds-exporter), [SQL](#sql-exporter)*
+- *[Exporters](#exporters): [Avro](#avro-exporter), [CSV](#csv-exporter), [Excel](#excel-exporter), [Excelx](#excelx-exporter), [JSON](#json-exporter), [RData](#rdata-exporter), [RDS](#rds-exporter), [SQL](#sql-exporter)*
 - [Creating your own IO modules](#creating-your-own-io-modules)
 - [Contributing](#contributing)
 - [License](#license)
@@ -456,6 +456,28 @@ Exports a **Daru::DataFrame** into a **.xls** file.
     #! Usage from Daru::DataFrame
     string = df.to_excel_string(header: {color: :red, weight: :bold}, data: {color: :blue }, index: false)
     df.write_excel('path/to/file.xls', header: {color: :red, weight: :bold}, data: {color: :blue }, index: false)
+    ```
+
+### Excelx Exporter
+
+[(Go to Table of Contents)](#table-of-contents)
+
+Exports a **Daru::DataFrame** into a **.xlsx** file.
+
+- **Docs**: [rubydoc.info](http://www.rubydoc.info/github/athityakumar/daru-io/master/Daru/IO/Exporters/Excelx)
+- **Gem Dependencies**: `rubyXL` gem
+- **Usage**:
+    ```ruby
+    #! Partially require just Excelx Exporter
+    require 'daru/io/exporters/excelx'
+
+    #! Usage from Daru::IO
+    string = Daru::IO::Exporters::Excelx.new(df, index: false).to_s
+    Daru::IO::Exporters::Excelx.new(df, index: false).write('path/to/file.xlsx')
+
+    #! Usage from Daru::DataFrame
+    string = df.to_excelx_string(index: false)
+    df.write_excel('path/to/file.xlsx', index: false)
     ```
 
 ### JSON Exporter

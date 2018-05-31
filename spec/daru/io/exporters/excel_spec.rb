@@ -2,7 +2,7 @@ RSpec.describe Daru::IO::Exporters::Excel do
   include_context 'exporter setup'
 
   let(:filename) { 'test_write.xls' }
-  let(:content)  { Spreadsheet.open tempfile.path }
+  let(:content)  { Spreadsheet.open(tempfile.path) }
   let(:opts)     { {header: {color: :blue}, data: {color: :red}, index: {color: :green}} }
 
   before { described_class.new(df, **opts).write(tempfile.path) }

@@ -78,6 +78,7 @@ module Daru
           @writer.close
 
           File.open(path, 'w') { |file| file.write(@buffer.string) }
+          true
         end
 
         private

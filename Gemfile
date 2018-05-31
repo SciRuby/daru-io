@@ -13,6 +13,7 @@ group :optional do
   gem 'request-log-analyzer', '~> 1.13.4'
   gem 'roo', '~> 2.7.0'
   gem 'rsruby'
+  gem 'rubyXL'
   gem 'snappy'
   gem 'spreadsheet', '~> 1.1.1'
   gem 'sqlite3'

@@ -10,9 +10,9 @@ module Daru
         Daru::DataFrame.register_io_module :read_excel do |*args, &io_block|
           if args.first.end_with?('.xlsx')
             require 'daru/io/importers/excelx'
-            Daru::IO::Importers::Excelx.new(*args[1..-1], &io_block).read(*args[0])
+            Daru::IO::Importers::Excelx.new.read(*args[0]).call(*args[1..-1], &io_block)
           else
-            Daru::IO::Importers::Excel.new(*args[1..-1], &io_block).read(*args[0])
+            Daru::IO::Importers::Excel.new.read(*args[0]).call(*args[1..-1], &io_block)
           end
         end
 
