@@ -40,8 +40,20 @@ module Daru
         #   instance = Daru::IO::Importers::CSV.read("matrix_test.csv.gz")
         def read(path)
           @path      = path
-          @file_data = open(@path)
+          @file_data = open_data_source(@path)
           self
+        end
+
+        private def open_data_source(name)
+          if name.respond_to?(:open)
+            name.open
+          elsif name.respond_to?(:to_str) &&
+                %r{\A[A-Za-z][A-Za-z0-9+\-\.]*://} =~ name &&
+                (uri = URI.parse(name)).respond_to?(:open)
+            uri.open
+          else
+            File.open name
+          end
         end
 
         # Imports a `Daru::DataFrame` from a CSV Importer instance
