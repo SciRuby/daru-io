@@ -11,7 +11,7 @@ module Daru
         # Checks for required gem dependencies of SQL Importer
         def initialize
           optional_gem 'dbd-sqlite3', requires: 'dbd/SQLite3'
-          optional_gem 'activerecord', '~> 4.0', requires: 'active_record'
+          optional_gem 'activerecord', '>= 4.0', requires: 'active_record'
           optional_gem 'dbi'
           optional_gem 'sqlite3'
         end

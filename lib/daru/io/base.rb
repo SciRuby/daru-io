@@ -23,7 +23,7 @@ module Daru
       #   #=> true
       #
       # @example Requires with version and requires
-      #   optional_gem 'activerecord', '~> 4.0', requires: 'active_record'
+      #   optional_gem 'activerecord', '>= 4.0', requires: 'active_record'
       #   #=> true
       #
       # @example Raises error with meaningful message

@@ -10,7 +10,7 @@ module Daru
 
         # Checks for required gem dependencies of ActiveRecord Importer
         def initialize
-          optional_gem 'activerecord', '~> 4.0', requires: 'active_record'
+          optional_gem 'activerecord', '>= 4.0', requires: 'active_record'
         end
 
         # Loads data from a given relation
