@@ -2,7 +2,7 @@ source 'https://rubygems.org'
 gemspec
 
 group :optional do
-  gem 'activerecord', '~> 4.0'
+  gem 'activerecord', '>= 4.0'
   gem 'avro'
   gem 'dbd-sqlite3'
   gem 'dbi'
