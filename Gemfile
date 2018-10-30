@@ -6,7 +6,7 @@ group :optional do
   gem 'avro'
   gem 'dbd-sqlite3'
   gem 'dbi'
-  gem 'jsonpath'
+  gem 'jsonpath', '>= 0.9.6'
   gem 'mongo'
   gem 'nokogiri'
   gem 'redis'
